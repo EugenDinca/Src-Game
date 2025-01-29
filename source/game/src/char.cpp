@@ -8477,9 +8477,9 @@ void CHARACTER::CheckMount()
 		if (mountItem->GetValue(1) != 0)
 			mobVnum = mountItem->GetValue(1);
 
-		if (mountSystem->CountSummoned() == 0)
+		if (mountSystem->CountSummoned() == 1)
 		{
-			mountSystem->Summon(mobVnum, mountItem, false);
+			mountSystem->Mount(mobVnum, mountItem);
 		}
 	}
 #else
@@ -8488,9 +8488,9 @@ void CHARACTER::CheckMount()
 		if (mountItem->GetValue(1) != 0)
 			mobVnum = mountItem->GetValue(1);
 
-		if (mountSystem->CountSummoned() == 0)
+		if (mountSystem->CountSummoned() == 1)
 		{
-			mountSystem->Summon(mobVnum, mountItem, false);
+			mountSystem->Mount(mobVnum, mountItem);
 		}
 	}
 #endif
