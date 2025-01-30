@@ -4274,6 +4274,9 @@ EVENTINFO(chat_shout_event_info)
 	const char* szText;
 	int	chatCount;
 	int maxCount;
+#ifdef ENABLE_PLAYER_BLOCK_SYSTEM
+	const char* m_szName;
+#endif
 };
 EVENTFUNC(chat_shout_update_event)
 {
