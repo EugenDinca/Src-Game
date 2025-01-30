@@ -4302,7 +4302,7 @@ EVENTFUNC(chat_shout_update_event)
 		snprintf(chatbuf_global, sizeof(chatbuf_global), "%s |H%s%s|h(#)|h|r - Lv.%d|h|r : %s", chName.c_str(), "whisper:", chName.c_str(), charLevel, chatText.c_str());
 
 #ifdef ENABLE_PLAYER_BLOCK_SYSTEM
-		SendShout(chatbuf_global, charEmpire, ch->GetName());
+		SendShout(chatbuf_global, charEmpire, GetName);
 #else
 		SendShout(chatbuf_global, charEmpire);
 #endif
