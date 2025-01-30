@@ -4302,7 +4302,7 @@ EVENTFUNC(chat_shout_update_event)
 		snprintf(chatbuf_global, sizeof(chatbuf_global), "%s |H%s%s|h(#)|h|r - Lv.%d|h|r : %s", chName.c_str(), "whisper:", chName.c_str(), charLevel, chatText.c_str());
 
 #ifdef ENABLE_PLAYER_BLOCK_SYSTEM
-		SendShout(chatbuf_global, charEmpire, GetName);
+		SendShout(chatbuf_global, charEmpire, ch->GetName());
 #else
 		SendShout(chatbuf_global, charEmpire);
 #endif
@@ -4310,6 +4310,9 @@ EVENTFUNC(chat_shout_update_event)
 		TPacketGGShout p;
 		p.bHeader = HEADER_GG_SHOUT;
 		p.bEmpire = charEmpire;
+#ifdef ENABLE_PLAYER_BLOCK_SYSTEM
+		strlcpy(p.szName, ch->GetName(), sizeof(p.szName));
+#endif
 		strlcpy(p.szText, chatbuf_global, sizeof(p.szText));
 		P2P_MANAGER::instance().Send(&p, sizeof(TPacketGGShout));
 	}
