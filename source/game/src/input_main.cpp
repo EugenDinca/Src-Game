@@ -489,7 +489,7 @@ struct FEmpireChatPacket
 #else
 	FEmpireChatPacket(packet_chat& p, const char* chat_msg, int len, int iMapIndex, int iNameLen)
 		: p(p), orig_msg(chat_msg), orig_len(len), iMapIndex(iMapIndex), namelen(iNameLen)
-#endif
+#endif//test
 	{
 	}
 
