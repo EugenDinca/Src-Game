@@ -4300,8 +4300,12 @@ EVENTFUNC(chat_shout_update_event)
 		const BYTE charLevel = number(75, 85);
 
 		snprintf(chatbuf_global, sizeof(chatbuf_global), "%s |H%s%s|h(#)|h|r - Lv.%d|h|r : %s", chName.c_str(), "whisper:", chName.c_str(), charLevel, chatText.c_str());
-
+		
+#ifdef ENABLE_PLAYER_BLOCK_SYSTEM
 		SendShout(chatbuf_global, charEmpire, chName.c_str());
+#else
+		SendShout(chatbuf_global, charEmpire);
+#endif
 		TPacketGGShout p;
 		p.bHeader = HEADER_GG_SHOUT;
 		p.bEmpire = charEmpire;
