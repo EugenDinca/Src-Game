@@ -8477,7 +8477,7 @@ void CHARACTER::CheckMount()
 		if (mountItem->GetValue(1) != 0)
 			mobVnum = mountItem->GetValue(1);
 
-		if (mountSystem->CountSummoned() == 1)
+		if (mountSystem->CountSummoned() == 1)//text fix
 		{
 			mountSystem->Mount(mobVnum, mountItem);
 		}
