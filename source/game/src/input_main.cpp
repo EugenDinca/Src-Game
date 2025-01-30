@@ -4304,7 +4304,22 @@ EVENTFUNC(chat_shout_update_event)
 
 		snprintf(chatbuf_global, sizeof(chatbuf_global), "%s |H%s%s|h(#)|h|r - Lv.%d|h|r : %s", chName.c_str(), "whisper:", chName.c_str(), charLevel, chatText.c_str());
 
-	 LPCHARACTER ch = (event && event->owner) ? static_cast<LPCHARACTER>(event->owner) : nullptr;
+long int chat_shout_update_event(LPEVENT event, long int)
+{
+    if (!event)
+    {
+        sys_err("chat_shout_update_event: event is null");
+        return 0;
+    }
+
+    spam_event_info* info = dynamic_cast<spam_event_info*>(event->info);
+    if (!info)
+    {
+        sys_err("chat_shout_update_event: event info is null");
+        return 0;
+    }
+
+    LPCHARACTER ch = CHARACTER_MANAGER::instance().FindPC(info->host);
     if (!ch)
     {
         sys_err("chat_shout_update_event: Character not found");
@@ -4316,6 +4331,13 @@ EVENTFUNC(chat_shout_update_event)
 #else
 		SendShout(chatbuf_global, charEmpire);
 #endif
+}
+
+//#ifdef ENABLE_PLAYER_BLOCK_SYSTEM
+//		SendShout(chatbuf_global, charEmpire, ch->GetName());
+//#else
+//		SendShout(chatbuf_global, charEmpire);
+//#endif
 		//SendShout(chatbuf_global, charEmpire);
 		TPacketGGShout p;
 		p.bHeader = HEADER_GG_SHOUT;
