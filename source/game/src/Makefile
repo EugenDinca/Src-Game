@@ -8,7 +8,7 @@ GccMinorEGT8 := $(shell expr $(GccMinorVersion) \>= 8)
 
 INCDIR =
 LIBDIR =
-BINDIR = /usr/src/source/game
+BINDIR = /usr/Src-Game/source/game
 OBJDIR = .obj
 $(shell if [ ! -d $(OBJDIR) ]; then mkdir $(OBJDIR); fi)
 

@@ -5,7 +5,7 @@ DB_VERSION = 52000
 
 INCDIR =
 LIBDIR =
-BINDIR = /usr/src/source/db
+BINDIR = /usr/Src-Game/source/db
 OBJDIR = .obj
 $(shell if [ ! -d $(OBJDIR) ]; then mkdir $(OBJDIR); fi)
 
