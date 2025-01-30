@@ -484,11 +484,11 @@ struct FEmpireChatPacket
 
 #ifdef ENABLE_PLAYER_BLOCK_SYSTEM
 	const char* m_szName;
-	FEmpireChatPacket(packet_chat& p, const char* chat_msg, int len, BYTE bEmpire, int iMapIndex, int iNameLen, const char* szName)
-		: p(p), orig_msg(chat_msg), orig_len(len), bEmpire(bEmpire), iMapIndex(iMapIndex), namelen(iNameLen), m_szName(szName)
+	FEmpireChatPacket(packet_chat& p, const char* chat_msg, int len, int iMapIndex, int iNameLen, const char* szName)
+		: p(p), orig_msg(chat_msg), orig_len(len), iMapIndex(iMapIndex), namelen(iNameLen), m_szName(szName)
 #else
-	FEmpireChatPacket(packet_chat& p, const char* chat_msg, int len, BYTE bEmpire, int iMapIndex, int iNameLen)
-		: p(p), orig_msg(chat_msg), orig_len(len), bEmpire(bEmpire), iMapIndex(iMapIndex), namelen(iNameLen)
+	FEmpireChatPacket(packet_chat& p, const char* chat_msg, int len, int iMapIndex, int iNameLen)
+		: p(p), orig_msg(chat_msg), orig_len(len), iMapIndex(iMapIndex), namelen(iNameLen)
 #endif
 	{
 	}
