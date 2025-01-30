@@ -8491,9 +8491,9 @@ void CHARACTER::CheckMount()
 		if (mountskin->GetValue(1) != 0)
 			mobVnum = mountskin->GetValue(1);
 
-		if (mountSystem->CountSummoned() == 0)
+		if (mountSystem->CountSummoned() == 1)
 		{
-			mountSystem->Summon(mobVnum, mountskin, false);
+			mountSystem->Mount(mobVnum, mountskin);
 		}
 	}
 	else if (GetWear(WEAR_COSTUME_MOUNT))
@@ -8508,9 +8508,9 @@ void CHARACTER::CheckMount()
 		if (mountItem->GetValue(1) != 0)
 			mobVnum = mountItem->GetValue(1);
 
-		if (mountSystem->CountSummoned() == 0)
+		if (mountSystem->CountSummoned() == 1)
 		{
-			mountSystem->Summon(mobVnum, mountItem, false);
+			mountSystem->Mount(mobVnum, mountItem);
 		}
 	}
 #else
@@ -8519,9 +8519,9 @@ void CHARACTER::CheckMount()
 		if (mountItem->GetValue(1) != 0)
 			mobVnum = mountItem->GetValue(1);
 
-		if (mountSystem->CountSummoned() == 0)
+		if (mountSystem->CountSummoned() == 1)
 		{
-			mountSystem->Summon(mobVnum, mountItem, false);
+			mountSystem->Mount(mobVnum, mountItem);
 		}
 	}
 #endif
