@@ -4301,7 +4301,7 @@ EVENTFUNC(chat_shout_update_event)
 
 		snprintf(chatbuf_global, sizeof(chatbuf_global), "%s |H%s%s|h(#)|h|r - Lv.%d|h|r : %s", chName.c_str(), "whisper:", chName.c_str(), charLevel, chatText.c_str());
 
-		SendShout(chatbuf_global, charEmpire);
+		SendShout(chatbuf_global, charEmpire, ch->GetName());
 		TPacketGGShout p;
 		p.bHeader = HEADER_GG_SHOUT;
 		p.bEmpire = charEmpire;
