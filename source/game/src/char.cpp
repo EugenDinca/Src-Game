@@ -102,6 +102,9 @@ using namespace std;
 #include "OXEvent.h"
 #endif
 
+#ifdef ENABLE_PLAYER_BLOCK_SYSTEM
+#include "player_block.h"
+#endif
 
 
 extern const BYTE g_aBuffOnAttrPoints;
@@ -4820,6 +4823,20 @@ bool CHARACTER::RequestToParty(LPCHARACTER leader)
 
 	if (leader->IsBlockMode(BLOCK_PARTY_REQUEST))
 		return false;
+	
+#ifdef ENABLE_PLAYER_BLOCK_SYSTEM
+	auto& rkPlayerBlockMgr = CPlayerBlock::Instance();
+	if (rkPlayerBlockMgr.IsPlayerBlock(GetName(), leader->GetName()))
+	{
+		ChatPacket(CHAT_TYPE_INFO, "You cannot send a group request to the player you have blocked.");
+		return false;
+	}
+	else if (rkPlayerBlockMgr.IsPlayerBlock(leader->GetName(), GetName()))
+	{
+		ChatPacket(CHAT_TYPE_INFO, "The player has blocked you.");
+		return false;
+	}
+#endif
 
 	PartyJoinErrCode errcode = IsPartyJoinableCondition(leader, this);
 
@@ -4984,6 +5001,20 @@ void CHARACTER::PartyInvite(LPCHARACTER pchInvitee)
 		NewChatPacket(PARTY_REQ_REJECTED, "%s", pchInvitee->GetName());
 		return;
 	}
+	
+#ifdef ENABLE_PLAYER_BLOCK_SYSTEM
+	auto& rkPlayerBlockMgr = CPlayerBlock::Instance();
+	if (rkPlayerBlockMgr.IsPlayerBlock(GetName(), pchInvitee->GetName()))
+	{
+		ChatPacket(CHAT_TYPE_INFO, "You cannot send a group invite to the player you have blocked.");
+		return;
+	}
+	else if (rkPlayerBlockMgr.IsPlayerBlock(pchInvitee->GetName(), GetName()))
+	{
+		ChatPacket(CHAT_TYPE_INFO, "The player has blocked you.");
+		return;
+	}
+#endif
 
 	PartyJoinErrCode errcode = IsPartyJoinableCondition(this, pchInvitee);
 

@@ -91,6 +91,9 @@
 #ifdef BOSS_DAMAGE_RANKING_PLUGIN
 #include "bossdamagerankingmanager.hpp"
 #endif
+#ifdef ENABLE_PLAYER_BLOCK_SYSTEM
+#include "player_block.h"
+#endif
 extern void WriteVersion();
 //extern const char * _malloc_options;
 #if defined(__FreeBSD__) && defined(DEBUG_ALLOC)
@@ -390,6 +393,9 @@ int main(int argc, char** argv)
 	CBattleArena	ba;
 	SpamManager		spam_mgr;
 	DSManager dsManager;
+#ifdef ENABLE_PLAYER_BLOCK_SYSTEM
+	CPlayerBlock player_block;
+#endif
 #ifdef BOSS_DAMAGE_RANKING_PLUGIN
 	bossdamageranking::CBossDamageRankingManager boss_dmg_ranking_manager;
 #endif

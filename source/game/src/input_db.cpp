@@ -69,6 +69,10 @@
 #include "battlepass_manager.h"
 #endif
 
+#ifdef ENABLE_PLAYER_BLOCK_SYSTEM
+#include "player_block.h"
+#endif
+
 bool GetServerLocation(TAccountTable& rTab, BYTE bEmpire)
 {
 	bool bFound = false;
@@ -969,6 +973,10 @@ void CInputDB::Boot(const char* data)
 	CMotionManager::instance().Build();
 
 	signal_timer_enable(30);
+	
+#ifdef ENABLE_PLAYER_BLOCK_SYSTEM
+	CPlayerBlock::Instance().BootPlayerBlockList();
+#endif
 
 #ifdef ENABLE_QUEST_BOOT_EVENT
 	quest::CQuestManager::instance().Boot();

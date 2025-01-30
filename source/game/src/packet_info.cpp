@@ -274,6 +274,9 @@ CPacketInfoGG::CPacketInfoGG()
 	Set(HEADER_GG_LOGIN_PING, sizeof(TPacketGGLoginPing), "LoginPing", false);
 	Set(HEADER_GG_BLOCK_CHAT, sizeof(TPacketGGBlockChat), "BlockChat", false);
 	Set(HEADER_GG_CHECK_AWAKENESS, sizeof(TPacketGGCheckAwakeness), "CheckAwakeness", false);
+#ifdef ENABLE_PLAYER_BLOCK_SYSTEM
+	Set(HEADER_GG_PLAYER_BLOCK, sizeof(TPacketGGPlayerBlock), "PlayerBlock");
+#endif
 #ifdef ENABLE_SWITCHBOT
 	Set(HEADER_GG_SWITCHBOT, sizeof(TPacketGGSwitchbot), "Switchbot", false);
 #endif

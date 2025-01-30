@@ -63,6 +63,9 @@
 #ifdef ENABLE_MINI_GAME_CATCH_KING
 #include "minigame_catchking.h"
 #endif
+#ifdef ENABLE_PLAYER_BLOCK_SYSTEM
+#include "player_block.h"
+#endif
 
 #define ENABLE_CHAT_COLOR_SYSTEM
 #define ENABLE_CHAT_SPAMLIMIT
@@ -324,6 +327,19 @@ int CInputMain::Whisper(LPCHARACTER ch, const char* data, size_t uiBytes)
 
 		if (pkCCI)
 		{
+#ifdef ENABLE_PLAYER_BLOCK_SYSTEM
+			auto& rkPlayerBlockMgr = CPlayerBlock::Instance();
+			if (rkPlayerBlockMgr.IsPlayerBlock(ch->GetName(), pinfo->szNameTo))
+			{
+				rkPlayerBlockMgr.WhisperPacket(ch->GetDesc(), "You cannot send messages to the player you have blocked.", pinfo->szNameTo);
+				return iExtraLen;
+			}
+			else if (rkPlayerBlockMgr.IsPlayerBlock(pinfo->szNameTo, ch->GetName()))
+			{
+				rkPlayerBlockMgr.WhisperPacket(ch->GetDesc(), "The player has blocked you.", pinfo->szNameTo);
+				return iExtraLen;
+			}
+#endif
 			pkDesc = pkCCI->pkDesc;
 			pkDesc->SetRelay(pinfo->szNameTo);
 		}
@@ -360,6 +376,10 @@ int CInputMain::Whisper(LPCHARACTER ch, const char* data, size_t uiBytes)
 				strlcpy(pack.szNameFrom, pinfo->szNameTo, sizeof(pack.szNameFrom));
 				ch->GetDesc()->Packet(&pack, sizeof(pack));
 			}
+#ifdef ENABLE_PLAYER_BLOCK_SYSTEM
+			pkDesc->SetRelay("");
+			return iExtraLen;
+#endif
 		}
 		else if (pkChr && pkChr->IsBlockMode(BLOCK_WHISPER))
 		{
@@ -372,7 +392,18 @@ int CInputMain::Whisper(LPCHARACTER ch, const char* data, size_t uiBytes)
 				strlcpy(pack.szNameFrom, pinfo->szNameTo, sizeof(pack.szNameFrom));
 				ch->GetDesc()->Packet(&pack, sizeof(pack));
 			}
+#ifdef ENABLE_PLAYER_BLOCK_SYSTEM
+			pkDesc->SetRelay("");
+			return iExtraLen;
+#endif
 		}
+#ifdef ENABLE_PLAYER_BLOCK_SYSTEM
+		auto& rkPlayerBlockMgr = CPlayerBlock::Instance();
+		if (pkChr && rkPlayerBlockMgr.IsPlayerBlock(ch->GetName(), pinfo->szNameTo))
+			rkPlayerBlockMgr.WhisperPacket(ch->GetDesc(), "You cannot send messages to the player you have blocked.", pinfo->szNameTo);
+		else if (pkChr && rkPlayerBlockMgr.IsPlayerBlock(pinfo->szNameTo, ch->GetName()))
+			rkPlayerBlockMgr.WhisperPacket(ch->GetDesc(), "The player has blocked you.", pinfo->szNameTo);
+#endif
 		else
 		{
 			BYTE bType = WHISPER_TYPE_NORMAL;
@@ -451,8 +482,14 @@ struct FEmpireChatPacket
 	int iMapIndex;
 	int namelen;
 
-	FEmpireChatPacket(packet_chat& p, const char* chat_msg, int len, int iMapIndex, int iNameLen)
-		: p(p), orig_msg(chat_msg), orig_len(len), iMapIndex(iMapIndex), namelen(iNameLen)
+#ifdef ENABLE_PLAYER_BLOCK_SYSTEM
+	const char* m_szName;
+	FEmpireChatPacket(packet_chat& p, const char* chat_msg, int len, BYTE bEmpire, int iMapIndex, int iNameLen, const char* szName)
+		: p(p), orig_msg(chat_msg), orig_len(len), bEmpire(bEmpire), iMapIndex(iMapIndex), namelen(iNameLen), m_szName(szName)
+#else
+	FEmpireChatPacket(packet_chat& p, const char* chat_msg, int len, BYTE bEmpire, int iMapIndex, int iNameLen)
+		: p(p), orig_msg(chat_msg), orig_len(len), bEmpire(bEmpire), iMapIndex(iMapIndex), namelen(iNameLen)
+#endif
 	{
 	}
 
@@ -463,6 +500,16 @@ struct FEmpireChatPacket
 
 		if (d->GetCharacter()->GetMapIndex() != iMapIndex)
 			return;
+		
+#ifdef ENABLE_PLAYER_BLOCK_SYSTEM
+		auto& rkPlayerBlockMgr = CPlayerBlock::Instance();
+		auto name = d->GetCharacter()->GetName();
+		if (name != m_szName)
+		{
+			if (rkPlayerBlockMgr.IsPlayerBlock(name, m_szName) || rkPlayerBlockMgr.IsPlayerBlock(m_szName, name))
+				return;
+		}
+#endif
 
 		d->BufferedPacket(&p, sizeof(packet_chat));
 		d->Packet(orig_msg, orig_len);
@@ -603,11 +650,18 @@ int CInputMain::Chat(LPCHARACTER ch, const char* data, size_t uiBytes)
 
 		p.bHeader = HEADER_GG_SHOUT;
 		p.bEmpire = ch->GetEmpire();
+#ifdef ENABLE_PLAYER_BLOCK_SYSTEM
+		strlcpy(p.szName, ch->GetName(), sizeof(p.szName));
+#endif
 		strlcpy(p.szText, chatbuf, sizeof(p.szText));
 
 		P2P_MANAGER::instance().Send(&p, sizeof(TPacketGGShout));
 
+#ifdef ENABLE_PLAYER_BLOCK_SYSTEM
+		SendShout(chatbuf, ch->GetEmpire(), ch->GetName());
+#else
 		SendShout(chatbuf, ch->GetEmpire());
+#endif
 
 		return (iExtraLen);
 	}
@@ -628,7 +682,11 @@ int CInputMain::Chat(LPCHARACTER ch, const char* data, size_t uiBytes)
 			FEmpireChatPacket(pack_chat,
 				chatbuf,
 				len,
-				ch->GetMapIndex(), strlen(ch->GetName())));
+				ch->GetMapIndex(), strlen(ch->GetName())
+#ifdef ENABLE_PLAYER_BLOCK_SYSTEM
+					, ch->GetName()
+#endif
+					));
 	}
 	break;
 
@@ -805,6 +863,20 @@ int CInputMain::Messenger(LPCHARACTER ch, const char* c_pData, size_t uiBytes)
 			ch->NewChatPacket(STRING_D127);
 			return sizeof(TPacketCGMessengerAddByVID);
 		}
+		
+#ifdef ENABLE_PLAYER_BLOCK_SYSTEM
+		auto& rkPlayerBlockMgr = CPlayerBlock::Instance();
+		if (rkPlayerBlockMgr.IsPlayerBlock(ch->GetName(), ch_companion->GetName()))
+		{
+			ch->ChatPacket(CHAT_TYPE_INFO, "You cannot send a friend request to the player you have blocked.");
+			return sizeof(TPacketCGMessengerAddByVID);
+		}
+		else if (rkPlayerBlockMgr.IsPlayerBlock(ch_companion->GetName(), ch->GetName()))
+		{
+			ch->ChatPacket(CHAT_TYPE_INFO, "The player has blocked you.");
+			return sizeof(TPacketCGMessengerAddByVID);
+		}
+#endif
 
 		LPDESC d = ch_companion->GetDesc();
 
@@ -848,10 +920,22 @@ int CInputMain::Messenger(LPCHARACTER ch, const char* c_pData, size_t uiBytes)
 			if (tch == ch)
 				return CHARACTER_NAME_MAX_LEN;
 
+#ifdef ENABLE_PLAYER_BLOCK_SYSTEM
 			if (tch->IsBlockMode(BLOCK_MESSENGER_INVITE) == true)
 			{
 				ch->NewChatPacket(STRING_D127);
+				return CHARACTER_NAME_MAX_LEN;
 			}
+
+			auto& rkPlayerBlockMgr = CPlayerBlock::Instance();
+			if (rkPlayerBlockMgr.IsPlayerBlock(ch->GetName(), tch->GetName()))
+				ch->ChatPacket(CHAT_TYPE_INFO, "You cannot send a friend request to the player you have blocked.");
+			else if (rkPlayerBlockMgr.IsPlayerBlock(tch->GetName(), ch->GetName()))
+				ch->ChatPacket(CHAT_TYPE_INFO, "The player has blocked you.");
+#else
+			if (tch->IsBlockMode(BLOCK_MESSENGER_INVITE) == true)
+				ch->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("상대방이 메신져 추가 거부 상태입니다."));
+#endif
 			else
 			{
 				MessengerManager::instance().RequestToAdd(ch, tch);

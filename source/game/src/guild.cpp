@@ -17,6 +17,10 @@
 
 #include "questmanager.h"
 
+#ifdef ENABLE_PLAYER_BLOCK_SYSTEM
+#include "player_block.h"
+#endif
+
 SGuildMember::SGuildMember(LPCHARACTER ch, BYTE grade, DWORD offer_exp)
 	: pid(ch->GetPlayerID()), grade(grade), is_general(0), job(ch->GetJob()), level(ch->GetLevel()), offer_exp(offer_exp), name(ch->GetName())
 {}
@@ -1823,6 +1827,20 @@ void CGuild::Invite(LPCHARACTER pchInviter, LPCHARACTER pchInvitee)
 		pchInviter->NewChatPacket(GUILD_TALK_20);
 		return;
 	}
+	
+#ifdef ENABLE_PLAYER_BLOCK_SYSTEM
+	auto& rkPlayerBlockMgr = CPlayerBlock::Instance();
+	if (rkPlayerBlockMgr.IsPlayerBlock(pchInviter->GetName(), pchInvitee->GetName()))
+	{
+		pchInviter->ChatPacket(CHAT_TYPE_INFO, "You cannot send a guild invite to the player you have blocked.");
+		return;
+	}
+	else if (rkPlayerBlockMgr.IsPlayerBlock(pchInvitee->GetName(), pchInviter->GetName()))
+	{
+		pchInviter->ChatPacket(CHAT_TYPE_INFO, "The player has blocked you.");
+		return;
+	}
+#endif
 
 	GuildJoinErrCode errcode = VerifyGuildJoinableCondition(pchInvitee);
 	switch (errcode)

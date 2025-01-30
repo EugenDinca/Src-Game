@@ -30,6 +30,10 @@
 #include "party.h"
 #endif
 
+#ifdef ENABLE_PLAYER_BLOCK_SYSTEM
+#include "player_block.h"
+#endif
+
 #include <cctype>
 #undef sys_err
 #ifndef __WIN32__
@@ -1992,6 +1996,11 @@ namespace quest
 
 		/* delete messenger list */
 		MessengerManager::instance().RemoveAllList(ch->GetName());
+		
+#ifdef ENABLE_PLAYER_BLOCK_SYSTEM
+		/* player block list */
+		CPlayerBlock::Instance().ChangeName(ch->GetName(), szName);
+#endif
 
 		snprintf(szQuery, sizeof(szQuery), "UPDATE player%s SET name='%s' WHERE id=%u", get_table_postfix(), szName, pid);
 		auto msg = DBManager::instance().DirectQuery(szQuery);

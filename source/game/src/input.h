@@ -17,7 +17,11 @@ enum
 };
 
 void LoginFailure(LPDESC d, const char* c_pszStatus);
-extern void SendShout(const char* szText, BYTE bEmpire);
+#ifdef ENABLE_PLAYER_BLOCK_SYSTEM
+extern void SendShout(const char *szText, BYTE bEmpire, const char *szName);
+#else
+extern void SendShout(const char *szText, BYTE bEmpire);
+#endif
 
 class CInputProcessor
 {
@@ -408,6 +412,9 @@ public:
 	void		LoginPing(LPDESC d, const char* c_pData);
 	void		BlockChat(const char* c_pData);
 	void		IamAwake(LPDESC d, const char* c_pData);
+#ifdef ENABLE_PLAYER_BLOCK_SYSTEM
+	auto		PlayerBlock(const char* c_pData) -> void;
+#endif
 #ifdef ENABLE_SWITCHBOT
 	void		Switchbot(LPDESC d, const char* c_pData);
 #endif

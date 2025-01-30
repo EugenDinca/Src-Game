@@ -333,6 +333,10 @@ enum GameToClientPackets
 #ifdef BOSS_DAMAGE_RANKING_PLUGIN
 	HEADER_GC_BOSS_DMG_RANKING			= 150,
 #endif
+#ifdef ENABLE_PLAYER_BLOCK_SYSTEM
+	HEADER_GC_PLAYER_BLOCK 				= 161,
+#endif
+
 	HEADER_GC_KEY_AGREEMENT_COMPLETED	= 250,
 	HEADER_GC_KEY_AGREEMENT				= 251,
 	HEADER_GC_TIME_SYNC					= 252,
@@ -388,6 +392,9 @@ enum GameToGamePackets
 #endif
 #ifdef BOSS_DAMAGE_RANKING_PLUGIN
 	HEADER_GG_UPDATE_BOSS_DAMAGE_RANKING,
+#endif
+#ifdef ENABLE_PLAYER_BLOCK_SYSTEM
+	HEADER_GG_PLAYER_BLOCK = 34,
 #endif
 
 };
@@ -484,6 +491,9 @@ typedef struct SPacketGGShout
 {
 	BYTE	bHeader;
 	BYTE	bEmpire;
+#ifdef ENABLE_PLAYER_BLOCK_SYSTEM
+	char	szName[CHARACTER_NAME_MAX_LEN + 1];
+#endif
 	char	szText[CHAT_MAX_LEN + 1];
 } TPacketGGShout;
 
@@ -3514,6 +3524,35 @@ struct SPacketGCBossDamageRankingInfo
     uint8_t percent_damage;
     uint8_t bad_affect_flag;
 };
+#endif
+
+#ifdef ENABLE_PLAYER_BLOCK_SYSTEM
+enum EPlayerBlockType
+{
+	PLAYER_BLOCK_TYPE_ADD,
+	PLAYER_BLOCK_TYPE_REMOVE,
+	PLAYER_BLOCK_TYPE_LOAD
+};
+
+typedef struct SPacketGCPlayerBlock
+{
+	BYTE header;
+	WORD size;
+	BYTE type;
+} TPacketGCPlayerBlock;
+
+typedef struct SPacketGCLoadPlayerBlock
+{
+	char szName[CHARACTER_NAME_MAX_LEN + 1];
+} TPacketGCLoadPlayerBlock;
+
+typedef struct SPacketGGPlayerBlock
+{
+	BYTE header;
+	BYTE type;
+	char szBlockingPlayerName[CHARACTER_NAME_MAX_LEN + 1];
+	char szBlockedPlayerName[CHARACTER_NAME_MAX_LEN + 1];
+} TPacketGGPlayerBlock;
 #endif
 
 #pragma pack()

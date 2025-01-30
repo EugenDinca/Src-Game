@@ -45,6 +45,9 @@
 #ifdef ENABLE_MAINTENANCE_SYSTEM
 #include "maintenance.h"
 #endif
+#ifdef ENABLE_PLAYER_BLOCK_SYSTEM
+#include "player_block.h"
+#endif
 
 #ifdef ENABLE_BUFFI_SYSTEM
 #include "BuffiSystem.h"
@@ -748,6 +751,10 @@ void CInputLogin::Entergame(LPDESC d, const char* data)
 #endif
 		// @fixme182 END
 	}
+	
+#ifdef ENABLE_PLAYER_BLOCK_SYSTEM
+	CPlayerBlock::Instance().LoadPlayerBlockList(ch);
+#endif
 
 	if (ch->IsPC())
 	{

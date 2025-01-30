@@ -262,7 +262,8 @@ CPPFILE = BattleArena.cpp\
 		  InGameLogManager.cpp\
 		  minigame_bnw.cpp\
 		  minigame_catchking.cpp\
-		  minigame_okeycard.cpp
+		  minigame_okeycard.cpp\
+		  player_block.cpp
 # PROJECT_SRC_FILES END
 
 BOSS_DAMAGE_RANKING_PLUGIN = 1

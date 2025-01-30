@@ -17,6 +17,9 @@
 #ifdef ENABLE_IN_GAME_LOG_SYSTEM
 #include "InGameLogManager.h"
 #endif
+#ifdef ENABLE_PLAYER_BLOCK_SYSTEM
+#include "player_block.h"
+#endif
 #ifdef ENABLE_EXTENDED_YANG_LIMIT
 void exchange_packet(LPCHARACTER ch, BYTE sub_header, bool is_me, int64_t arg1, TItemPos arg2, DWORD arg3, void* pvData = NULL);
 #else
@@ -125,6 +128,20 @@ bool CHARACTER::ExchangeStart(LPCHARACTER victim)
 		NewChatPacket(STRING_D87);
 		return false;
 	}
+	
+#ifdef ENABLE_PLAYER_BLOCK_SYSTEM
+	auto& rkPlayerBlockMgr = CPlayerBlock::Instance();
+	if (rkPlayerBlockMgr.IsPlayerBlock(GetName(), victim->GetName()))
+	{
+		ChatPacket(CHAT_TYPE_INFO, "You cannot send a trade request to the player you have blocked.");
+		return false;
+	}
+	else if (rkPlayerBlockMgr.IsPlayerBlock(victim->GetName(), GetName()))
+	{
+		ChatPacket(CHAT_TYPE_INFO, "The player has blocked you.");
+		return false;
+	}
+#endif
 
 	SetExchange(M2_NEW CExchange(this));
 	victim->SetExchange(M2_NEW CExchange(victim));

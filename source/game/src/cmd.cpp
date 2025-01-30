@@ -342,6 +342,11 @@ ACMD(do_dailyreward_open);
 ACMD(do_dailyreward_process);
 #endif
 
+#ifdef ENABLE_PLAYER_BLOCK_SYSTEM
+ACMD(do_block_player);
+ACMD(do_unblock_player);
+#endif
+
 struct command_info cmd_info[] =
 {
 	{ "!RESERVED!",	NULL,			0,			POS_DEAD,	GM_IMPLEMENTOR	},
@@ -721,6 +726,10 @@ struct command_info cmd_info[] =
 #ifdef ENABLE_DAILY_REWARD
 	{ "dailyreward_open",	do_dailyreward_open,	0,	POS_DEAD,	GM_PLAYER	},
 	{ "dailyreward_process",		do_dailyreward_process,			0,	POS_DEAD,	GM_PLAYER	},	
+#endif
+#ifdef ENABLE_PLAYER_BLOCK_SYSTEM
+	{ "block_player", do_block_player, 0, POS_DEAD, GM_PLAYER },
+	{ "unblock_player", do_unblock_player, 0, POS_DEAD, GM_PLAYER },
 #endif
 	{ "\n",		NULL,			0,			POS_DEAD,	GM_IMPLEMENTOR	}
 };

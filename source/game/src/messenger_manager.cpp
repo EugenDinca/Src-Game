@@ -383,6 +383,23 @@ void MessengerManager::AddToList(MessengerManager::keyA account, MessengerManage
 	P2P_MANAGER::instance().Send(&p2ppck, sizeof(TPacketGGMessenger));
 }
 
+#ifdef ENABLE_PLAYER_BLOCK_SYSTEM
+void MessengerManager::__RemoveFromList(MessengerManager::keyA account, MessengerManager::keyA companion, bool isComp)
+{
+	m_Relation[account].erase(companion);
+	m_InverseRelation[companion].erase(account);
+
+	LPCHARACTER ch = CHARACTER_MANAGER::instance().FindPC(account.c_str());
+
+	if (ch)
+	{
+		if (!isComp)
+			ch->NewChatPacket(STRING_D115, "%s", companion.c_str());
+		else
+			ch->ChatPacket(CHAT_TYPE_COMMAND, "RemoveFriend %s", companion.c_str());
+	}
+}
+#else
 void MessengerManager::__RemoveFromList(MessengerManager::keyA account, MessengerManager::keyA companion)
 {
 	m_Relation[account].erase(companion);
@@ -394,6 +411,7 @@ void MessengerManager::__RemoveFromList(MessengerManager::keyA account, Messenge
 	if (d)
 		ch->NewChatPacket(STRING_D115, "%s", companion.c_str());
 }
+#endif
 
 void MessengerManager::RemoveFromList(MessengerManager::keyA account, MessengerManager::keyA companion)
 {
@@ -408,10 +426,18 @@ void MessengerManager::RemoveFromList(MessengerManager::keyA account, MessengerM
 	// @fixme142 END
 
 	sys_log(1, "Messenger Remove %s %s", account.c_str(), companion.c_str());
-	DBManager::instance().Query("DELETE FROM messenger_list%s WHERE account='%s' AND companion = '%s'",
-		get_table_postfix(), __account, __companion);
+#ifdef ENABLE_PLAYER_BLOCK_SYSTEM
+	DBManager::instance().Query("DELETE FROM messenger_list%s WHERE account='%s' AND companion = '%s' OR account='%s' AND companion = '%s'",
+		get_table_postfix(), __account, __companion, __companion, __account);
 
 	__RemoveFromList(account, companion);
+	__RemoveFromList(companion, account, true);
+#else
+	DBManager::instance().Query("DELETE FROM messenger_list%s WHERE account='%s' AND companion = '%s'",
+		get_table_postfix(), __account, __companion, __companion, __account);
+
+	__RemoveFromList(account, companion);
+#endif
 
 	TPacketGGMessenger p2ppck;
 

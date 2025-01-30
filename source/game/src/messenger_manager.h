@@ -25,7 +25,11 @@ public:
 	void	__AddToList(keyA account, keyA companion);
 	void	AddToList(keyA account, keyA companion);
 
+#ifdef ENABLE_PLAYER_BLOCK_SYSTEM
+	void	__RemoveFromList(keyA account, keyA companion, bool isComp = false);
+#else
 	void	__RemoveFromList(keyA account, keyA companion);
+#endif
 	void	RemoveFromList(keyA account, keyA companion);
 
 	void	RemoveAllList(keyA account);
