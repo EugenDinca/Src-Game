@@ -4276,7 +4276,6 @@ EVENTINFO(chat_shout_event_info)
 	int maxCount;
 #ifdef ENABLE_PLAYER_BLOCK_SYSTEM
 	const char* m_szName;
-	LPCHARACTER ch = CHARACTER_MANAGER::instance().FindByPID(some_id);
 #endif
 };
 EVENTFUNC(chat_shout_update_event)
@@ -4349,7 +4348,7 @@ void CreateShoutEvent()
 	chat_shout_event_info* info = AllocEventInfo<chat_shout_event_info>();
 	info->maxCount = vec_chNames.size();
 	info->chatCount = 0;
-	event_create(chat_shout_update_event, info, PASSES_PER_SEC(1));
+	event_create(chat_shout_update_event, info, PASSES_PER_SEC(1), ch);
 }
 #endif
 
