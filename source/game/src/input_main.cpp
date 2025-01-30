@@ -4276,6 +4276,7 @@ EVENTINFO(chat_shout_event_info)
 	int maxCount;
 #ifdef ENABLE_PLAYER_BLOCK_SYSTEM
 	const char* m_szName;
+	LPCHARACTER ch = CHARACTER_MANAGER::instance().FindByPID(some_id);
 #endif
 };
 EVENTFUNC(chat_shout_update_event)
