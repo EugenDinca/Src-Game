@@ -4304,6 +4304,13 @@ EVENTFUNC(chat_shout_update_event)
 
 		snprintf(chatbuf_global, sizeof(chatbuf_global), "%s |H%s%s|h(#)|h|r - Lv.%d|h|r : %s", chName.c_str(), "whisper:", chName.c_str(), charLevel, chatText.c_str());
 
+	 LPCHARACTER ch = (event && event->owner) ? static_cast<LPCHARACTER>(event->owner) : nullptr;
+    if (!ch)
+    {
+        sys_err("chat_shout_update_event: Character not found");
+        return 0;
+    }
+
 #ifdef ENABLE_PLAYER_BLOCK_SYSTEM
 		SendShout(chatbuf_global, charEmpire, ch->GetName());
 #else
@@ -4348,7 +4355,7 @@ void CreateShoutEvent()
 	chat_shout_event_info* info = AllocEventInfo<chat_shout_event_info>();
 	info->maxCount = vec_chNames.size();
 	info->chatCount = 0;
-	event_create(chat_shout_update_event, info, PASSES_PER_SEC(1), ch);
+	event_create(chat_shout_update_event, info, PASSES_PER_SEC(1));
 }
 #endif
 
