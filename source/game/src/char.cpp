@@ -2162,7 +2162,8 @@ void CHARACTER::SetProto(const CMob* pkMob)
 		GetRaceNum() == 20106 ||
 		GetRaceNum() == 20107 ||
 		GetRaceNum() == 20108 ||
-		GetRaceNum() == 20109
+		GetRaceNum() == 20109 ||
+		CMobVnumHelper::IsMount(GetRaceNum())
 		)
 	{
 		m_stateIdle.Set(this, &CHARACTER::BeginStateEmpty, &CHARACTER::StateHorse, &CHARACTER::EndStateEmpty);
@@ -7019,6 +7020,11 @@ void CHARACTER::MountVnum(DWORD vnum)
 		return;
 	if ((m_dwMountVnum != 0) && (vnum != 0)) //@fixme108 set recursively to 0 for eventuality
 		MountVnum(0);
+		
+#ifdef ENABLE_MOUNT_LIKE_HORSE
+	if (const auto pMountItem = GetWear(WEAR_COSTUME_MOUNT))
+		CalcMountBonusBySeal(pMountItem);
+#endif
 
 	m_dwMountVnum = vnum;
 	m_dwMountTime = get_dword_time();
