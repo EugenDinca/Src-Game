@@ -666,6 +666,11 @@ void CHARACTER::LoadAffect(DWORD dwCount, TPacketAffectElement* pElements)
 	}
 
 	StartAffectEvent();
+	
+#ifdef ENABLE_AFK_MODE_SYSTEM
+	if (IsAffectFlag(AFF_AFK))
+		RemoveAffect(AFFECT_AFK);
+#endif
 
 	m_bIsLoadedAffect = true;
 

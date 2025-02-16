@@ -69,6 +69,7 @@ enum eConfig {
 #define ENABLE_PLAYER_BLOCK_SYSTEM															//Player Block System
 #define ENABLE_WHISPER_RENEWAL																//Typing Whisper...
 #define __STONE_SCROLL__																	// Remove Stone from Item
+#define ENABLE_AFK_MODE_SYSTEM																// AFK MODE
 
 #define ENABLE_PLAYER_STATS_SYSTEM															// Character Stats
 #define ENABLE_GLOBAL_RANKING																// Global Ranking System

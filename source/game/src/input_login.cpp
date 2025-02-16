@@ -605,6 +605,10 @@ void CInputLogin::Entergame(LPDESC d, const char* data)
 
 	ch->StartSaveEvent();
 	ch->StartRecoveryEvent();
+	
+#ifdef ENABLE_AFK_MODE_SYSTEM
+	ch->StartUpdateCharacterEvent();
+#endif
 
 	CPVPManager::instance().Connect(ch);
 	CPVPManager::instance().SendList(d);

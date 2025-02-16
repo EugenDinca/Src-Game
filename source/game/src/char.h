@@ -1537,6 +1537,13 @@ public:
 	void				SetPKMode(BYTE bPKMode);
 
 	void				UpdateAggrPoint(LPCHARACTER ch, EDamageType type, DAM_LL dam);
+	
+#ifdef ENABLE_AFK_MODE_SYSTEM
+	public:
+		void SetAway(bool f) { m_isAway = f; }
+		bool IsAway() const { return m_isAway; }
+		void StartUpdateCharacterEvent();
+#endif
 
 protected:
 	void				UpdateAggrPointEx(LPCHARACTER ch, EDamageType type, DAM_LL dam, TBattleInfo& info);
@@ -1856,6 +1863,11 @@ protected:
 	BYTE				m_bSendHorseLevel;
 	BYTE				m_bSendHorseHealthGrade;
 	BYTE				m_bSendHorseStaminaGrade;
+	
+#ifdef ENABLE_AFK_MODE_SYSTEM
+	bool m_isAway;
+#endif
+
 
 public:
 	void 				SetEmpire(BYTE bEmpire);
@@ -1961,6 +1973,9 @@ public:
 #endif
 	LPEVENT				m_pkFireEvent;
 	LPEVENT				m_pkWarpNPCEvent;
+#ifdef ENABLE_AFK_MODE_SYSTEM
+	LPEVENT				m_pkUpdateCharacter;
+#endif
 	//DELAYED_WARP
 	//END_DELAYED_WARP
 

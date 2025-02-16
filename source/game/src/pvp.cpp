@@ -385,6 +385,11 @@ bool CPVPManager::CanAttack(LPCHARACTER pkChr, LPCHARACTER pkVictim)
 
 	if (pkVictim->IsNPC() && pkChr->IsNPC() && !pkChr->IsGuardNPC())
 		return false;
+	
+#ifdef ENABLE_AFK_MODE_SYSTEM
+	if (pkVictim->IsPC() && pkVictim->IsAway())
+		return false;
+#endif
 
 	if (true == pkChr->IsHorseRiding())
 	{

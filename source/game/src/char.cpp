@@ -329,6 +329,11 @@ void CHARACTER::Initialize()
 	m_bSkipSave = false;
 
 	m_bItemLoaded = false;
+	
+#ifdef ENABLE_AFK_MODE_SYSTEM
+	m_pkUpdateCharacter = NULL;
+	m_isAway = false;
+#endif
 
 	m_bHasPoisoned = false;
 #ifdef ENABLE_WOLFMAN_CHARACTER
@@ -4137,6 +4142,45 @@ void CHARACTER::Motion(BYTE motion, LPCHARACTER victim)
 	MotionPacketEncode(motion, victim, &pack_motion);
 	PacketAround(&pack_motion, sizeof(struct packet_motion));
 }
+
+#ifdef ENABLE_AFK_MODE_SYSTEM
+EVENTFUNC(update_character_event)
+{
+	char_event_info* info = dynamic_cast<char_event_info*>( event->info );
+	if ( info == NULL )
+	{
+		sys_err( "update_character_event> <Factor> Null pointer" );
+		return 0;
+	}
+
+	LPCHARACTER	ch = info->ch;
+
+	if (NULL == ch || ch->IsNPC())
+		return 0;
+	
+	if (get_dword_time() - ch->GetLastMoveTime() > 60000*3)
+	{		
+		if (!ch->IsAway())
+			ch->SetAway(true);
+		
+		if (!ch->IsAffectFlag(AFF_AFK))
+			ch->AddAffect(AFFECT_AFK, POINT_NONE, 0, AFF_AFK, INFINITE_AFFECT_DURATION, 0, true, true);
+		
+	}
+	
+	return PASSES_PER_SEC(15);
+}
+
+void CHARACTER::StartUpdateCharacterEvent()
+{
+	if (m_pkUpdateCharacter)
+		return;
+	
+	char_event_info* info = AllocEventInfo<char_event_info>();
+	info->ch = this;
+	m_pkUpdateCharacter = event_create(update_character_event, info, PASSES_PER_SEC(15));
+}
+#endif
 
 EVENTFUNC(save_event)
 {

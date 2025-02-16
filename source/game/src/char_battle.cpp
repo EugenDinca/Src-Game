@@ -204,6 +204,18 @@ bool CHARACTER::Attack(LPCHARACTER pkVictim, BYTE bType)
 	{
 		return false;
 	}
+	
+#ifdef ENABLE_AFK_MODE_SYSTEM
+	if (pkVictim && pkVictim->IsPC() && pkVictim->IsAway())
+	{
+		if(IsPC())
+		return false;
+		
+		if (!CanMove())
+		return false;
+	
+	}
+#endif
 
 	if (pkVictim->GetMyShop())//L05fix88
 	{
@@ -1302,6 +1314,17 @@ bool CHARACTER::Damage(LPCHARACTER pAttacker, DAM_LL dam, EDamageType type) // r
 {
 #ifdef ENABLE_OBSERVER_DAMAGE_FIX
 	if (IsPC() && IsObserverMode()) {
+		return false;
+	}
+#endif
+
+#ifdef ENABLE_AFK_MODE_SYSTEM
+	if (pAttacker && pAttacker->IsPC() && pAttacker->IsAway())
+	{
+		if(IsPC())
+		return false;
+		
+		if (!CanMove())
 		return false;
 	}
 #endif

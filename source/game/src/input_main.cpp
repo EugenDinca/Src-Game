@@ -1438,6 +1438,14 @@ void CInputMain::Move(LPCHARACTER ch, const char* data)
 		ch->SetRotation(pinfo->bRot * 5);
 		ch->ResetStopTime();
 		ch->Goto(pinfo->lX, pinfo->lY);
+#ifdef ENABLE_AFK_MODE_SYSTEM
+		if (ch->IsAway())
+		{
+			ch->SetAway(false);
+			if (ch->IsAffectFlag(AFF_AFK))
+				ch->RemoveAffect(AFFECT_AFK);
+		}
+#endif
 	}
 	else
 	{
@@ -1461,6 +1469,14 @@ void CInputMain::Move(LPCHARACTER ch, const char* data)
 		ch->Move(pinfo->lX, pinfo->lY);
 		ch->Stop();
 		ch->StopStaminaConsume();
+#ifdef ENABLE_AFK_MODE_SYSTEM
+		if (ch->IsAway())
+		{
+			ch->SetAway(false);
+			if (ch->IsAffectFlag(AFF_AFK))
+				ch->RemoveAffect(AFFECT_AFK);
+		}
+#endif
 	}
 
 	TPacketGCMove pack;

@@ -68,6 +68,15 @@ bool CHARACTER::StartRiding()
 	}
 #endif
 
+#ifdef ENABLE_AFK_MODE_SYSTEM
+	if (IsAway())
+	{
+		SetAway(false);
+		if (IsAffectFlag(AFF_AFK))
+			RemoveAffect(AFFECT_AFK);
+	}
+#endif
+
 	HorseSummon(false);
 
 	MountVnum(dwMountVnum);
