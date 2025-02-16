@@ -359,8 +359,17 @@ int CInputMain::Whisper(LPCHARACTER ch, const char* data, size_t uiBytes)
 			pack.bType = WHISPER_TYPE_NOT_EXIST;
 			pack.wSize = sizeof(TPacketGCWhisper);
 			strlcpy(pack.szNameFrom, pinfo->szNameTo, sizeof(pack.szNameFrom));
+#ifdef ENABLE_WHISPER_RENEWAL			
+			char buf[CHAT_MAX_LEN + 1];
+			strlcpy(buf, data + sizeof(TPacketCGWhisper), MIN(iExtraLen + 1, sizeof(buf)));
+			if (!(std::string(buf).find("|?whisper_renewal>|") != std::string::npos || std::string(buf).find("|?whisper_renewal<|") != std::string::npos)) {
+				ch->GetDesc()->Packet(&pack, sizeof(TPacketGCWhisper));
+				sys_log(0, "WHISPER: no player");
+			}
+#else
 			ch->GetDesc()->Packet(&pack, sizeof(TPacketGCWhisper));
 			sys_log(0, "WHISPER: no player");
+#endif
 		}
 	}
 	else

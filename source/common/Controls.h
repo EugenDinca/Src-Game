@@ -67,6 +67,7 @@ enum eConfig {
 #define BOSS_DAMAGE_RANKING_PLUGIN															// Enable Damage Ranking Boss
 #define __SKILL_TRAINING__																	// SKILL SELECT RENDER TARGET
 #define ENABLE_PLAYER_BLOCK_SYSTEM															//Player Block System
+#define ENABLE_WHISPER_RENEWAL																//Typing Whisper...
 
 #define ENABLE_PLAYER_STATS_SYSTEM															// Character Stats
 #define ENABLE_GLOBAL_RANKING																// Global Ranking System
