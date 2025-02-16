@@ -347,6 +347,10 @@ ACMD(do_block_player);
 ACMD(do_unblock_player);
 #endif
 
+#ifdef __STONE_SCROLL__
+ACMD(do_stone_scroll);
+#endif
+
 struct command_info cmd_info[] =
 {
 	{ "!RESERVED!",	NULL,			0,			POS_DEAD,	GM_IMPLEMENTOR	},
@@ -730,6 +734,9 @@ struct command_info cmd_info[] =
 #ifdef ENABLE_PLAYER_BLOCK_SYSTEM
 	{ "block_player", do_block_player, 0, POS_DEAD, GM_PLAYER },
 	{ "unblock_player", do_unblock_player, 0, POS_DEAD, GM_PLAYER },
+#endif
+#ifdef __STONE_SCROLL__
+	{ "stone_scroll", do_stone_scroll, 0, POS_DEAD, GM_PLAYER },
 #endif
 	{ "\n",		NULL,			0,			POS_DEAD,	GM_IMPLEMENTOR	}
 };

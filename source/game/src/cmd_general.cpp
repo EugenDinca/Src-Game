@@ -3923,3 +3923,81 @@ ACMD(do_unblock_player)
 	P2P_MANAGER::Instance().Send(&p2p_packet, sizeof(p2p_packet));
 }
 #endif
+
+#ifdef __STONE_SCROLL__
+ACMD(do_stone_scroll)
+{
+	std::vector<std::string> vecArgs;
+	split_argument(argument, vecArgs);
+	if (vecArgs.size() < 4) { return; }
+
+	WORD scrollPos, itemPos;
+	BYTE socketIdx;
+
+	if (!str_to_number(scrollPos, vecArgs[1].c_str()) || !str_to_number(itemPos, vecArgs[2].c_str()) || !str_to_number(socketIdx, vecArgs[3].c_str()))
+		return;
+
+	LPITEM scrollItem = ch->GetInventoryItem(scrollPos), item = ch->GetInventoryItem(itemPos);
+	if((!scrollItem&&!ch->CountSpecifyItem(25100)) || !item || !((item->GetType() == ITEM_WEAPON && item->GetSubType() != WEAPON_ARROW) || (item->GetType() == ITEM_ARMOR && item->GetSubType() == ARMOR_BODY)) || socketIdx >= 3)
+		return;
+
+	if (scrollItem)
+	{
+		if (scrollItem->GetVnum() != 25100 && !ch->CountSpecifyItem(25100))
+			return;
+	}
+	else
+	{
+		if (!ch->CountSpecifyItem(25100))
+			return;
+	}
+
+	const DWORD stoneItemIdx = item->GetSocket(socketIdx);
+	const TItemTable* p = ITEM_MANAGER::instance().GetTable(stoneItemIdx);
+	if (!p || p->bType != ITEM_METIN)
+		return;
+	
+	if(28960 == stoneItemIdx)
+	{
+		ch->ChatPacket(CHAT_TYPE_INFO, "You can't get back broke stone!");
+		return;
+	}
+
+	BYTE socketCount = 0;
+	for (BYTE i = 0; i < ITEM_SOCKET_MAX_NUM; ++i)
+	{
+		if (item->GetSocket(i) >= 1)
+			socketCount += 1;
+	}
+
+	ch->AutoGiveItem(stoneItemIdx);
+	item->SetSocket(socketIdx, 0);
+
+	if (scrollItem)
+	{
+		if (scrollItem->GetVnum() != 25100)
+			ch->RemoveSpecifyItem(25100, 1);
+		else
+			scrollItem->SetCount(scrollItem->GetCount() - 1);
+	}
+	else
+		ch->RemoveSpecifyItem(25100, 1);
+	
+	
+	const std::vector<long> m_lsockets = { item->GetSocket(0), item->GetSocket(1), item->GetSocket(2)};
+	for (BYTE i = 0; i < socketCount; ++i)
+		item->SetSocket(i, 1);
+	if (socketCount > 1)
+	{
+		for (BYTE i = 0, j=0; i < socketCount; ++i)
+		{
+			if (m_lsockets[i] > 0)
+				item->SetSocket(j++, m_lsockets[i]);
+				
+		}
+	}
+
+	item->UpdatePacket();
+	item->Save();
+}
+#endif
