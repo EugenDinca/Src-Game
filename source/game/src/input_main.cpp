@@ -26,7 +26,7 @@
 #include "affect.h"
 #include "guild.h"
 #include "guild_manager.h"
-//test
+//test1
 #include "banword.h"
 #include "unique_item.h"
 #include "building.h"
