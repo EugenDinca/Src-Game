@@ -4158,7 +4158,7 @@ EVENTFUNC(update_character_event)
 	if (NULL == ch || ch->IsNPC())
 		return 0;
 	
-	if (get_dword_time() - ch->GetLastMoveTime() > 10000*3)
+	if (get_dword_time() - ch->GetLastMoveTime() > 60000*3)
 	{		
 		if (!ch->IsAway())
 			ch->SetAway(true);
