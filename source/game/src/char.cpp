@@ -4166,8 +4166,6 @@ EVENTFUNC(update_character_event)
 		if (!ch->IsAffectFlag(AFF_AFK))
 			ch->AddAffect(AFFECT_AFK, POINT_NONE, 0, AFF_AFK, INFINITE_AFFECT_DURATION, 0, true, true);
 		
-		ChatPacket(CHAT_TYPE_NOTICE, LC_TEXT("AFK Mode is Activated !"));
-		
 	}
 	
 	return PASSES_PER_SEC(15);
