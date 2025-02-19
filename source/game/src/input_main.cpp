@@ -588,82 +588,59 @@ int CInputMain::Chat(LPCHARACTER ch, const char* data, size_t uiBytes)
 	// @fixme133 end
 
 	char chatbuf[CHAT_MAX_LEN + 1];
-
-#ifdef ENABLE_PM_IN_GLOBAL_CHAT
-    if (pinfo->type == CHAT_TYPE_SHOUT)
-    {
-        #ifdef ENABLE_MULTI_LANGUAGE_SYSTEM
-            int len = snprintf(chatbuf, sizeof(chatbuf), "|L%s|l |cFFffa200|Hpm:%s|h[PM]|h|r|r%s|h|r : %s", 
-                LC_LOCALE(ch->GetLanguage()), ch->GetName(), ch->GetName(), buf);
-        #else
-            int len = snprintf(chatbuf, sizeof(chatbuf), "|cFFffa200|Hpm:%s|h[PM]|h|r|r%s|h|r : %s", 
-                ch->GetName(), ch->GetName(), buf);
-        #endif
-    }
-    else
-    {
-        #ifdef ENABLE_MULTI_LANGUAGE_SYSTEM
-            int len = snprintf(chatbuf, sizeof(chatbuf), "|L%s|l %s : %s", 
-                LC_LOCALE(ch->GetLanguage()), ch->GetName(), buf);
-        #else
-            int len = snprintf(chatbuf, sizeof(chatbuf), "%s : %s", ch->GetName(), buf);
-        #endif
-    }
+#ifdef ENABLE_MULTI_LANGUAGE_SYSTEM
+	int len = snprintf(chatbuf, sizeof(chatbuf), "|L%s|l %s : %s", LC_LOCALE(ch->GetLanguage()), ch->GetName(), buf);
 #else
-    #ifdef ENABLE_MULTI_LANGUAGE_SYSTEM
-        int len = snprintf(chatbuf, sizeof(chatbuf), "|L%s|l %s : %s", 
-            LC_LOCALE(ch->GetLanguage()), ch->GetName(), buf);
-    #else
-        int len = snprintf(chatbuf, sizeof(chatbuf), "%s : %s", ch->GetName(), buf);
-    #endif
+	int len = snprintf(chatbuf, sizeof(chatbuf), "%s : %s", ch->GetName(), buf);
 #endif
 
-if (len < 0 || len >= (int)sizeof(chatbuf))
-    len = sizeof(chatbuf) - 1;
+	if (len < 0 || len >= (int)sizeof(chatbuf))
+		len = sizeof(chatbuf) - 1;
 
-if (pinfo->type == CHAT_TYPE_SHOUT)
-{
-	#ifdef ENABLE_CHAT_COLOR_SYSTEM
-		char const* color;
+	if (pinfo->type == CHAT_TYPE_SHOUT)
+	{
+#ifdef ENABLE_CHAT_COLOR_SYSTEM
+	char const* color;
 
-		if (ch->GetChatColor() == 1)
-			color = "0080FF";
-		else if (ch->GetChatColor() == 2) 
-			color = "FF0000";
-		else if (ch->GetChatColor() == 3)
-			color = "FFFF00";
-		else if (ch->GetChatColor() == 4)
-			color = "00FF00";
-		else if (ch->GetChatColor() == 5)
-			color = "FFA500";
-		else if (ch->GetChatColor() == 6)
-			color = "40E0D0";
-		else if (ch->GetChatColor() == 7)
-			color = "000000";
-		else if (ch->GetChatColor() == 8)
-			color = "A020F0";
-		else if (ch->GetChatColor() == 9)
-			color = "FFC0CB";
+	if (ch->GetChatColor() == 1)
+		color = "0080FF";
+	else if (ch->GetChatColor() == 2) 
+		color = "FF0000";
+	else if (ch->GetChatColor() == 3)
+		color = "FFFF00";
+	else if (ch->GetChatColor() == 4)
+		color = "00FF00";
+	else if (ch->GetChatColor() == 5)
+		color = "FFA500";
+	else if (ch->GetChatColor() == 6)
+		color = "40E0D0";
+	else if (ch->GetChatColor() == 7)
+		color = "000000";
+	else if (ch->GetChatColor() == 8)
+		color = "A020F0";
+	else if (ch->GetChatColor() == 9)
+		color = "FFC0CB";
+	else
+	{
+		if (pinfo->type == CHAT_TYPE_SHOUT)
+			color = "A7FFD4";
 		else
-			color = (pinfo->type == CHAT_TYPE_SHOUT) ? "A7FFD4" : "FFFFFF";
-
-		if (pinfo->bEmoticon == false
-		#ifdef ENABLE_PREMIUM_MEMBER_SYSTEM
-			&& ch->FindAffect(AFFECT_PREMIUM)
-		#endif
-		)
-			len = snprintf(chatbuf, sizeof(chatbuf), "|L%s|l %s |H%s%s|h(#)|h|r - Lv.%d|h|r : |cFF%s%s|r", 
-				LC_LOCALE(ch->GetLanguage()), ch->GetName(), "whisper:", ch->GetName(), ch->GetLevel(), color, buf);
-		else
-			len = snprintf(chatbuf, sizeof(chatbuf), "|L%s|l %s |H%s%s|h(#)|h|r - Lv.%d|h|r : %s", 
-				LC_LOCALE(ch->GetLanguage()), ch->GetName(), "whisper:", ch->GetName(), ch->GetLevel(), buf);
-	#else
-		#ifdef ENABLE_CHAT_FLAG_AND_PM
-			len = snprintf(chatbuf, sizeof(chatbuf), "|L%s|l %s |H%s%s|h(#)|h|r - Lv.%d|h|r : %s", 
-				LC_LOCALE(ch->GetDesc()->GetLanguage()), ch->GetName(), "whisper:", ch->GetName(), ch->GetLevel(), buf);
-		#endif
-	#endif
+			color = "FFFFFF";
 	}
+
+	if (pinfo->bEmoticon == false
+#ifdef ENABLE_PREMIUM_MEMBER_SYSTEM
+		&& ch->FindAffect(AFFECT_PREMIUM)
+#endif
+		)
+		len = snprintf(chatbuf, sizeof(chatbuf), "|L%s|l %s |H%s%s|h(#)|h|r - Lv.%d|h|r : |cFF%s%s|r", LC_LOCALE(ch->GetLanguage()), ch->GetName(), "whisper:", ch->GetName(), ch->GetLevel(), color, buf);
+	else
+		len = snprintf(chatbuf, sizeof(chatbuf), "|L%s|l %s |H%s%s|h(#)|h|r - Lv.%d|h|r : %s", LC_LOCALE(ch->GetLanguage()), ch->GetName(), "whisper:", ch->GetName(), ch->GetLevel(), buf);
+#else
+#ifdef ENABLE_CHAT_FLAG_AND_PM
+		len = snprintf(chatbuf, sizeof(chatbuf), "|L%s|l %s |H%s%s|h(#)|h|r - Lv.%d|h|r : %s", LC_LOCALE(ch->GetDesc()->GetLanguage()), ch->GetName(), "whisper:", ch->GetName(), ch->GetLevel(), buf);
+#endif
+#endif
 
 		if (ch->GetLevel() < g_iShoutLimitLevel)
 		{
