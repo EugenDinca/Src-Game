@@ -590,36 +590,36 @@ int CInputMain::Chat(LPCHARACTER ch, const char* data, size_t uiBytes)
 	char chatbuf[CHAT_MAX_LEN + 1];
 
 #ifdef ENABLE_PM_IN_GLOBAL_CHAT
-	if (pinfo->type == CHAT_TYPE_SHOUT)
-	{
-		#ifdef ENABLE_MULTI_LANGUAGE_SYSTEM
-			int len = snprintf(chatbuf, sizeof(chatbuf), "|L%s|l |cFFffa200|Hpm:%s|h[PM]|h|r|r%s|h|r : %s", 
-				LC_LOCALE(ch->GetLanguage()), ch->GetName(), ch->GetName(), buf);
-		#else
-			int len = snprintf(chatbuf, sizeof(chatbuf), "|cFFffa200|Hpm:%s|h[PM]|h|r|r%s|h|r : %s", 
-				ch->GetName(), ch->GetName(), buf);
-		#endif
-	}
-	else
-	{
-		#ifdef ENABLE_MULTI_LANGUAGE_SYSTEM
-			int len = snprintf(chatbuf, sizeof(chatbuf), "|L%s|l %s : %s", 
-				LC_LOCALE(ch->GetLanguage()), ch->GetName(), buf);
-		#else
-			int len = snprintf(chatbuf, sizeof(chatbuf), "%s : %s", ch->GetName(), buf);
-		#endif
-	}
+    if (pinfo->type == CHAT_TYPE_SHOUT)
+    {
+        #ifdef ENABLE_MULTI_LANGUAGE_SYSTEM
+            int len = snprintf(chatbuf, sizeof(chatbuf), "|L%s|l |cFFffa200|Hpm:%s|h[PM]|h|r|r%s|h|r : %s", 
+                LC_LOCALE(ch->GetLanguage()), ch->GetName(), ch->GetName(), buf);
+        #else
+            int len = snprintf(chatbuf, sizeof(chatbuf), "|cFFffa200|Hpm:%s|h[PM]|h|r|r%s|h|r : %s", 
+                ch->GetName(), ch->GetName(), buf);
+        #endif
+    }
+    else
+    {
+        #ifdef ENABLE_MULTI_LANGUAGE_SYSTEM
+            int len = snprintf(chatbuf, sizeof(chatbuf), "|L%s|l %s : %s", 
+                LC_LOCALE(ch->GetLanguage()), ch->GetName(), buf);
+        #else
+            int len = snprintf(chatbuf, sizeof(chatbuf), "%s : %s", ch->GetName(), buf);
+        #endif
+    }
 #else
-	#ifdef ENABLE_MULTI_LANGUAGE_SYSTEM
-		int len = snprintf(chatbuf, sizeof(chatbuf), "|L%s|l %s : %s", 
-			LC_LOCALE(ch->GetLanguage()), ch->GetName(), buf);
-	#else
-		int len = snprintf(chatbuf, sizeof(chatbuf), "%s : %s", ch->GetName(), buf);
-	#endif
+    #ifdef ENABLE_MULTI_LANGUAGE_SYSTEM
+        int len = snprintf(chatbuf, sizeof(chatbuf), "|L%s|l %s : %s", 
+            LC_LOCALE(ch->GetLanguage()), ch->GetName(), buf);
+    #else
+        int len = snprintf(chatbuf, sizeof(chatbuf), "%s : %s", ch->GetName(), buf);
+    #endif
 #endif
 
 if (len < 0 || len >= (int)sizeof(chatbuf))
-	len = sizeof(chatbuf) - 1;
+    len = sizeof(chatbuf) - 1;
 
 if (pinfo->type == CHAT_TYPE_SHOUT)
 {
