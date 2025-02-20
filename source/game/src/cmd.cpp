@@ -60,10 +60,6 @@ ACMD(do_max_pick);
 ACMD(do_refine_pick);
 // END_OF_REFINE_PICK
 
-#ifdef __AUTO_HUNT__
-ACMD(do_auto_hunt);
-#endif
-
 ACMD(do_console);
 ACMD(do_restart);
 ACMD(do_advance);
@@ -353,6 +349,10 @@ ACMD(do_unblock_player);
 
 #ifdef __STONE_SCROLL__
 ACMD(do_stone_scroll);
+#endif
+
+#ifdef __AUTO_HUNT__
+ACMD(do_auto_hunt);
 #endif
 
 struct command_info cmd_info[] =
