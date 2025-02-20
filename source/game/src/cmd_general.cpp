@@ -4001,3 +4001,10 @@ ACMD(do_stone_scroll)
 	item->Save();
 }
 #endif
+
+#ifdef __AUTO_HUNT__
+ACMD(do_auto_hunt)
+{
+	ch->GetAutoHuntCommand(argument);
+}
+#endif

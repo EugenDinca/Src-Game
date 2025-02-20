@@ -3168,6 +3168,21 @@ bool CHARACTER::UseItemEx(LPITEM item, TItemPos DestCell
 
 		case ITEM_QUEST:
 		{
+#ifdef __AUTO_HUNT__
+		if (item->GetVnum() == 38014)
+		{
+			if (FindAffect(AFFECT_AUTO_HUNT))
+			{
+				ChatPacket(CHAT_TYPE_INFO, "You already has affect");
+				return false;
+			}
+			AddAffect(AFFECT_AUTO_HUNT, POINT_NONE, 0, AFF_NONE, 60 * 60 * 24 * item->GetValue(0), 0, false);
+			ChatPacket(CHAT_TYPE_INFO, "Affect added for %d day.", item->GetValue(0));
+			item->SetCount(item->GetCount() - 1);
+			return true;
+		}
+#endif
+
 #ifdef ENABLE_QUEST_DND_EVENT
 			if (IS_SET(item->GetFlag(), ITEM_FLAG_APPLICABLE))
 			{

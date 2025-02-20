@@ -238,6 +238,9 @@ void CHARACTER::Initialize()
 	m_iMoveCount = 0;
 
 	m_pkRegen = NULL;
+#ifdef __AUTO_HUNT__
+	m_bAutoHuntStatus = false;
+#endif
 	regen_id_ = 0;
 	m_posRegen.x = m_posRegen.y = m_posRegen.z = 0;
 	m_posStart.x = m_posStart.y = 0;
@@ -10932,5 +10935,41 @@ void CHARACTER::StartShieldCountdownEvent(LPCHARACTER ch, int iSec)
 	info->seconds = iSec;
 	info->ch = ch;
 	timer_shieldcountdown_check = event_create(ShieldCountdown_Timer_Event, info, 1);
+}
+#endif
+
+#ifdef __AUTO_HUNT__
+void CHARACTER::SetAutoHuntStatus(bool bStatus, bool bMobFarm, bool bMetinFarm)
+{
+	m_bAutoHuntStatus = bStatus;
+	RemoveAffect(AFFECT_AUTO_HUNT_AFFECT);
+	if (bStatus)
+		AddAffect(AFFECT_AUTO_HUNT_AFFECT, POINT_NONE, 0, AFF_AUTO_HUNT, INFINITE_AFFECT_DURATION, 0, false);
+	ChatPacket(CHAT_TYPE_COMMAND, "AutoHuntStatus %d %d %d", bStatus, bMobFarm, bMetinFarm);
+}
+void CHARACTER::GetAutoHuntCommand(const char* szArgument)
+{
+	std::vector<std::string> vecArgs;
+	split_argument(szArgument, vecArgs);
+	if (vecArgs.size() < 2) { return; }
+	else if (vecArgs[1] == "end")
+	{
+		SetAutoHuntStatus(false);
+	}
+	else if (vecArgs[1] == "start")
+	{
+		if (vecArgs.size() < 7) { return; }
+		if (!IsAutoHuntAffectHas())
+		{
+			ChatPacket(CHAT_TYPE_INFO, "You don't have auto hunt affect.");
+			return;
+		}
+		SetAutoHuntStatus(true, vecArgs[5] == "1" ? true : false, vecArgs[6] == "1" ? true : false);
+	}
+	ChatPacket(CHAT_TYPE_COMMAND, "auto_hunt %s", szArgument);
+}
+bool CHARACTER::IsAutoHuntAffectHas()
+{
+	return FindAffect(AFFECT_AUTO_HUNT) != NULL ? true : false;
 }
 #endif

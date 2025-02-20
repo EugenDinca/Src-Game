@@ -636,6 +636,15 @@ namespace marriage
 #define NEW_ICEDAMAGE_SYSTEM
 class CHARACTER : public CEntity, public CFSM, public CHorseRider
 {
+#ifdef __AUTO_HUNT__
+public:
+	void			GetAutoHuntCommand(const char* szArgument);
+	void			SetAutoHuntStatus(bool bStatus, bool bMobFarm = false, bool bMetinFarm = false);
+	bool			IsAutoHuntAffectHas();
+protected:
+	bool			m_bAutoHuntStatus;
+#endif
+
 protected:
 	//////////////////////////////////////////////////////////////////////////////////
 	virtual void	EncodeInsertPacket(LPENTITY entity);

@@ -60,6 +60,10 @@ ACMD(do_max_pick);
 ACMD(do_refine_pick);
 // END_OF_REFINE_PICK
 
+#ifdef __AUTO_HUNT__
+ACMD(do_auto_hunt);
+#endif
+
 ACMD(do_console);
 ACMD(do_restart);
 ACMD(do_advance);
@@ -737,6 +741,9 @@ struct command_info cmd_info[] =
 #endif
 #ifdef __STONE_SCROLL__
 	{ "stone_scroll", do_stone_scroll, 0, POS_DEAD, GM_PLAYER },
+#endif
+#ifdef __AUTO_HUNT__
+	{ "auto_hunt",	do_auto_hunt,		0,		POS_DEAD,	GM_PLAYER },
 #endif
 	{ "\n",		NULL,			0,			POS_DEAD,	GM_IMPLEMENTOR	}
 };

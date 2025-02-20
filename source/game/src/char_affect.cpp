@@ -20,7 +20,7 @@
 #ifdef ENABLE_BUFFI_SYSTEM
 #include "BuffiSystem.h"
 #endif
-#define IS_NO_SAVE_AFFECT(type) ((type) == AFFECT_WAR_FLAG || (type) == AFFECT_REVIVE_INVISIBLE || ((type) >= AFFECT_PREMIUM_START && (type) <= AFFECT_PREMIUM_END)) // @fixme156 added MOUNT_BONUS (if the game core crashes, the bonus would double if present in player.affect)
+#define IS_NO_SAVE_AFFECT(type) ((type) == AFFECT_WAR_FLAG || (type) == AFFECT_REVIVE_INVISIBLE || type == AFFECT_AUTO_HUNT_AFFECT || ((type) >= AFFECT_PREMIUM_START && (type) <= AFFECT_PREMIUM_END)) // @fixme156 added MOUNT_BONUS (if the game core crashes, the bonus would double if present in player.affect)
 #define IS_NO_CLEAR_ON_DEATH_AFFECT(type) ((type) == AFFECT_BLOCK_CHAT || ((type) >= 500 && (type) < 600))
 
 #ifdef ENABLE_ADD_REALTIME_AFFECT
