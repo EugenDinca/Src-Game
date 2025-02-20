@@ -239,9 +239,6 @@ enum EAffectBits
 	AFF_WAR_FLAG3,
 
 	AFF_CHINA_FIREWORK,
-#ifdef __AUTO_HUNT__
-	AFF_AUTO_HUNT,
-#endif
 	AFF_HAIR,
 	AFF_GERMANY,
 	AFF_RAMADAN_RING,
@@ -265,6 +262,9 @@ enum EAffectBits
 #endif
 #ifdef ENABLE_AFK_MODE_SYSTEM
 	AFF_AFK,
+#endif
+#ifdef __AUTO_HUNT__
+	AFF_AUTO_HUNT,
 #endif
 	AFF_BITS_MAX
 };
