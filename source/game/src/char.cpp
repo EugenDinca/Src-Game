@@ -11072,7 +11072,7 @@ void CHARACTER::CheckPvPBonus(bool isAdd, bool* pvpSettingNew)
 
 		if (pvpSettings[PVP_PET] == false)
 		{
-			item = GetWear(WEAR_COSTUME_PET);
+			item = GetWear(WEAR_PET_SKIN);
 			if (item != NULL)
 				UnequipItem(item);
 		}
