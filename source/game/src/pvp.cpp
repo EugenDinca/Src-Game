@@ -367,7 +367,7 @@ void CPVPManager::Insert(LPCHARACTER pkChr, LPCHARACTER pkVictim)
 
 #ifdef ENABLE_RENEWAL_PVP
 	char msg[CHAT_MAX_LEN + 1];
-	int iLen = snprintf(msg, sizeof(msg), "OpenPvPWindow %s %u ", pkChr->GetName(), pkChr->GetVID());
+	int iLen = snprintf(msg, sizeof(msg), "OpenPvPWindow %s %u ", pkChr->GetName(), static_cast<unsigned int>(pkChr->GetVID()));
 	for (DWORD j = 0; j < PVP_BET; ++j)
 		iLen += snprintf(msg + iLen, sizeof(msg) - iLen, "#%d", pvpSetting[j]);
 	iLen += snprintf(msg + iLen, sizeof(msg) - iLen, "#%lld", pvpBet);
