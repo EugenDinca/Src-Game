@@ -229,6 +229,9 @@ void CHARACTER::Initialize()
 
 	m_fSyncTime = get_float_time() - 3;
 	m_dwPlayerID = 0;
+#ifdef ENABLE_RENEWAL_PVP
+	memset(&pvpSettings, false, sizeof(pvpSettings));
+#endif
 	m_dwKillerPID = 0;
 	
 #if defined(__GAME_OPTION_ESCAPE__)
@@ -10971,5 +10974,255 @@ void CHARACTER::GetAutoHuntCommand(const char* szArgument)
 bool CHARACTER::IsAutoHuntAffectHas()
 {
 	return FindAffect(AFFECT_AUTO_HUNT) != NULL ? true : false;
+}
+#endif
+
+#ifdef ENABLE_RENEWAL_PVP
+bool CHARACTER::IsInFight()
+{
+	return CPVPManager::Instance().IsFighting(this);
+}
+bool CHARACTER::IsBlockPvP(DWORD itemVnum)
+{
+	if (itemVnum >= 53001 && itemVnum <= 53100 && pvpSettings[PVP_PET] == false)
+		return true;
+	else if (itemVnum >= 55700 && itemVnum <= 55750 && pvpSettings[PVP_NEW_PET] == false)
+		return true;
+
+	std::map<DWORD, DWORD> pvp_data = {
+		{72723,PVP_HP_ELIXIR},
+		{72724,PVP_HP_ELIXIR},
+		{72725,PVP_HP_ELIXIR},
+		{72726,PVP_HP_ELIXIR},
+		{50826,PVP_WHITE_DEW},
+		{50823,PVP_YELLOW_DEW},
+		{50822,PVP_ORANGE_DEW},
+
+		{50821,PVP_RED_DEW},
+		{50825,PVP_BLUE_DEW},
+		{50824,PVP_GREEN_DEW},
+
+		{39018,PVP_DRAGON_GOD_ATTACK},
+		{71028,PVP_DRAGON_GOD_ATTACK},
+
+		{39020,PVP_DRAGON_GOD_DEFENCE},
+		{71030,PVP_DRAGON_GOD_DEFENCE},
+
+		{39017,PVP_DRAGON_GOD_LIFE},
+		{71027,PVP_DRAGON_GOD_LIFE},
+
+		{39025,PVP_PIERCING_STRIKE},
+		{71045,PVP_PIERCING_STRIKE},
+
+		{39024,PVP_CRITICAL_STRIKE},
+		{71044,PVP_CRITICAL_STRIKE},
+
+		{50817,PVP_ZIN_WATER},
+		{50818,PVP_SAMBO_WATER},
+
+		{27868,PVP_ATTACKSPEED_FISH},
+		{51002,PVP_ENERGY},
+	};
+	auto it = pvp_data.find(itemVnum);
+	if (it != pvp_data.end())
+	{
+		if (pvpSettings[it->second] == false)
+			return true;
+	}
+	return false;
+}
+bool CHARACTER::CheckPvPSetting(BYTE settingIndex)
+{
+	if (!IsInFight())
+		return false;
+	return pvpSettings[settingIndex] == false;
+}
+bool CHARACTER::CheckPvPUse(DWORD itemVnum)
+{
+	if (!IsInFight())
+		return false;
+	return IsBlockPvP(itemVnum);
+}
+void CHARACTER::CheckPvPBonus(bool isAdd, bool* pvpSettingNew)
+{
+	if (isAdd)
+	{
+		thecore_memcpy(&pvpSettings, pvpSettingNew, sizeof(pvpSettings));
+		//Close items
+		for (DWORD j = 0; j < INVENTORY_MAX_NUM; ++j)
+		{
+			LPITEM item = GetInventoryItem(j);
+			if (item != NULL)
+			{
+				if (item->GetSocket(0) != 1)
+					continue;
+				else if(IsBlockPvP(item->GetVnum()))
+					UseItem(TItemPos(INVENTORY, item->GetCell()));
+			}
+		}
+
+		LPITEM item = NULL;
+
+		if (pvpSettings[PVP_NEW_PET] == false)
+		{
+			item = GetWear(WEAR_PET);
+			if (item != NULL)
+				UnequipItem(item);
+		}
+
+		if (pvpSettings[PVP_PET] == false)
+		{
+			item = GetWear(WEAR_COSTUME_PET);
+			if (item != NULL)
+				UnequipItem(item);
+		}
+
+		if (pvpSettings[PVP_BUFFI_SKILLS] == false)
+		{
+			RemoveAffect(SKILL_PAERYONG);
+			RemoveAffect(SKILL_REFLECT);
+			RemoveAffect(SKILL_GICHEON);
+			RemoveAffect(SKILL_JEONGEOP);
+			RemoveAffect(SKILL_HOSIN);
+			RemoveAffect(SKILL_KWAESOK);
+			RemoveAffect(SKILL_JEUNGRYEOK);
+		}
+
+		CAffect* affect = NULL;
+
+		if (pvpSettings[PVP_POISONING] == false)
+		{
+			affect = FindAffect(AFFECT_POISON);
+			if (affect != NULL)
+				RemoveAffect(affect);
+		}
+
+		if (pvpSettings[PVP_WHITE_DEW] == false)
+		{
+			affect = FindAffect(AFFECT_BLEND, aApplyInfo[APPLY_DEF_GRADE_BONUS].bPointType);
+			if (affect != NULL)
+				RemoveAffect(affect);
+		}
+
+		if (pvpSettings[PVP_YELLOW_DEW] == false)
+		{
+			affect = FindAffect(AFFECT_BLEND, aApplyInfo[APPLY_ATT_SPEED].bPointType);
+			if (affect != NULL)
+				RemoveAffect(affect);
+		}
+
+		if (pvpSettings[PVP_ORANGE_DEW] == false)
+		{
+			affect = FindAffect(AFFECT_BLEND, aApplyInfo[APPLY_PENETRATE_PCT].bPointType);
+			if (affect != NULL)
+				RemoveAffect(affect);
+		}
+
+		if (pvpSettings[PVP_RED_DEW] == false)
+		{
+			affect = FindAffect(AFFECT_BLEND, aApplyInfo[APPLY_CRITICAL_PCT].bPointType);
+			if (affect != NULL)
+				RemoveAffect(affect);
+		}
+
+		if (pvpSettings[PVP_BLUE_DEW] == false)
+		{
+			affect = FindAffect(AFFECT_BLEND, aApplyInfo[APPLY_ATT_GRADE_BONUS].bPointType);
+			if (affect != NULL)
+				RemoveAffect(affect);
+		}
+
+		if (pvpSettings[PVP_ATTACKSPEED_FISH] == false)
+		{
+			affect = FindAffect(AFFECT_EXP_BONUS_EURO_FREE, aApplyInfo[APPLY_ATT_SPEED].bPointType);
+			if (affect != NULL)
+				RemoveAffect(affect);
+		}
+		
+		if (pvpSettings[PVP_GREEN_DEW] == false)
+		{
+			affect = FindAffect(AFFECT_BLEND, aApplyInfo[APPLY_RESIST_MAGIC].bPointType);
+			if (affect != NULL)
+				RemoveAffect(affect);
+		}
+
+		if (pvpSettings[PVP_ZIN_WATER] == false)
+		{
+			affect = FindAffect(AFFECT_EXP_BONUS_EURO_FREE, aApplyInfo[APPLY_ATT_GRADE_BONUS].bPointType);
+			if (affect != NULL)
+				RemoveAffect(affect);
+		}
+
+		if (pvpSettings[PVP_SAMBO_WATER] == false)
+		{
+			affect = FindAffect(AFFECT_EXP_BONUS_EURO_FREE, aApplyInfo[APPLY_DEF_GRADE_BONUS].bPointType);
+			if (affect != NULL)
+				RemoveAffect(affect);
+		}
+
+		if (pvpSettings[PVP_ATTACKSPEED_FISH] == false)
+		{
+			affect = FindAffect(AFFECT_ATT_SPEED, aApplyInfo[APPLY_ATT_SPEED].bPointType);
+			if (affect != NULL)
+				RemoveAffect(affect);
+		}
+
+		if (pvpSettings[PVP_ENERGY] == false)
+		{
+			affect = FindAffect(AFFECT_BLEND, aApplyInfo[APPLY_ENERGY].bPointType);
+			if (affect != NULL)
+				RemoveAffect(affect);
+		}
+
+		if (pvpSettings[PVP_DRAGON_GOD_ATTACK] == false)
+		{
+			affect = FindAffect(510, aApplyInfo[86].bPointType);
+			if (affect != NULL)
+				RemoveAffect(affect);
+		}
+
+		if (pvpSettings[PVP_DRAGON_GOD_DEFENCE] == false)
+		{
+			affect = FindAffect(510, aApplyInfo[65].bPointType);
+			if (affect != NULL)
+				RemoveAffect(affect);
+		}
+
+		if (pvpSettings[PVP_DRAGON_GOD_LIFE] == false)
+		{
+			affect = FindAffect(510, aApplyInfo[69].bPointType);
+			if (affect != NULL)
+				RemoveAffect(affect);
+		}
+
+
+		if (pvpSettings[PVP_PIERCING_STRIKE] == false)
+		{
+			affect = FindAffect(510, aApplyInfo[16].bPointType);
+			if (affect != NULL)
+				RemoveAffect(affect);
+		}
+
+		if (pvpSettings[PVP_CRITICAL_STRIKE] == false)
+		{
+			affect = FindAffect(510, aApplyInfo[15].bPointType);
+			if (affect != NULL)
+				RemoveAffect(affect);
+		}
+
+		if (pvpSettings[PVP_HALF_HUMAN] == true)
+		{
+			auto affect = FindAffect(AFFECT_PVP_SETTINGS);
+			if (affect)
+				RemoveAffect(affect);
+			AddAffect(AFFECT_PVP_SETTINGS, POINT_ATTBONUS_HUMAN, -50, AFF_NONE, INFINITE_AFFECT_DURATION, 0, true);
+		}
+	}
+	else
+	{
+		auto affect = FindAffect(AFFECT_PVP_SETTINGS);
+		if (affect)
+			RemoveAffect(affect);
+	}
 }
 #endif

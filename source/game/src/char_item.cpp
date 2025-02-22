@@ -3075,6 +3075,14 @@ bool CHARACTER::UseItemEx(LPITEM item, TItemPos DestCell
 #endif
 )
 {
+#ifdef ENABLE_RENEWAL_PVP
+	if (CheckPvPUse(item->GetVnum()))
+	{
+		ChatPacket(CHAT_TYPE_INFO, LC_TEXT("1005"));
+		return false;
+	}
+#endif
+
 	int iLimitRealtimeStartFirstUseFlagIndex = -1;
 	//int iLimitTimerBasedOnWearFlagIndex = -1;
 
@@ -5532,6 +5540,14 @@ bool CHARACTER::UseItem(TItemPos Cell, TItemPos DestCell
 
 	if (!IsValidItemPosition(Cell) || !(item = GetItem(Cell)))
 		return false;
+	
+#ifdef ENABLE_RENEWAL_PVP
+	if (CheckPvPUse(item->GetVnum()))
+	{
+		ChatPacket(CHAT_TYPE_INFO, LC_TEXT("1005"));
+		return false;
+	}
+#endif
 
 	if (item->IsExchanging())
 		return false;

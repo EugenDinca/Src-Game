@@ -2204,6 +2204,16 @@ bool CHARACTER::UseSkill(DWORD dwVnum, LPCHARACTER pkVictim, bool bUseGrandMaste
 {
 	if (false == CanUseSkill(dwVnum))
 		return false;
+	
+#ifdef ENABLE_RENEWAL_PVP
+	if (IsPC() && IsInFight() && pvpSettings[PVP_BUFFI_SKILLS] == false)
+		if(dwVnum == SKILL_PAERYONG || dwVnum == SKILL_REFLECT || dwVnum == SKILL_GICHEON || dwVnum == SKILL_JEONGEOP || dwVnum == SKILL_HOSIN || dwVnum == SKILL_KWAESOK || dwVnum == SKILL_JEUNGRYEOK)
+			return false;
+	if(pkVictim)
+		if (pkVictim->IsPC() && pkVictim->IsInFight() && pkVictim->pvpSettings[PVP_BUFFI_SKILLS] == false)
+			if (dwVnum == SKILL_PAERYONG || dwVnum == SKILL_REFLECT || dwVnum == SKILL_GICHEON || dwVnum == SKILL_JEONGEOP || dwVnum == SKILL_HOSIN || dwVnum == SKILL_KWAESOK || dwVnum == SKILL_JEUNGRYEOK)
+				return false;
+#endif
 
 	if ((dwVnum == SKILL_GEOMKYUNG || dwVnum == SKILL_GWIGEOM) && !GetWear(WEAR_WEAPON))//@Lightwork#88
 		return false;

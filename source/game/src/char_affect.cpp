@@ -676,6 +676,12 @@ void CHARACTER::LoadAffect(DWORD dwCount, TPacketAffectElement* pElements)
 
 	ComputePoints(); // @fixme156
 	DragonSoul_Initialize();
+	
+#ifdef ENABLE_RENEWAL_PVP
+	auto affect = FindAffect(AFFECT_PVP_SETTINGS);
+	if (affect)
+		RemoveAffect(affect);
+#endif
 
 #ifdef __SKILL_TRAINING__
 	if (GetLevel() >= 5 && GetSkillGroup() == 0)

@@ -45,6 +45,14 @@ CPVP::CPVP(CPVP& k)
 
 	m_dwCRC = k.m_dwCRC;
 	m_bRevenge = k.m_bRevenge;
+	
+#ifdef ENABLE_RENEWAL_PVP
+	memset(&pvpSetting, true, sizeof(pvpSetting));
+	pvpSetting[PVP_HALF_HUMAN] = false;
+	pvpSetting[PVP_BUFFI_SKILLS] = false;
+	pvpSetting[PVP_HP_ELIXIR] = false;
+	pvpBet = 0;
+#endif
 
 	SetLastFightTime();
 }
@@ -69,6 +77,14 @@ void CPVP::Packet(bool bDelete)
 
 	if (bDelete)
 	{
+#ifdef ENABLE_RENEWAL_PVP
+		LPCHARACTER ch = CHARACTER_MANAGER::Instance().FindByPID(m_players[0].dwPID);
+		if (ch != NULL)
+			ch->CheckPvPBonus(false, pvpSetting);
+		ch = CHARACTER_MANAGER::Instance().FindByPID(m_players[1].dwPID);
+		if (ch != NULL)
+			ch->CheckPvPBonus(false, pvpSetting);
+#endif
 		pack.bMode = PVP_MODE_NONE;
 		pack.dwVIDSrc = m_players[0].dwVID;
 		pack.dwVIDDst = m_players[1].dwVID;
@@ -169,7 +185,129 @@ CPVPManager::~CPVPManager()
 {
 }
 
+#ifdef ENABLE_RENEWAL_PVP
+bool CPVPManager::IsFighting(LPCHARACTER pkChr)
+{
+	if (!pkChr)
+		return false;
+	return IsFighting(pkChr->GetPlayerID());
+}
+bool CPVPManager::IsFighting(DWORD dwPID)
+{
+	CPVPSetMap::iterator it = m_map_pkPVPSetByID.find(dwPID);
+
+	if (it == m_map_pkPVPSetByID.end())
+		return false;
+	std::unordered_set<CPVP*>::iterator it2 = it->second.begin();
+	while (it2 != it->second.end())
+	{
+		CPVP* pkPVP = *it2++;
+		if (pkPVP->IsFight())
+			return true;
+	}
+	return false;
+}
+bool CPVPManager::HasPvP(LPCHARACTER pkChr, LPCHARACTER pkVictim)
+{
+	auto it = m_map_pkPVPSetByID.find(pkChr->GetPlayerID());
+	if (it == m_map_pkPVPSetByID.end())
+		return false;
+	auto it2 = it->second.begin();
+	while (it2 != it->second.end())
+	{
+		CPVP* pkPVP = *it2++;
+		DWORD dwCompanionPID;
+		if (pkPVP->m_players[0].dwPID == pkChr->GetPlayerID())
+			dwCompanionPID = pkPVP->m_players[1].dwPID;
+		else
+			dwCompanionPID = pkPVP->m_players[0].dwPID;
+		if (dwCompanionPID == pkVictim->GetPlayerID())
+			return true;
+	}
+	return false;
+}
+void CPVPManager::RemoveCharactersPvP(LPCHARACTER pkChr, LPCHARACTER pkVictim)
+{
+	auto it = m_map_pkPVPSetByID.find(pkChr->GetPlayerID());
+
+	if (it == m_map_pkPVPSetByID.end())
+		return;
+
+	auto it2 = it->second.begin();
+	while (it2 != it->second.end())
+	{
+		CPVP* pkPVP = *it2++;
+		DWORD dwCompanionPID;
+		if (pkPVP->m_players[0].dwPID == pkChr->GetPlayerID())
+			dwCompanionPID = pkPVP->m_players[1].dwPID;
+		else
+			dwCompanionPID = pkPVP->m_players[0].dwPID;
+		if (dwCompanionPID == pkVictim->GetPlayerID())
+		{
+			pkPVP->Packet(true);
+			Delete(pkPVP);
+		}
+	}
+}
+
+EVENTINFO(duel_effect_info)
+{
+	DWORD players1, players2, crcPvP;
+	BYTE state;
+	duel_effect_info(): players1(0), players2(0), crcPvP(0), state(0){}
+};
+
+EVENTFUNC(start_duel_efect)
+{
+	duel_effect_info* info = dynamic_cast<duel_effect_info*>(event->info);
+	if (!info)
+		return 0;
+
+	CPVP* pkPVP = CPVPManager::Instance().Find(info->crcPvP);
+	if (!pkPVP)
+		return 0;
+
+	LPCHARACTER pkChr = CHARACTER_MANAGER::Instance().FindByPID(info->players1), pkVictim = CHARACTER_MANAGER::Instance().FindByPID(info->players2);
+	if (!pkChr || !pkVictim)
+		return 0;
+
+	switch (info->state)
+	{
+		case 0:
+			pkChr->SpecificEffectPacket("d:/ymir work/effect/pvp/3.mse");
+			pkVictim->SpecificEffectPacket("d:/ymir work/effect/pvp/3.mse");
+			break;
+		case 1:
+			pkChr->SpecificEffectPacket("d:/ymir work/effect/pvp/2.mse");
+			pkVictim->SpecificEffectPacket("d:/ymir work/effect/pvp/2.mse");
+			break;
+		case 2:
+			pkChr->SpecificEffectPacket("d:/ymir work/effect/pvp/1.mse");
+			pkVictim->SpecificEffectPacket("d:/ymir work/effect/pvp/1.mse");
+			break;
+		case 3:
+		{
+			pkChr->SpecificEffectPacket("d:/ymir work/effect/pvp/go.mse");
+			pkVictim->SpecificEffectPacket("d:/ymir work/effect/pvp/go.mse");
+			
+			pkChr->CheckPvPBonus(true, pkPVP->pvpSetting);
+			pkVictim->CheckPvPBonus(true, pkPVP->pvpSetting);
+			if (pkPVP->Agree(pkChr->GetPlayerID()))
+			{
+				pkVictim->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("%s님과의 대결 시작!"), pkChr->GetName());
+				pkChr->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("%s님과의 대결 시작!"), pkVictim->GetName());
+			}
+			return 0;
+		}
+		break;
+	}
+	info->state++;
+	return PASSES_PER_SEC(1);
+}
+void CPVPManager::Insert(LPCHARACTER pkChr, LPCHARACTER pkVictim, bool* pvpSetting, long long pvpBet)
+#else
 void CPVPManager::Insert(LPCHARACTER pkChr, LPCHARACTER pkVictim)
+#endif
 {
 	if (pkChr->IsDead() || pkVictim->IsDead())
 		return;
@@ -180,15 +318,44 @@ void CPVPManager::Insert(LPCHARACTER pkChr, LPCHARACTER pkVictim)
 
 	if ((pkPVP = Find(kPVP.m_dwCRC)))
 	{
+#ifdef ENABLE_RENEWAL_PVP
+		if(pkPVP->pvpBet > 0)
+		{
+			if (pkPVP->pvpBet > pkChr->GetGold())
+			{
+				pkChr->ChatPacket(CHAT_TYPE_INFO,  LC_TEXT("1000"));
+				return;
+			}
+			else if (pkPVP->pvpBet > pkVictim->GetGold())
+			{
+				pkChr->ChatPacket(CHAT_TYPE_INFO,  LC_TEXT("1003"));
+				return;
+			}
+
+			pkVictim->PointChange(POINT_GOLD, -pkPVP->pvpBet);
+			pkChr->PointChange(POINT_GOLD, -pkPVP->pvpBet);
+		}
+		duel_effect_info* info = AllocEventInfo<duel_effect_info>();
+		info->players1 = pkChr->GetPlayerID();
+		info->players2 = pkVictim->GetPlayerID();
+		info->crcPvP = kPVP.m_dwCRC;
+		event_create(start_duel_efect, info, PASSES_PER_SEC(1));
+#else
 		if (pkPVP->Agree(pkChr->GetPlayerID()))
 		{
 			pkVictim->NewChatPacket(STRING_D100, "%s", pkChr->GetName());
 			pkChr->NewChatPacket(STRING_D100, "%s", pkVictim->GetName());
 		}
+#endif
 		return;
 	}
 
 	pkPVP = M2_NEW CPVP(kPVP);
+
+#ifdef ENABLE_RENEWAL_PVP
+	thecore_memcpy(&pkPVP->pvpSetting, pvpSetting, sizeof(pkPVP->pvpSetting));
+	pkPVP->pvpBet = pvpBet;
+#endif
 
 	pkPVP->SetVID(pkChr->GetPlayerID(), pkChr->GetVID());
 	pkPVP->SetVID(pkVictim->GetPlayerID(), pkVictim->GetVID());
@@ -198,8 +365,17 @@ void CPVPManager::Insert(LPCHARACTER pkChr, LPCHARACTER pkVictim)
 	m_map_pkPVPSetByID[pkChr->GetPlayerID()].insert(pkPVP);
 	m_map_pkPVPSetByID[pkVictim->GetPlayerID()].insert(pkPVP);
 
-	pkPVP->Packet();
+#ifdef ENABLE_RENEWAL_PVP
+	char msg[CHAT_MAX_LEN + 1];
+	int iLen = snprintf(msg, sizeof(msg), "OpenPvPWindow %s %u ", pkChr->GetName(), pkChr->GetVID());
+	for (DWORD j = 0; j < PVP_BET; ++j)
+		iLen += snprintf(msg + iLen, sizeof(msg) - iLen, "#%d", pvpSetting[j]);
+	iLen += snprintf(msg + iLen, sizeof(msg) - iLen, "#%lld", pvpBet);
+	pkVictim->ChatPacket(CHAT_TYPE_COMMAND, msg);
 
+	pkPVP->Packet();
+#else
+	pkPVP->Packet();
 	char msg[CHAT_MAX_LEN + 1];
 	snprintf(msg, sizeof(msg), LC_TEXT("%s wants to fight with you."), pkChr->GetName());
 
@@ -212,7 +388,7 @@ void CPVPManager::Insert(LPCHARACTER pkChr, LPCHARACTER pkVictim)
 	{
 		TPacketGCWhisper pack;
 
-		int len = MIN(CHAT_MAX_LEN, strlen(msg) + 1);
+		int32_t len = MIN(CHAT_MAX_LEN, strlen(msg) + 1);
 
 		pack.bHeader = HEADER_GC_WHISPER;
 		pack.wSize = sizeof(TPacketGCWhisper) + len;
@@ -226,6 +402,7 @@ void CPVPManager::Insert(LPCHARACTER pkChr, LPCHARACTER pkVictim)
 
 		pkVictimDesc->Packet(buf.read_peek(), buf.size());
 	}
+#endif
 	// END_OF_NOTIFY_PVP_MESSAGE
 }
 
@@ -283,7 +460,20 @@ void CPVPManager::Connect(LPCHARACTER pkChr)
 
 void CPVPManager::Disconnect(LPCHARACTER pkChr)
 {
-	//ConnectEx(pkChr, true);
+#ifdef ENABLE_RENEWAL_PVP
+	if (!pkChr)
+		return;
+	auto it = m_map_pkPVPSetByID.find(pkChr->GetPlayerID());
+	if (it == m_map_pkPVPSetByID.end())
+		return;
+	auto it2 = it->second.begin();
+	while (it2 != it->second.end())
+	{
+		CPVP* pkPVP = *it2++;
+		pkPVP->Packet(true);
+		Delete(pkPVP);
+	}
+#endif
 }
 
 void CPVPManager::GiveUp(LPCHARACTER pkChr, DWORD dwKillerPID) // This method is calling from no where yet.
@@ -327,7 +517,11 @@ void CPVPManager::GiveUp(LPCHARACTER pkChr, DWORD dwKillerPID) // This method is
 	}
 }
 
+#ifdef ENABLE_RENEWAL_PVP
+bool CPVPManager::Dead(LPCHARACTER pkChr, LPCHARACTER pkKiller)
+#else
 bool CPVPManager::Dead(LPCHARACTER pkChr, DWORD dwKillerPID)
+#endif
 {
 	CPVPSetMap::iterator it = m_map_pkPVPSetByID.find(pkChr->GetPlayerID());
 
@@ -350,12 +544,32 @@ bool CPVPManager::Dead(LPCHARACTER pkChr, DWORD dwKillerPID)
 		else
 			dwCompanionPID = pkPVP->m_players[0].dwPID;
 
+#ifdef ENABLE_RENEWAL_PVP
+		if (dwCompanionPID == pkKiller->GetPlayerID())
+#else
 		if (dwCompanionPID == dwKillerPID)
+#endif
 		{
 			if (pkPVP->IsFight())
 			{
 				pkPVP->SetLastFightTime();
+#ifdef ENABLE_RENEWAL_PVP
+				if (pkPVP->pvpBet > 0)
+				{
+					pkKiller->ChatPacket(CHAT_TYPE_INFO,  LC_TEXT("1004"), pkPVP->pvpBet);
+					pkKiller->PointChange(POINT_GOLD, pkPVP->pvpBet * 2);
+				}
+
+				pkKiller->CheckPvPBonus(false, pkPVP->pvpSetting);
+				pkKiller->SpecificEffectPacket("d:/ymir work/effect/pvp/win.mse");
+				pkChr->CheckPvPBonus(false, pkPVP->pvpSetting);
+
+				pkPVP->Win(pkKiller->GetPlayerID());
+				pkPVP->Packet(true);
+				Delete(pkPVP);
+#else
 				pkPVP->Win(dwKillerPID);
+#endif
 				found = true;
 				break;
 			}

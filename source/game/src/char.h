@@ -645,6 +645,17 @@ protected:
 	bool			m_bAutoHuntStatus;
 #endif
 
+#ifdef ENABLE_RENEWAL_PVP
+public:
+	bool				IsInFight();
+	void				CheckPvPBonus(bool isAdd, bool* pvpSettingNew);
+	bool				CheckPvPUse(DWORD itemVnum);
+	bool				IsBlockPvP(DWORD itemVnum);
+	bool				CheckPvPSetting(BYTE settingIndex);
+protected:
+	bool				pvpSettings[PVP_BET];
+#endif
+
 protected:
 	//////////////////////////////////////////////////////////////////////////////////
 	virtual void	EncodeInsertPacket(LPENTITY entity);

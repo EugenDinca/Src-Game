@@ -727,6 +727,73 @@ ACMD(do_pvp)
 		return;
 	}
 
+	#ifdef ENABLE_RENEWAL_PVP
+	std::vector<std::string> vecArgs;
+	split_argument(argument, vecArgs);
+	if (vecArgs.size() < 3) { return; }
+
+	DWORD vid = 0;
+	str_to_number(vid, vecArgs[2].c_str());
+
+	LPCHARACTER pkVictim = CHARACTER_MANAGER::instance().Find(vid);
+	if (!pkVictim)
+		return;
+	if (pkVictim->IsNPC())
+		return;
+	if (pkVictim->GetArena() != NULL)
+	{
+		pkVictim->NewChatPacket(STRING_D18);
+		return;
+	}
+
+	if (vecArgs[1] == "revenge")
+	{
+		if (!CPVPManager::Instance().HasPvP(ch, pkVictim))
+			return;
+		long long betPrice = 0;
+		bool pvpData[PVP_BET];
+		CPVPManager::instance().Insert(ch, pkVictim, pvpData, betPrice);
+	}
+	else if (vecArgs[1] == "pvp")
+	{
+		if (vecArgs.size() != 28) { return; }
+
+		long long betPrice = 0;
+		bool pvpData[PVP_BET];
+		memset(&pvpData, false, sizeof(pvpData));
+
+		for (DWORD j = 3; j < vecArgs.size() - 1; ++j)
+			pvpData[j - 3] = vecArgs[j] == "1" ? true : false;
+		str_to_number(betPrice, vecArgs[vecArgs.size() - 1].c_str());
+
+		if (CPVPManager::Instance().IsFighting(ch))
+		{
+			ch->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("1001"));
+			return;
+		}
+		else if (CPVPManager::Instance().IsFighting(pkVictim))
+		{
+			ch->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("1002"));
+			return;
+		}
+		else if (betPrice > ch->GetGold())
+		{
+			ch->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("1000"));
+			return;
+		}
+		else if (betPrice > pkVictim->GetGold())
+		{
+			ch->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("1003"));
+			return;
+		}
+
+		CPVPManager::instance().Insert(ch, pkVictim, pvpData, betPrice);
+	}
+	else if (vecArgs[1] == "close")
+	{
+		CPVPManager::instance().RemoveCharactersPvP(ch, pkVictim);
+	}
+#else
 	char arg1[256];
 	one_argument(argument, arg1, sizeof(arg1));
 
@@ -747,6 +814,8 @@ ACMD(do_pvp)
 	}
 
 	CPVPManager::instance().Insert(ch, pkVictim);
+#endif
+
 }
 
 ACMD(do_guildskillup)

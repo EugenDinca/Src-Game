@@ -246,6 +246,12 @@ void CHARACTER::AttackedByPoison(LPCHARACTER pkAttacker)
 
 	if (m_bHasPoisoned && !IsPC())
 		return;
+	
+#ifdef ENABLE_RENEWAL_PVP
+	if (pkAttacker && pkAttacker->IsPC())
+		if(pkAttacker->IsInFight() && pvpSettings[PVP_POISONING] == false)
+			return;
+#endif
 
 #ifdef ENABLE_WOLFMAN_CHARACTER
 	if (m_pkBleedingEvent)

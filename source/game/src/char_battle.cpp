@@ -1007,7 +1007,11 @@ void CHARACTER::Dead(LPCHARACTER pkKiller, bool bImmediateDead)
 		if (!IsPC() && pkKiller->GetDungeon())
 			pkKiller->GetDungeon()->IncKillCount(pkKiller, this);
 
+#ifdef ENABLE_RENEWAL_PVP
+		isAgreedPVP = CPVPManager::instance().Dead(this, pkKiller);
+#else
 		isAgreedPVP = CPVPManager::instance().Dead(this, pkKiller->GetPlayerID());
+#endif
 		isDuel = CArenaManager::instance().OnDead(pkKiller, this);
 
 		if (IsPC())
@@ -1339,8 +1343,23 @@ bool CHARACTER::Damage(LPCHARACTER pAttacker, DAM_LL dam, EDamageType type) // r
 	{
 		if (GetEmpire() && GetEmpire() == pAttacker->GetEmpire())
 		{
-			SendDamagePacket(pAttacker, 0, DAMAGE_BLOCK);
-			return false;
+#ifdef ENABLE_RENEWAL_PVP
+				bool SendDamageBlock = true;
+				if (IsPC())
+				{
+					if (IsInFight() && pvpSettings[PVP_MISS_HITS] == false)
+						SendDamageBlock = false;
+				}
+				if (SendDamageBlock)
+				{
+					SendDamagePacket(pAttacker, 0, DAMAGE_BLOCK);
+					return false;
+				}
+#else
+
+				SendDamagePacket(pAttacker, 0, DAMAGE_BLOCK);
+				return false;
+#endif
 		}
 	}
 #endif
@@ -1460,8 +1479,23 @@ bool CHARACTER::Damage(LPCHARACTER pAttacker, DAM_LL dam, EDamageType type) // r
 		{
 			if (GetPoint(POINT_DODGE) && number(1, 110) <= GetPoint(POINT_DODGE))
 			{
+#ifdef ENABLE_RENEWAL_PVP
+				bool SendDamageDodge = true;
+				if (IsPC())
+				{
+					if (IsInFight() && pvpSettings[PVP_MISS_HITS] == false)
+						SendDamageDodge = false;
+				}
+				if (SendDamageDodge)
+				{
+					SendDamagePacket(pAttacker, 0, DAMAGE_DODGE);
+					return false;
+				}
+#else
+
 				SendDamagePacket(pAttacker, 0, DAMAGE_DODGE);
 				return false;
+#endif
 			}
 		}
 
@@ -1523,6 +1557,11 @@ bool CHARACTER::Damage(LPCHARACTER pAttacker, DAM_LL dam, EDamageType type) // r
 
 			if (!IsPC())
 				iPenetratePct += pAttacker->GetMarriageBonus(UNIQUE_ITEM_MARRIAGE_PENETRATE_BONUS);
+			
+#ifdef ENABLE_RENEWAL_PVP
+			if (IsPC() && IsInFight() && pvpSettings[PVP_CRITICAL_DAMAGE_SKILLS] == false)
+				iCriticalPct = 0;
+#endif
 
 			{
 				CSkillProto* pkSk = CSkillManager::instance().Get(SKILL_RESIST_PENETRATE);
