@@ -185,7 +185,7 @@ CPVPManager::~CPVPManager()
 {
 }
 
-#ifdef ENABLE_RENEWAL_PVP
+#if defined(ENABLE_RENEWAL_PVP) || defined(ENABLE_NEWSTUFF)
 bool CPVPManager::IsFighting(LPCHARACTER pkChr)
 {
 	if (!pkChr)
@@ -406,34 +406,34 @@ void CPVPManager::Insert(LPCHARACTER pkChr, LPCHARACTER pkVictim)
 	// END_OF_NOTIFY_PVP_MESSAGE
 }
 
-#ifdef ENABLE_NEWSTUFF
-bool CPVPManager::IsFighting(LPCHARACTER pkChr)
-{
-	if (!pkChr)
-		return false;
-
-	return IsFighting(pkChr->GetPlayerID());
-}
-
-bool CPVPManager::IsFighting(DWORD dwPID)
-{
-	CPVPSetMap::iterator it = m_map_pkPVPSetByID.find(dwPID);
-
-	if (it == m_map_pkPVPSetByID.end())
-		return false;
-
-	TR1_NS::unordered_set<CPVP*>::iterator it2 = it->second.begin();
-
-	while (it2 != it->second.end())
-	{
-		CPVP* pkPVP = *it2++;
-		if (pkPVP->IsFight())
-			return true;
-	}
-
-	return false;
-}
-#endif
+//#ifdef ENABLE_NEWSTUFF
+//bool CPVPManager::IsFighting(LPCHARACTER pkChr)
+//{
+//	if (!pkChr)
+//		return false;
+//
+//	return IsFighting(pkChr->GetPlayerID());
+//}
+//
+//bool CPVPManager::IsFighting(DWORD dwPID)
+//{
+//	CPVPSetMap::iterator it = m_map_pkPVPSetByID.find(dwPID);
+//
+//	if (it == m_map_pkPVPSetByID.end())
+//		return false;
+//
+//	TR1_NS::unordered_set<CPVP*>::iterator it2 = it->second.begin();
+//
+//	while (it2 != it->second.end())
+//	{
+//		CPVP* pkPVP = *it2++;
+//		if (pkPVP->IsFight())
+//			return true;
+//	}
+//
+//	return false;
+//}
+//#endif
 
 void CPVPManager::ConnectEx(LPCHARACTER pkChr, bool bDisconnect)
 {
