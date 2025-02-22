@@ -1008,9 +1008,9 @@ void CHARACTER::Dead(LPCHARACTER pkKiller, bool bImmediateDead)
 			pkKiller->GetDungeon()->IncKillCount(pkKiller, this);
 
 #ifdef ENABLE_RENEWAL_PVP
-		isAgreedPVP = CPVPManager::instance().Dead(this, pkKiller);
+isAgreedPVP = CPVPManager::instance().Dead(this, pkKiller->GetPlayerID());
 #else
-		isAgreedPVP = CPVPManager::instance().Dead(this, pkKiller->GetPlayerID());
+isAgreedPVP = CPVPManager::instance().Dead(this, pkKiller->GetPlayerID());
 #endif
 		isDuel = CArenaManager::instance().OnDead(pkKiller, this);
 
