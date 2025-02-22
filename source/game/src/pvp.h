@@ -58,12 +58,12 @@ public:
 	CPVPManager();
 	virtual ~CPVPManager();
 
-#ifdef ENABLE_NEWSTUFF
-	bool			IsFighting(LPCHARACTER pkChr);
-	bool			IsFighting(DWORD dwPID);
-#endif
+//#ifdef ENABLE_NEWSTUFF
+//	bool			IsFighting(LPCHARACTER pkChr);
+//	bool			IsFighting(DWORD dwPID);
+//#endif
 
-#ifdef ENABLE_RENEWAL_PVP
+#ifdef ENABLE_RENEWAL_PVP || ENABLE_NEWSTUFF
 	void	Insert(LPCHARACTER pkChr, LPCHARACTER pkVictim, bool* pvpSetting, long long pvpBet);
 	void	RemoveCharactersPvP(LPCHARACTER pkChr, LPCHARACTER pkVictim);
 	bool	IsFighting(LPCHARACTER pkChr);
