@@ -36,6 +36,11 @@ public:
 	DWORD	GetLastFightTime();
 
 	DWORD 	GetCRC() { return m_dwCRC; }
+	
+#ifdef ENABLE_RENEWAL_PVP
+	bool	pvpSetting[PVP_BET];
+	long long	pvpBet;
+#endif
 
 protected:
 	TPlayer	m_players[2];
@@ -58,9 +63,21 @@ public:
 	bool			IsFighting(DWORD dwPID);
 #endif
 
-	void			Insert(LPCHARACTER pkChr, LPCHARACTER pkVictim);
+#ifdef ENABLE_RENEWAL_PVP
+	void	Insert(LPCHARACTER pkChr, LPCHARACTER pkVictim, bool* pvpSetting, long long pvpBet);
+	void	RemoveCharactersPvP(LPCHARACTER pkChr, LPCHARACTER pkVictim);
+	bool	IsFighting(LPCHARACTER pkChr);
+	bool	IsFighting(DWORD dwPID);
+	bool	HasPvP(LPCHARACTER pkChr, LPCHARACTER pkVictim);
+#else
+	void	Insert(LPCHARACTER pkChr, LPCHARACTER pkVictim);
+#endif
 	bool			CanAttack(LPCHARACTER pkChr, LPCHARACTER pkVictim);
-	bool			Dead(LPCHARACTER pkChr, DWORD dwKillerPID);
+#ifdef ENABLE_RENEWAL_PVP
+	bool	Dead(LPCHARACTER pkChr, LPCHARACTER pkKiller);
+#else
+	bool	Dead(LPCHARACTER pkChr, DWORD dwKillerPID);
+#endif
 	void			GiveUp(LPCHARACTER pkChr, DWORD dwKillerPID);
 	void			Connect(LPCHARACTER pkChr);
 	void			Disconnect(LPCHARACTER pkChr);
