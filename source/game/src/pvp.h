@@ -63,14 +63,14 @@ public:
 //	bool			IsFighting(DWORD dwPID);
 //#endif
 
-#ifdef ENABLE_RENEWAL_PVP || ENABLE_NEWSTUFF
-	void	Insert(LPCHARACTER pkChr, LPCHARACTER pkVictim, bool* pvpSetting, long long pvpBet);
-	void	RemoveCharactersPvP(LPCHARACTER pkChr, LPCHARACTER pkVictim);
-	bool	IsFighting(LPCHARACTER pkChr);
-	bool	IsFighting(DWORD dwPID);
-	bool	HasPvP(LPCHARACTER pkChr, LPCHARACTER pkVictim);
+#if defined(ENABLE_RENEWAL_PVP) || defined(ENABLE_NEWSTUFF)
+	void Insert(LPCHARACTER pkChr, LPCHARACTER pkVictim, bool* pvpSetting, long long pvpBet);
+	void RemoveCharactersPvP(LPCHARACTER pkChr, LPCHARACTER pkVictim);
+	bool HasPvP(LPCHARACTER pkChr, LPCHARACTER pkVictim);
+	bool IsFighting(LPCHARACTER pkChr);
+	bool IsFighting(DWORD dwPID);
 #else
-	void	Insert(LPCHARACTER pkChr, LPCHARACTER pkVictim);
+	void Insert(LPCHARACTER pkChr, LPCHARACTER pkVictim);
 #endif
 	bool			CanAttack(LPCHARACTER pkChr, LPCHARACTER pkVictim);
 #ifdef ENABLE_RENEWAL_PVP
