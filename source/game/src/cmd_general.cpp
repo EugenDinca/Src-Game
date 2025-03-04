@@ -456,7 +456,7 @@ ACMD(do_restart)
 
 	if (subcmd != SCMD_RESTART_TOWN && (!ch->GetWarMap() || ch->GetWarMap()->GetType() == GUILD_WAR_TYPE_FLAG))
 	{
-#define eFRS_HERESEC	178
+#define eFRS_HERESEC	170
 		if (iTimeToDead > eFRS_HERESEC)
 		{
 			ch->NewChatPacket(STRING_D13, "%d", (iTimeToDead - eFRS_HERESEC));
@@ -477,7 +477,7 @@ ACMD(do_restart)
 			}
 		}
 
-#define eFRS_TOWNSEC	175
+#define eFRS_TOWNSEC	173
 		if (iTimeToDead > eFRS_TOWNSEC)
 		{
 			ch->NewChatPacket(STRING_D14, "%d", (iTimeToDead - eFRS_TOWNSEC));
