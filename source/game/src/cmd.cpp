@@ -552,6 +552,14 @@ struct command_info cmd_info[] =
 	{ "cheerup",	do_emotion,	0,	POS_FIGHTING,	GM_PLAYER	},
 	{ "banter",		do_emotion,	0,	POS_FIGHTING,	GM_PLAYER	},
 	{ "joy",		do_emotion,	0,	POS_FIGHTING,	GM_PLAYER	},
+	
+#ifdef ENABLE_EXPRESSING_EMOTION
+	{ "pushup",		do_emotion,	0,	POS_FIGHTING,	GM_PLAYER	},
+	{ "dance_7",		do_emotion,	0,	POS_FIGHTING,	GM_PLAYER	},
+	{ "exercise",		do_emotion,	0,	POS_FIGHTING,	GM_PLAYER	},
+	{ "doze",		do_emotion,	0,	POS_FIGHTING,	GM_PLAYER	},
+	{ "selfie",		do_emotion,	0,	POS_FIGHTING,	GM_PLAYER	},
+#endif
 
 	{ "change_attr",	do_change_attr,		0,			POS_DEAD,	GM_IMPLEMENTOR	},
 	{ "add_attr",	do_add_attr,		0,			POS_DEAD,	GM_IMPLEMENTOR	},
@@ -744,13 +752,6 @@ struct command_info cmd_info[] =
 #endif
 #ifdef __AUTO_HUNT__
 	{ "auto_hunt",	do_auto_hunt,		0,		POS_DEAD,	GM_PLAYER },
-#endif
-#ifdef ENABLE_EXPRESSING_EMOTION
-	{ "pushup",		do_emotion,	0,	POS_FIGHTING,	GM_PLAYER	},
-	{ "dance_7",		do_emotion,	0,	POS_FIGHTING,	GM_PLAYER	},
-	{ "exercise",		do_emotion,	0,	POS_FIGHTING,	GM_PLAYER	},
-	{ "doze",		do_emotion,	0,	POS_FIGHTING,	GM_PLAYER	},
-	{ "selfie",		do_emotion,	0,	POS_FIGHTING,	GM_PLAYER	},
 #endif
 	{ "\n",		NULL,			0,			POS_DEAD,	GM_IMPLEMENTOR	}
 };
