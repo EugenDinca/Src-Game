@@ -19,7 +19,7 @@ void CHARACTER::LoadInfoEmotions()
 
 	snprintf(szQuery, sizeof(szQuery),
 	"SELECT id_emotion, tiempo_emotion FROM %semotions_new WHERE player_id = %d", get_table_postfix(), GetPlayerID());
-	std::auto_ptr<SQLMsg> pMsg(DBManager::Instance().DirectQuery(szQuery));
+	std::unique_ptr<SQLMsg> pMsg(DBManager::Instance().DirectQuery(szQuery));
 
 	if (pMsg->Get()->uiNumRows > 0){
 		
