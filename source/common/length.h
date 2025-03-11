@@ -592,6 +592,9 @@ enum EWindows
 	SAFEBOX,
 	MALL,
 	DRAGON_SOUL_INVENTORY,
+#ifdef FAST_EQUIP_WORLDARD
+	CHANGE_EQUIP,
+#endif
 #ifdef ENABLE_SPECIAL_STORAGE
 	UPGRADE_INVENTORY,
 	BOOK_INVENTORY,
@@ -875,6 +878,44 @@ enum EMisc2
 	INVENTORY_AND_EQUIP_SLOT_MAX = BELT_INVENTORY_SLOT_END,
 };
 
+#ifdef FAST_EQUIP_WORLDARD 
+enum ChangeEquipConfig
+{
+	CHANGE_EQUIP_PAGE_EXTRA = 10,
+	CHANGE_EQUIP_SLOT_COUNT = 30*CHANGE_EQUIP_PAGE_EXTRA,
+};
+
+static const DWORD EWearCheckPositions[]=
+{
+	WEAR_BODY,		// 0
+	WEAR_HEAD,		// 1
+	WEAR_FOOTS,		// 2
+	WEAR_WRIST,		// 3
+	WEAR_WEAPON,	// 4
+	WEAR_NECK,		// 5
+	WEAR_EAR,		// 6
+	WEAR_UNIQUE1,	// 7
+	WEAR_UNIQUE2,	// 8
+	WEAR_ARROW,		// 9
+	WEAR_SHIELD,	// 10
+    WEAR_ABILITY1,  // 11
+    WEAR_ABILITY2,  // 12
+    WEAR_ABILITY3,  // 13
+    WEAR_ABILITY4,  // 14
+    WEAR_ABILITY5,  // 15
+    WEAR_ABILITY6,  // 16
+    WEAR_ABILITY7,  // 17
+    WEAR_ABILITY8,  // 18
+	WEAR_COSTUME_BODY,	// 19
+	WEAR_COSTUME_HAIR,	// 20
+#ifdef ENABLE_WEAPON_COSTUME_SYSTEM
+	WEAR_COSTUME_WEAPON,
+#endif
+	WEAR_BELT,			// 23	: ½Å±Ô º§Æ®½½·Ô
+
+};
+#endif
+
 #pragma pack(push, 1)
 
 typedef struct SItemPos
@@ -924,6 +965,10 @@ typedef struct SItemPos
 		case BUFFI_INVENTORY:
 			return cell < BUFFI_MAX_SLOT;
 #endif
+#ifdef FAST_EQUIP_WORLDARD
+		case CHANGE_EQUIP:
+			return cell < CHANGE_EQUIP_SLOT_COUNT;
+#endif
 		case SAFEBOX:
 		case MALL:
 			return false;
@@ -960,6 +1005,13 @@ typedef struct SItemPos
 	{
 		return INVENTORY == window_type && cell < INVENTORY_MAX_NUM;
 	}
+	
+#ifdef FAST_EQUIP_WORLDARD
+	bool IsChangeEquipPosition() const
+	{
+		return CHANGE_EQUIP == window_type && cell < CHANGE_EQUIP_SLOT_COUNT;
+	}
+#endif
 
 	bool operator==(const struct SItemPos& rhs) const
 	{
