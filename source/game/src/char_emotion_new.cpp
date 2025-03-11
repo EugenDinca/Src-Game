@@ -14,33 +14,34 @@ void CHARACTER::LoadingInfoEmotions()
 
 void CHARACTER::LoadInfoEmotions()
 {
-	char szQuery[1024];
-	load_info_emotion.clear();
+    char szQuery[1024];
+    load_info_emotion.clear();
 
-	snprintf(szQuery, sizeof(szQuery),
-	"SELECT id_emotion, tiempo_emotion FROM %semotions_new WHERE player_id = %d", get_table_postfix(), GetPlayerID());
-	std::unique_ptr<SQLMsg> pMsg(DBManager::Instance().DirectQuery(szQuery));
+    snprintf(szQuery, sizeof(szQuery),
+    "SELECT id_emotion, tiempo_emotion FROM %semotions_new WHERE player_id = %d", get_table_postfix(), GetPlayerID());
+    std::unique_ptr<SQLMsg> pMsg(DBManager::Instance().DirectQuery(szQuery));
 
-	if (pMsg->Get()->uiNumRows > 0){
-		
-		int id_emotion;
-		DWORD tiempo_emotion;
+    if (pMsg->Get()->uiNumRows > 0) {
+        for (int i = 0; i < mysql_num_rows(pMsg->Get()->pSQLResult); ++i)
+        {
+            MYSQL_ROW row = mysql_fetch_row(pMsg->Get()->pSQLResult);
+            if (!row) // Ensure row is valid
+                continue;
 
-		for (int i = 0; i < mysql_num_rows(pMsg->Get()->pSQLResult); ++i)
-		{
-			MYSQL_ROW row = mysql_fetch_row(pMsg->Get()->pSQLResult);
-			int col = 0;
+            int col = 0;
+            int id_emotion = 0;
+            DWORD tiempo_emotion = 0;
 
-			str_to_number(id_emotion, row[col++]);
-			str_to_number(tiempo_emotion, row[col++]);
+            str_to_number(id_emotion, row[col++]);
+            str_to_number(tiempo_emotion, row[col++]);
 
-			save_info_emotion.id_emotion = id_emotion;
-			save_info_emotion.tiempo_emotion = tiempo_emotion;
+            save_info_emotion.id_emotion = id_emotion;
+            save_info_emotion.tiempo_emotion = tiempo_emotion;
 
-			memcpy (&copy_info_emotion, &save_info_emotion, sizeof(save_info_emotion));
-			load_info_emotion.push_back(copy_info_emotion);
-		}
-	}
+            memcpy(&copy_info_emotion, &save_info_emotion, sizeof(save_info_emotion));
+            load_info_emotion.push_back(copy_info_emotion);
+        }
+    }
 }
 
 void CHARACTER::LoadEmotions()
