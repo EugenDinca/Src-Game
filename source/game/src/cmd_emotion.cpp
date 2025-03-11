@@ -47,6 +47,13 @@ struct emotion_type_s
 	{ "응원",	"cheerup",			0,				1.0f	},
 	{ "질투",	"banter",			0,				1.0f	},
 	{ "기쁨",	"joy",				0,				1.0f	},
+#ifdef ENABLE_EXPRESSING_EMOTION
+	{ "pushup",	"pushup",				0,				1.0f	},
+	{ "dance_7",	"dance_7",				0,				1.0f	},
+	{ "exercise",	"exercise",				0,				1.0f	},
+	{ "doze",	"doze",				0,				1.0f	},
+	{ "selfie",	"selfie",				0,				1.0f	},
+#endif
 	{ "\n",	"\n",		0,						0.0f },
 };
 

@@ -2821,6 +2821,33 @@ private:
 	DWORD m_dwEscapeCooltime;
 #endif
 
+#ifdef ENABLE_EXPRESSING_EMOTION
+	struct EmotionsValues
+	{
+		int 	id_emotion;
+		DWORD 	tiempo_emotion;
+
+	}save_info_emotion,copy_info_emotion;
+
+	public:
+
+		void LoadingInfoEmotions();
+		void LoadInfoEmotions();
+		void LoadEmotions();
+		bool CheckEmotionList(int emotion);
+		int EmotionsList();
+		void InsertEmotion();
+		int CountEmotion();
+		void StartCheckTimeEmotion();
+		int get_time_emotion(int value);
+		int get_id_emotion(int value);
+
+
+	private:
+		LPEVENT	TimeEmotionUpdateTime;
+		std::vector<EmotionsValues> load_info_emotion;	
+#endif
+
 };
 
 ESex GET_SEX(LPCHARACTER ch);

@@ -72,6 +72,7 @@ enum eConfig {
 #define ENABLE_AFK_MODE_SYSTEM																// AFK MODE
 #define __AUTO_HUNT__																		// Auto Hunt System
 #define ENABLE_RENEWAL_PVP																	// New Duel PvP
+#define ENABLE_EXPRESSING_EMOTION															// NEW EMOTION
 
 #define ENABLE_PLAYER_STATS_SYSTEM															// Character Stats
 #define ENABLE_GLOBAL_RANKING																// Global Ranking System

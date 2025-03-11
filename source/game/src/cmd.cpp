@@ -745,6 +745,13 @@ struct command_info cmd_info[] =
 #ifdef __AUTO_HUNT__
 	{ "auto_hunt",	do_auto_hunt,		0,		POS_DEAD,	GM_PLAYER },
 #endif
+#ifdef ENABLE_EXPRESSING_EMOTION
+	{ "pushup",		do_emotion,	0,	POS_FIGHTING,	GM_PLAYER	},
+	{ "dance_7",		do_emotion,	0,	POS_FIGHTING,	GM_PLAYER	},
+	{ "exercise",		do_emotion,	0,	POS_FIGHTING,	GM_PLAYER	},
+	{ "doze",		do_emotion,	0,	POS_FIGHTING,	GM_PLAYER	},
+	{ "selfie",		do_emotion,	0,	POS_FIGHTING,	GM_PLAYER	},
+#endif
 	{ "\n",		NULL,			0,			POS_DEAD,	GM_IMPLEMENTOR	}
 };
 

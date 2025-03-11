@@ -606,6 +606,11 @@ void CInputLogin::Entergame(LPDESC d, const char* data)
 	ch->StartSaveEvent();
 	ch->StartRecoveryEvent();
 	
+#ifdef ENABLE_EXPRESSING_EMOTION
+	ch->LoadingInfoEmotions();
+	ch->StartCheckTimeEmotion();
+#endif
+	
 #ifdef ENABLE_AFK_MODE_SYSTEM
 	ch->StartUpdateCharacterEvent();
 #endif

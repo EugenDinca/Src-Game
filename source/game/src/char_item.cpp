@@ -3896,6 +3896,29 @@ bool CHARACTER::UseItemEx(LPITEM item, TItemPos DestCell
 						break;
 					}
 
+					case 38060:
+								{
+									#ifdef ENABLE_EXPRESSING_EMOTION
+										if(CountEmotion() >= 12){
+											ChatPacket(CHAT_TYPE_INFO,"[EmotionExtra] You can't put more emotions.");
+											return false;
+										}
+
+										item->SetCount(item->GetCount()-1);
+
+										int pct = number(1, 100);
+
+										if (pct <= 70){
+											InsertEmotion();
+											ChatPacket(CHAT_TYPE_INFO,"[EmotionExtra] Emotion successfully added.");
+										}
+
+									#else
+										ChatPacket(CHAT_TYPE_INFO,"[EmotionExtra] System not working.");
+									#endif
+
+								}
+								break;
 
 					case UNIQUE_ITEM_CAPE_OF_COURAGE:
 					case 70057:
