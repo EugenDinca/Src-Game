@@ -263,6 +263,7 @@ CPPFILE = BattleArena.cpp\
 		  minigame_bnw.cpp\
 		  minigame_catchking.cpp\
 		  minigame_okeycard.cpp\
+		  char_emotion_new.cpp\
 		  player_block.cpp
 # PROJECT_SRC_FILES END
 
