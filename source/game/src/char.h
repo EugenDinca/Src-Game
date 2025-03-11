@@ -486,6 +486,9 @@ typedef struct character_point_instant
 
 	LPITEM			pDSItems[DRAGON_SOUL_INVENTORY_MAX_NUM];
 	CELL_UINT			wDSItemGrid[DRAGON_SOUL_INVENTORY_MAX_NUM];
+#ifdef FAST_EQUIP_WORLDARD
+	LPITEM 			pChangeEquipItem[CHANGE_EQUIP_SLOT_COUNT];
+#endif
 #ifdef ENABLE_SPECIAL_STORAGE
 	LPITEM			pSSUItems[SPECIAL_INVENTORY_MAX_NUM];
 	CELL_UINT			wSSUItemGrid[SPECIAL_INVENTORY_MAX_NUM];
@@ -2819,6 +2822,21 @@ public:
 	DWORD GetEscapeCooltime() const { return m_dwEscapeCooltime; }
 private:
 	DWORD m_dwEscapeCooltime;
+#endif
+
+#ifdef FAST_EQUIP_WORLDARD
+	public:
+		bool 			IsValidItemChangeEquip(int cell, LPITEM item);
+		LPITEM			GetChangeEquipItem(WORD wCell) const;
+		void 			SetTimeChangeEquip(int time ) {time_change_equip = time;}
+		int 			GetTimeChangeEquip(){return time_change_equip;}
+		DWORD 			GetLastSkillTime() const {return m_dwLastSkillTime;}
+		bool 			ChechPositionAvailable(int iWearCell);
+		int 			IsWearUniqueChangeEquip(BYTE page_index_ce,LPITEM item);
+
+	private:
+		int 	time_change_equip;
+
 #endif
 
 };
