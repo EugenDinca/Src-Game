@@ -1550,9 +1550,6 @@ void CInputDB::ItemLoad(LPDESC d, const char* c_pData)
 			{
 			case INVENTORY:
 			case DRAGON_SOUL_INVENTORY:
-#ifdef FAST_EQUIP_WORLDARD
-			case CHANGE_EQUIP:
-#endif
 #ifdef ENABLE_SPECIAL_STORAGE
 			case UPGRADE_INVENTORY:
 			case BOOK_INVENTORY:

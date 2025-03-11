@@ -331,19 +331,6 @@ LPITEM CItem::RemoveFromCharacter()
 				else
 					pOwner->SetItem(TItemPos(m_bWindow, m_wCell), NULL);
 			}
-#ifdef FAST_EQUIP_WORLDARD
-			else if (m_bWindow == CHANGE_EQUIP)
-			{
-				if (m_wCell >= CHANGE_EQUIP_SLOT_COUNT)
-				{
-					sys_err("CItem::RemoveFromCharacter: pos >= CHANGE_EQUIP_SLOT_COUNT");
-				}
-				else
-				{
-					pOwner->SetItem(TItemPos(CHANGE_EQUIP, m_wCell), NULL);
-				}
-			}
-#endif
 #ifdef ENABLE_SPECIAL_STORAGE
 			else if (IsUpgradeItem() || IsBook() || IsStone() || IsChest())
 			{
@@ -463,17 +450,6 @@ bool CItem::AddToCharacter(LPCHARACTER ch, TItemPos Cell
 		if (m_wCell >= BUFFI_MAX_SLOT)
 		{
 			sys_err("CItem::AddToCharacter: BuffEquipment cell overflow: %s to %s cell %d", m_pProto->szName, ch->GetName(), m_wCell);
-			return false;
-		}
-	}
-#endif
-
-#ifdef FAST_EQUIP_WORLDARD
-	else if (CHANGE_EQUIP == window_type)
-	{
-		if (m_wCell >= CHANGE_EQUIP_SLOT_COUNT)
-		{
-			sys_err("CItem::AddToCharacter:ChangeEquip cell overflow: %s to %s cell %d", m_pProto->szName, ch->GetName(), m_wCell);
 			return false;
 		}
 	}

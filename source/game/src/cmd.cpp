@@ -355,10 +355,6 @@ ACMD(do_stone_scroll);
 ACMD(do_auto_hunt);
 #endif
 
-#ifdef FAST_EQUIP_WORLDARD
-ACMD(do_open_change_equip);
-#endif
-
 struct command_info cmd_info[] =
 {
 	{ "!RESERVED!",	NULL,			0,			POS_DEAD,	GM_IMPLEMENTOR	},
@@ -748,9 +744,6 @@ struct command_info cmd_info[] =
 #endif
 #ifdef __AUTO_HUNT__
 	{ "auto_hunt",	do_auto_hunt,		0,		POS_DEAD,	GM_PLAYER },
-#endif
-#ifdef FAST_EQUIP_WORLDARD
-	{"change_equip_wa",			do_open_change_equip,	0,			POS_DEAD,		GM_PLAYER},
 #endif
 	{ "\n",		NULL,			0,			POS_DEAD,	GM_IMPLEMENTOR	}
 };

@@ -389,10 +389,7 @@ void CClientManager::QUERY_PLAYER_LOAD(CPeer* peer, DWORD dwHandle, TPlayerLoadP
 				"'ATTR_INVENTORY', "
 #endif
 #ifdef ENABLE_BELT_INVENTORY_EX
-				"'BELT_INVENTORY',"
-#endif
-#ifdef FAST_EQUIP_WORLDARD
-				"'CHANGE_EQUIP'"
+				"'BELT_INVENTORY'"
 #endif
 #ifdef ENABLE_BUFFI_SYSTEM
 				", 'BUFFI_INVENTORY'"
@@ -498,10 +495,7 @@ void CClientManager::QUERY_PLAYER_LOAD(CPeer* peer, DWORD dwHandle, TPlayerLoadP
 			"'ATTR_INVENTORY', "
 #endif
 #ifdef ENABLE_BELT_INVENTORY_EX
-			"'BELT_INVENTORY',"
-#endif
-#ifdef FAST_EQUIP_WORLDARD
-				"'CHANGE_EQUIP'"
+			"'BELT_INVENTORY'"
 #endif
 #ifdef ENABLE_BUFFI_SYSTEM
 			", 'BUFFI_INVENTORY'"
@@ -1355,7 +1349,7 @@ void CClientManager::__RESULT_PLAYER_DELETE(CPeer* peer, SQLMsg* msg)
 		snprintf(queryStr, sizeof(queryStr), "DELETE FROM player%s WHERE id=%d", GetTablePostfix(), pi->player_id);
 		CDBManager::instance().DirectQuery(queryStr);
 
-		snprintf(queryStr, sizeof(queryStr), "DELETE FROM item%s WHERE owner_id=%d AND (`window` in ('INVENTORY','EQUIPMENT','DRAGON_SOUL_INVENTORY','UPGRADE_INVENTORY','BOOK_INVENTORY','STONE_INVENTORY','CHEST_INVENTORY','SWITCHBOT', 'ATTR_INVENTORY', 'BELT_INVENTORY', 'CHANGE_EQUIP'))", GetTablePostfix(), pi->player_id);
+		snprintf(queryStr, sizeof(queryStr), "DELETE FROM item%s WHERE owner_id=%d AND (`window` in ('INVENTORY','EQUIPMENT','DRAGON_SOUL_INVENTORY','UPGRADE_INVENTORY','BOOK_INVENTORY','STONE_INVENTORY','CHEST_INVENTORY','SWITCHBOT', 'ATTR_INVENTORY', 'BELT_INVENTORY'))", GetTablePostfix(), pi->player_id);
 		CDBManager::instance().DirectQuery(queryStr);
 
 		snprintf(queryStr, sizeof(queryStr), "DELETE FROM quest%s WHERE dwPID=%d", GetTablePostfix(), pi->player_id);
