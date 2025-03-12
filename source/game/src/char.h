@@ -655,7 +655,7 @@ public:
 protected:
 	bool				pvpSettings[PVP_BET];
 private: 
-	bool				m_bPendingAutoHpRecovery = false; // Track HP recovery after fight
+	std::vector<DWORD> m_pendingAffects; // Store affects to apply after fight
 #endif
 
 protected:
