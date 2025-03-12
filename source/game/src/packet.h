@@ -336,6 +336,9 @@ enum GameToClientPackets
 #ifdef ENABLE_PLAYER_BLOCK_SYSTEM
 	HEADER_GC_PLAYER_BLOCK 				= 161,
 #endif
+#if defined(__BL_KILL_BAR__)
+	HEADER_GC_KILLBAR 					= 218,
+#endif
 
 	HEADER_GC_KEY_AGREEMENT_COMPLETED	= 250,
 	HEADER_GC_KEY_AGREEMENT				= 251,
@@ -2165,6 +2168,18 @@ typedef struct packet_channel
 	BYTE header;
 	BYTE channel;
 } TPacketGCChannel;
+
+#if defined(__BL_KILL_BAR__)
+typedef struct command_kill_bar
+{
+	BYTE	bHeader;
+	BYTE	bKillerRace;
+	BYTE	bKillerWeaponType;
+	BYTE	bVictimRace;
+	char	szKiller[CHARACTER_NAME_MAX_LEN + 1];
+	char	szVictim[CHARACTER_NAME_MAX_LEN + 1];
+} TPacketGCKillBar;
+#endif
 
 typedef struct SEquipmentItemSet
 {
