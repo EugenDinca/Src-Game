@@ -294,8 +294,8 @@ EVENTFUNC(start_duel_efect)
 			pkVictim->CheckPvPBonus(true, pkPVP->pvpSetting);
 			if (pkPVP->Agree(pkChr->GetPlayerID()))
 			{
-				pkVictim->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("%s, the fight with you begins!"), pkChr->GetName());
-				pkChr->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("%s, the fight begins with you!"), pkVictim->GetName());
+				pkVictim->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("The fight with %s begins!"), pkChr->GetName());
+				pkChr->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("The fight with %s begins!"), pkVictim->GetName());
 			}
 			return 0;
 		}

@@ -3966,12 +3966,14 @@ bool CHARACTER::UseItemEx(LPITEM item, TItemPos DestCell
 						if (FindAffect(AFFECT_AUTO_HP_RECOVERY, POINT_NONE)) // @fixme171
 							return false;
 					
-						if (IsInFight()) // Prevent effect if in a fight
+						if (IsInFight()) // Block the affect during combat
 						{
-							m_bPendingAutoHpRecovery = true; // Set flag to apply later
+							m_pendingAffects.push_back(AFFECT_AUTO_HP_RECOVERY); // Queue affect for later
+							item->SetCount(item->GetCount() - 1); // Still consume item
 							return false;
 						}
 					
+						// Apply immediately if not in a fight
 						AddAffect(AFFECT_AUTO_HP_RECOVERY, POINT_NONE, 0, 0, INFINITE_AFFECT_DURATION, 1, false);
 						item->SetCount(item->GetCount() - 1);
 						break;
