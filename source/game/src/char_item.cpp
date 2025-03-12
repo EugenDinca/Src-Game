@@ -3963,17 +3963,14 @@ bool CHARACTER::UseItemEx(LPITEM item, TItemPos DestCell
 
 					case 72726:
 					{
+					#ifdef ENABLE_RENEWAL_PVP
+						if (IsInFight()) // Prevent usage during PvP fight
+							return false;
+					#endif
+					
 						if (FindAffect(AFFECT_AUTO_HP_RECOVERY, POINT_NONE)) // @fixme171
 							return false;
 					
-						if (IsInFight()) // Block applying affect during combat
-						{
-							m_pendingAffects.push_back(AFFECT_AUTO_HP_RECOVERY); // Queue affect
-							item->SetCount(item->GetCount() - 1); // Consume item
-							return false;
-						}
-					
-						// Apply the affect immediately if not in a fight
 						AddAffect(AFFECT_AUTO_HP_RECOVERY, POINT_NONE, 0, 0, INFINITE_AFFECT_DURATION, 1, false);
 						item->SetCount(item->GetCount() - 1);
 						break;

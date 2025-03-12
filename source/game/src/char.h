@@ -654,8 +654,6 @@ public:
 	bool				CheckPvPSetting(BYTE settingIndex);
 protected:
 	bool				pvpSettings[PVP_BET];
-private: 
-	std::vector<DWORD> m_pendingAffects; // Store affects to apply after fight
 #endif
 
 protected:
