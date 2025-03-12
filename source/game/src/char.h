@@ -654,6 +654,8 @@ public:
 	bool				CheckPvPSetting(BYTE settingIndex);
 protected:
 	bool				pvpSettings[PVP_BET];
+private: 
+	bool				m_bPendingAutoHpRecovery = false; // Track HP recovery after fight
 #endif
 
 protected:
