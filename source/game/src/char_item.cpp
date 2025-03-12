@@ -3963,11 +3963,17 @@ bool CHARACTER::UseItemEx(LPITEM item, TItemPos DestCell
 
 					case 72726:
 					{
-						if (FindAffect(AFFECT_AUTO_HP_RECOVERY, POINT_NONE))// @fixme171
-							return false;
-
-						AddAffect(AFFECT_AUTO_HP_RECOVERY, POINT_NONE, 0, 0, INFINITE_AFFECT_DURATION, 1, false);
-						item->SetCount(item->GetCount() - 1);
+					if (FindAffect(AFFECT_AUTO_HP_RECOVERY, POINT_NONE)) // @fixme171
+						return false;
+					
+					if (IsInFight()) // Prevent effect if in a fight
+					{
+						m_bPendingAutoHpRecovery = true; // Set flag to apply later
+						return false;
+					}
+					
+					AddAffect(AFFECT_AUTO_HP_RECOVERY, POINT_NONE, 0, 0, INFINITE_AFFECT_DURATION, 1, false);
+					item->SetCount(item->GetCount() - 1);
 						break;
 					}
 					case 72730:
