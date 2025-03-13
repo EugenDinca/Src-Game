@@ -10986,7 +10986,7 @@ bool CHARACTER::IsBlockPvP(DWORD itemVnum)
 {
 	if (itemVnum >= 53001 && itemVnum <= 53100 && pvpSettings[PVP_PET] == false)
 		return true;
-	else if (ITEM_COSTUME == item.GetType() && COSTUME_MOUNT == item.GetSubType() && pvpSettings[PVP_NEW_PET] == false)
+	else if (itemVnum >= 55700 && itemVnum <= 55750 && (pvpSettings[PVP_NEW_PET] == false || GetWear(WEAR_COSTUME_MOUNT) != NULL))
 		return true;
 
 	std::map<DWORD, DWORD> pvp_data = {
@@ -11065,7 +11065,7 @@ void CHARACTER::CheckPvPBonus(bool isAdd, bool* pvpSettingNew)
 
 		if (pvpSettings[PVP_NEW_PET] == false)
 		{
-			item = GetWear(WEAR_PET);
+			item = GetWear(WEAR_COSTUME_MOUNT);
 			if (item != NULL)
 				UnequipItem(item);
 		}
