@@ -162,7 +162,7 @@ void CPVP::Win(DWORD dwPID)
             pkWinner->AddAffect(AFFECT_AUTO_HP_RECOVERY, POINT_NONE, 0, AFF_NONE, INFINITE_AFFECT_DURATION, 0, true);
         }
         // Start the HP recovery effect immediately
-        pkWinner->StartAffect(AFFECT_AUTO_HP_RECOVERY);
+        pkWinner->AutoRecoveryItemProcess(AFFECT_AUTO_HP_RECOVERY);
     }
 
     if (pkLoser)
@@ -172,7 +172,7 @@ void CPVP::Win(DWORD dwPID)
             pkLoser->AddAffect(AFFECT_AUTO_HP_RECOVERY, POINT_NONE, 0, 0, INFINITE_AFFECT_DURATION, 0, false);
         }
         // Start the HP recovery effect immediately
-        pkLoser->StartAffect(AFFECT_AUTO_HP_RECOVERY);
+        pkLoser->AutoRecoveryItemProcess(AFFECT_AUTO_HP_RECOVERY);
     }
 
     Packet();
