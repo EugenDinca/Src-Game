@@ -156,20 +156,22 @@ void CPVP::Win(DWORD dwPID)
     LPCHARACTER pkLoser = CHARACTER_MANAGER::Instance().FindByPID(m_players[!iSlot].dwPID);
 
     if (pkWinner)
-    {
-        if (!pkWinner->FindAffect(AFFECT_AUTO_HP_RECOVERY))
-        {
-            pkWinner->AddAffect(AFFECT_AUTO_HP_RECOVERY, POINT_NONE, 0, AFF_NONE, INFINITE_AFFECT_DURATION, 0, true);
-        }
-    }
-
-    if (pkLoser)
-    {
-        if (!pkLoser->FindAffect(AFFECT_AUTO_HP_RECOVERY))
-        {
-            pkLoser->AddAffect(AFFECT_AUTO_HP_RECOVERY, POINT_NONE, 0, 0, INFINITE_AFFECT_DURATION, 0, false);
-        }
-    }
+	{
+		if (!pkWinner->FindAffect(AFFECT_AUTO_HP_RECOVERY))
+		{
+			pkWinner->AddAffect(AFFECT_AUTO_HP_RECOVERY, POINT_NONE, 0, AFF_NONE, INFINITE_AFFECT_DURATION, 0, true);
+			pkWinner->StartAffectEvent(); // Try forcing event processing
+		}
+	}
+	
+	if (pkLoser)
+	{
+		if (!pkLoser->FindAffect(AFFECT_AUTO_HP_RECOVERY))
+		{
+			pkLoser->AddAffect(AFFECT_AUTO_HP_RECOVERY, POINT_NONE, 0, 0, INFINITE_AFFECT_DURATION, 0, false);
+			pkLoser->StartAffectEvent();
+		}
+}
 
     Packet();
 }
