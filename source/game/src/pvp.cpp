@@ -160,6 +160,8 @@ void CPVP::Win(DWORD dwPID)
         if (!pkWinner->FindAffect(AFFECT_AUTO_HP_RECOVERY))
         {
             pkWinner->AddAffect(AFFECT_AUTO_HP_RECOVERY, POINT_NONE, 0, AFF_NONE, INFINITE_AFFECT_DURATION, 0, true);
+            // Ensure the affect is activated immediately
+            pkWinner->ActivateAffect(AFFECT_AUTO_HP_RECOVERY); // Assuming this function exists
         }
     }
 
@@ -168,6 +170,8 @@ void CPVP::Win(DWORD dwPID)
         if (!pkLoser->FindAffect(AFFECT_AUTO_HP_RECOVERY))
         {
             pkLoser->AddAffect(AFFECT_AUTO_HP_RECOVERY, POINT_NONE, 0, 0, INFINITE_AFFECT_DURATION, 0, false);
+            // Ensure the affect is activated immediately
+            pkLoser->ActivateAffect(AFFECT_AUTO_HP_RECOVERY); // Assuming this function exists
         }
     }
 
