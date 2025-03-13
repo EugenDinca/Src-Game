@@ -151,7 +151,7 @@ void CPVP::Win(DWORD dwPID)
     m_players[!iSlot].bCanRevenge = true;
     m_players[!iSlot].bAgree = false;
 
-@@ -154,14 +155,20 @@ void CPVP::Win(DWORD dwPID)
+    // Restore HP Recovery Affect after PvP ends
     LPCHARACTER pkWinner = CHARACTER_MANAGER::Instance().FindByPID(m_players[iSlot].dwPID);
     LPCHARACTER pkLoser = CHARACTER_MANAGER::Instance().FindByPID(m_players[!iSlot].dwPID);
 
