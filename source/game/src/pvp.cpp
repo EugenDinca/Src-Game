@@ -156,36 +156,30 @@ void CPVP::Win(DWORD dwPID)
     LPCHARACTER pkLoser = CHARACTER_MANAGER::Instance().FindByPID(m_players[!iSlot].dwPID);
 
     if (pkWinner)
-{
-    // Check if the AFFECT_AUTO_HP_RECOVERY affect is already active
-    if (!pkWinner->FindAffect(AFFECT_AUTO_HP_RECOVERY))
-    {
-        // Add the AFFECT_AUTO_HP_RECOVERY affect with infinite duration
-        pkWinner->AddAffect(AFFECT_AUTO_HP_RECOVERY, POINT_NONE, 0, AFF_NONE, INFINITE_AFFECT_DURATION, 0, true);
-
-        // Notify the winner that the elixir effect has started
-        pkWinner->ChatPacket(CHAT_TYPE_INFO, "The elixir's healing effect has started!");
-    }
-
-    // Optionally, you can add additional logic here, such as playing a visual effect
-    pkWinner->EffectPacket(SE_HPUP_RED); // Example: Play a red HP recovery effect
-}
-
-if (pkLoser)
-{
-    // Check if the AFFECT_AUTO_HP_RECOVERY affect is already active
-    if (!pkLoser->FindAffect(AFFECT_AUTO_HP_RECOVERY))
-    {
-        // Add the AFFECT_AUTO_HP_RECOVERY affect with infinite duration
-        pkLoser->AddAffect(AFFECT_AUTO_HP_RECOVERY, POINT_NONE, 0, 0, INFINITE_AFFECT_DURATION, 0, false);
-
-        // Notify the loser that the elixir effect has started
-        pkLoser->ChatPacket(CHAT_TYPE_INFO, "The elixir's healing effect has started!");
-    }
-
-    // Optionally, you can add additional logic here, such as playing a visual effect
-    pkLoser->EffectPacket(SE_HPUP_RED); // Example: Play a red HP recovery effect
-}
+	{
+		// Check if the AFFECT_AUTO_HP_RECOVERY affect is already active
+		if (!pkWinner->FindAffect(AFFECT_AUTO_HP_RECOVERY))
+		{
+			// Add the AFFECT_AUTO_HP_RECOVERY affect with infinite duration
+			pkWinner->AddAffect(AFFECT_AUTO_HP_RECOVERY, POINT_NONE, 0, AFF_NONE, INFINITE_AFFECT_DURATION, 0, true);
+	
+			// Notify the winner that the healing effect has started
+			pkWinner->ChatPacket(CHAT_TYPE_INFO, "A healing effect has been applied to you!");
+		}
+	}
+	
+	if (pkLoser)
+	{
+		// Check if the AFFECT_AUTO_HP_RECOVERY affect is already active
+		if (!pkLoser->FindAffect(AFFECT_AUTO_HP_RECOVERY))
+		{
+			// Add the AFFECT_AUTO_HP_RECOVERY affect with infinite duration
+			pkLoser->AddAffect(AFFECT_AUTO_HP_RECOVERY, POINT_NONE, 0, 0, INFINITE_AFFECT_DURATION, 0, false);
+	
+			// Notify the loser that the healing effect has started
+			pkLoser->ChatPacket(CHAT_TYPE_INFO, "A healing effect has been applied to you!");
+		}
+	}
 
     Packet();
 }
