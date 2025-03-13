@@ -791,11 +791,7 @@ ACMD(do_pvp)
 	}
 	else if (vecArgs[1] == "close")
 	{
-    // Remove characters from PvP
 		CPVPManager::instance().RemoveCharactersPvP(ch, pkVictim);
-
-    // Restore disabled affects for the character
-		ch->RestoreDisabledAffects();
 	}
 #else
 	char arg1[256];
