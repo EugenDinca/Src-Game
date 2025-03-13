@@ -795,7 +795,7 @@ ACMD(do_pvp)
 		CPVPManager::instance().RemoveCharactersPvP(ch, pkVictim);
 
     // Restore disabled affects for the character
-		pkChr->RestoreDisabledAffects();
+		ch->RestoreDisabledAffects();
 	}
 #else
 	char arg1[256];
