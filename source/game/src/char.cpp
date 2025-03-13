@@ -11095,7 +11095,7 @@ void CHARACTER::CheckPvPBonus(bool isAdd, bool* pvpSettingNew)
 			affect = FindAffect(AFFECT_AUTO_HP_RECOVERY);
 			if (affect != NULL)
 			{
-				affect->bActive = false; // Disable it instead of removing
+				affect->SetActive(false); // Disable it instead of removing
 			}
 		}
 
