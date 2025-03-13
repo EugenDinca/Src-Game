@@ -240,6 +240,13 @@ void CHARACTER::ClearAffect(bool bSave
 	WORD	wMovSpd = GetPoint(POINT_MOV_SPEED);
 	WORD	wAttSpd = GetPoint(POINT_ATT_SPEED);
 
+	if (!FindAffect(AFFECT_AUTO_HP_RECOVERY))
+	{
+		sys_log(0, "DEBUG: HP Recovery Affect was removed! Restarting for %s", GetName());
+		AddAffect(AFFECT_AUTO_HP_RECOVERY, POINT_NONE, 0, AFF_NONE, INFINITE_AFFECT_DURATION, 0, true);
+		StartAffectEvent();
+	}
+
 	itertype(m_list_pkAffect) it = m_list_pkAffect.begin();
 
 	while (it != m_list_pkAffect.end())
