@@ -11043,6 +11043,14 @@ bool CHARACTER::CheckPvPUse(DWORD itemVnum)
 		return false;
 	return IsBlockPvP(itemVnum);
 }
+void CHARACTER::RestoreDisabledAffects()
+{
+    for (int affectType : disabledAffects)
+    {
+        AddAffect(affectType, POINT_NONE, 0, AFF_NONE, INFINITE_AFFECT_DURATION, 0, false);
+    }
+    disabledAffects.clear(); // Clear the list after restoring
+}
 void CHARACTER::CheckPvPBonus(bool isAdd, bool* pvpSettingNew)
 {
 	if (isAdd)
@@ -11094,7 +11102,10 @@ void CHARACTER::CheckPvPBonus(bool isAdd, bool* pvpSettingNew)
 		{
 			affect = FindAffect(AFFECT_AUTO_HP_RECOVERY);
 			if (affect != NULL)
-				RemoveAffect(affect);
+			{
+				disabledAffects.push_back(AFFECT_AUTO_HP_RECOVERY); // Store the disabled affect
+				RemoveAffect(AFFECT_AUTO_HP_RECOVERY); // Temporarily disable it
+			}
 		}
 
 		if (pvpSettings[PVP_POISONING] == false)

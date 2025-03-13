@@ -248,6 +248,9 @@ void CPVPManager::RemoveCharactersPvP(LPCHARACTER pkChr, LPCHARACTER pkVictim)
 			Delete(pkPVP);
 		}
 	}
+
+	// Restore disabled affects after PvP ends
+	pkChr->RestoreDisabledAffects();
 }
 
 EVENTINFO(duel_effect_info)

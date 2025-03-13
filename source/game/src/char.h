@@ -652,8 +652,11 @@ public:
 	bool				CheckPvPUse(DWORD itemVnum);
 	bool				IsBlockPvP(DWORD itemVnum);
 	bool				CheckPvPSetting(BYTE settingIndex);
+	void				RestoreDisabledAffects(); // Public so it can be accessed from CPVPManager
 protected:
 	bool				pvpSettings[PVP_BET];
+private:
+	std::vector<int> disabledAffects; // Stores affects disabled during PvP
 #endif
 
 protected:
