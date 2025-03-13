@@ -11045,11 +11045,15 @@ bool CHARACTER::CheckPvPUse(DWORD itemVnum)
 }
 void CHARACTER::RestoreDisabledAffects()
 {
-    for (int EAffectTypes : disabledAffects)
+    for (int affectType : disabledAffects)
     {
-        AddAffect(AFFECT_AUTO_HP_RECOVERY, POINT_NONE, 0, 0, INFINITE_AFFECT_DURATION, 1, false);
+        if (affectType == AFFECT_AUTO_HP_RECOVERY)
+        {
+            printf("Restoring AFFECT_AUTO_HP_RECOVERY\n");
+            AddAffect(AFFECT_AUTO_HP_RECOVERY, POINT_NONE, 0, 0, INFINITE_AFFECT_DURATION, 1, false);
+        }
     }
-    disabledAffects.clear(); // Clear the list after restoring
+    disabledAffects.clear();
 }
 void CHARACTER::CheckPvPBonus(bool isAdd, bool* pvpSettingNew)
 {
@@ -11103,7 +11107,7 @@ void CHARACTER::CheckPvPBonus(bool isAdd, bool* pvpSettingNew)
 			affect = FindAffect(AFFECT_AUTO_HP_RECOVERY);
 			if (affect != NULL)
 			{
-				disabledAffects.push_back(AFFECT_AUTO_HP_RECOVERY); // Store the disabled affect
+				disabledAffects.push_back(AFFECT_AUTO_HP_RECOVERY); // Store the affect type
 				RemoveAffect(AFFECT_AUTO_HP_RECOVERY); // Temporarily disable it
 			}
 		}
