@@ -11045,7 +11045,7 @@ bool CHARACTER::CheckPvPUse(DWORD itemVnum)
 }
 void CHARACTER::RestoreDisabledAffects()
 {
-    for (int affectType : disabledAffects)
+    for (int EAffectTypes : disabledAffects)
     {
         AddAffect(AFFECT_AUTO_HP_RECOVERY, POINT_NONE, 0, 0, INFINITE_AFFECT_DURATION, 1, false);
     }
