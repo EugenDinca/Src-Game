@@ -146,30 +146,23 @@ void CPVP::Win(DWORD dwPID)
     int iSlot = m_players[0].dwPID != dwPID ? 1 : 0;
 
     m_bRevenge = true;
+
     m_players[iSlot].bAgree = true;
     m_players[!iSlot].bCanRevenge = true;
     m_players[!iSlot].bAgree = false;
 
-    // Find both players
-    LPCHARACTER pkWinner = CHARACTER_MANAGER::Instance().FindByPID(m_players[iSlot].dwPID);
+    // Find the character and reapply the HP recovery affect if it was previously disabled
+    LPCHARACTER pkWinner = CHARACTER_MANAGER::Instance().FindByPID(dwPID);
     LPCHARACTER pkLoser = CHARACTER_MANAGER::Instance().FindByPID(m_players[!iSlot].dwPID);
 
-    if (pkWinner)
+    if (pkPVP->pvpSetting[PVP_HP_ELIXIR] == false)
     {
-        if (pkWinner->FindAffect(AFFECT_AUTO_HP_RECOVERY_DISABLED))
+        if (pkPVP->IsFight() == false) // PvP ended
         {
-            pkWinner->RemoveAffect(AFFECT_AUTO_HP_RECOVERY);
-            pkWinner->AddAffect(AFFECT_AUTO_HP_RECOVERY, POINT_NONE, 0, 0, INFINITE_AFFECT_DURATION, 0, false);
-        }
-    }
-
-    if (pkLoser)
-    {
-        if (pkLoser->FindAffect(AFFECT_AUTO_HP_RECOVERY_DISABLED))
-        {
-            pkLoser->RemoveAffect(AFFECT_AUTO_HP_RECOVERY_DISABLED);
-            pkLoser->AddAffect(AFFECT_AUTO_HP_RECOVERY, POINT_NONE, 0, 0, INFINITE_AFFECT_DURATION, 0, false);
-        }
+            if (pkChr != NULL)
+                pkChr->AddAffect(AFFECT_AUTO_HP_RECOVERY, 0, 0, 0, INFINITE_AFFECT_DURATION, 0, false);
+            if (pkVictim)
+                pkVictim->AddAffect(AFFECT_AUTO_HP_RECOVERY, POINT_NONE, 0, 0, INFINITE_AFFECT_DURATION, 0, false);
     }
 
     Packet();

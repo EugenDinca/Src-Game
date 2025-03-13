@@ -11090,13 +11090,18 @@ void CHARACTER::CheckPvPBonus(bool isAdd, bool* pvpSettingNew)
 
 		CAffect* affect = NULL;
 		
-		if (pvpSettings[PVP_HP_ELIXIR] == false)
+		static CAffect* storedHpElixirAffect = NULL; // Store the HP Elixir affect before disabling
+
+if (pvpSettings[PVP_HP_ELIXIR] == false)
 {
-    if (FindAffect(AFFECT_AUTO_HP_RECOVERY) != NULL)
+    affect = FindAffect(AFFECT_AUTO_HP_RECOVERY);
+    if (affect != NULL)
     {
-        // Temporarily disable Auto HP Recovery without removing it
-        AddAffect(AFFECT_AUTO_HP_RECOVERY_DISABLED, POINT_NONE, 0, 0, 600, 0, false);
-        RemoveAffect(AFFECT_AUTO_HP_RECOVERY);
+        if (!IsInFight()) // Check if in PvP
+        {
+            return; // Do nothing if not in PvP
+        }
+        RemoveAffect(affect); // Remove only if in PvP
     }
 }
 
