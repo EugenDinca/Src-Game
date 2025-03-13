@@ -11095,8 +11095,11 @@ void CHARACTER::CheckPvPBonus(bool isAdd, bool* pvpSettingNew)
     affect = FindAffect(AFFECT_AUTO_HP_RECOVERY);
     if (affect != NULL)
     {
-        // Disable the effect by modifying an internal flag (if exists)
-        affect->isActive = false;  // Assuming 'isActive' is a flag that controls the effect's state.
+        if (!IsInFight()) // Check if in PvP
+        {
+            return; // Do nothing if not in PvP
+        }
+        RemoveAffect(affect); // Remove only if in PvP
     }
 }
 
