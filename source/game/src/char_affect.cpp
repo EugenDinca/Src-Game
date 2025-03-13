@@ -194,14 +194,8 @@ bool CHARACTER::UpdateAffect()
 		PointChange(POINT_SP, GetPoint(POINT_SP_RECOVER_CONTINUE));
 	}
 
-	if (!FindAffect(AFFECT_AUTO_HP_RECOVERY))
-{
-    //sys_log(0, "DEBUG: HP Recovery Affect missing, re-adding for %s", GetName());
-    AddAffect(AFFECT_AUTO_HP_RECOVERY, POINT_NONE, 0, AFF_NONE, INFINITE_AFFECT_DURATION, 0, true);
-    StartAffectEvent();
-}
-AutoRecoveryItemProcess(AFFECT_AUTO_HP_RECOVERY);
-AutoRecoveryItemProcess(AFFECT_AUTO_SP_RECOVERY);
+	AutoRecoveryItemProcess(AFFECT_AUTO_HP_RECOVERY);
+	AutoRecoveryItemProcess(AFFECT_AUTO_SP_RECOVERY);
 
 	if (GetMaxStamina() > GetStamina())
 	{
@@ -239,13 +233,6 @@ void CHARACTER::ClearAffect(bool bSave
 	TAffectFlag afOld = m_afAffectFlag;
 	WORD	wMovSpd = GetPoint(POINT_MOV_SPEED);
 	WORD	wAttSpd = GetPoint(POINT_ATT_SPEED);
-
-	if (!FindAffect(AFFECT_AUTO_HP_RECOVERY))
-	{
-		sys_log(0, "DEBUG: HP Recovery Affect was removed! Restarting for %s", GetName());
-		AddAffect(AFFECT_AUTO_HP_RECOVERY, POINT_NONE, 0, AFF_NONE, INFINITE_AFFECT_DURATION, 0, true);
-		StartAffectEvent();
-	}
 
 	itertype(m_list_pkAffect) it = m_list_pkAffect.begin();
 

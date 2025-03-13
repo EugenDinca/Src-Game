@@ -160,7 +160,6 @@ void CPVP::Win(DWORD dwPID)
         if (!pkWinner->FindAffect(AFFECT_AUTO_HP_RECOVERY))
         {
             pkWinner->AddAffect(AFFECT_AUTO_HP_RECOVERY, POINT_NONE, 0, AFF_NONE, INFINITE_AFFECT_DURATION, 0, true);
-			pkWinner->StartAffectEvent();  // Make sure it starts!
         }
     }
 
@@ -169,9 +168,10 @@ void CPVP::Win(DWORD dwPID)
         if (!pkLoser->FindAffect(AFFECT_AUTO_HP_RECOVERY))
         {
             pkLoser->AddAffect(AFFECT_AUTO_HP_RECOVERY, POINT_NONE, 0, 0, INFINITE_AFFECT_DURATION, 0, false);
-			pkLoser->StartAffectEvent();  // Make sure it starts!
         }
     }
+	
+	pvpSettings[PVP_HP_ELIXIR] = true;
 
     Packet();
 }
