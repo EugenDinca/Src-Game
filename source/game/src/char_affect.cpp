@@ -210,6 +210,10 @@ bool CHARACTER::UpdateAffect()
 			m_pkAffectEvent = NULL;
 			return false;
 		}
+		if (pkAff->dwType == AFFECT_AUTO_HP_RECOVERY)
+		{
+			StartAffectEvent();  // Restart it if removed
+		}
 
 	return true;
 }

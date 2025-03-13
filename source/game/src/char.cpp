@@ -11094,7 +11094,10 @@ void CHARACTER::CheckPvPBonus(bool isAdd, bool* pvpSettingNew)
 		{
 			affect = FindAffect(AFFECT_AUTO_HP_RECOVERY);
 			if (affect != NULL)
+			{
 				RemoveAffect(affect);
+				pvpSettings[PVP_HP_ELIXIR] = true; // Enable it after PvP
+			}
 		}
 
 		if (pvpSettings[PVP_POISONING] == false)
