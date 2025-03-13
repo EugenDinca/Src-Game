@@ -11082,11 +11082,11 @@ void CHARACTER::CheckPvPBonus(bool isAdd, bool* pvpSettingNew)
 		{
 			item = GetWear(WEAR_PET_SKIN);
 			if (item != NULL)
-				RemoveAffect(item->GetVnum());
+				UnequipItem(item);
 	
 			item = GetWear(WEAR_PET);
 			if (item != NULL)
-				RemoveAffect(item->GetVnum());
+				UnequipItem(item);
 		}
 
 		if (pvpSettings[PVP_BUFFI_SKILLS] == false)
