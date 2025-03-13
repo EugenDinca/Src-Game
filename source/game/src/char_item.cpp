@@ -4507,12 +4507,6 @@ bool CHARACTER::UseItemEx(LPITEM item, TItemPos DestCell
 						}
 						}
 					}
-					
-					if (CPVPManager::instance().IsFighting(GetPlayerID()) && IsBlockPvP(item->GetVnum()))
-                            {
-                                return false;
-                            }
-					
 					bool used = false;
 
 					if (item->GetValue(0) != 0)
