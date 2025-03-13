@@ -11099,11 +11099,6 @@ void CHARACTER::CheckPvPBonus(bool isAdd, bool* pvpSettingNew)
         affect->isActive = false;  // Assuming 'isActive' is a flag that controls the effect's state.
     }
 }
-		{
-			affect = FindAffect(AFFECT_AUTO_HP_RECOVERY);
-			if (affect != NULL)
-				RemoveAffect(affect);
-		}
 
 		if (pvpSettings[PVP_POISONING] == false)
 		{
