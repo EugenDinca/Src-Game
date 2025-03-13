@@ -143,15 +143,28 @@ bool CPVP::IsFight()
 
 void CPVP::Win(DWORD dwPID)
 {
-	int iSlot = m_players[0].dwPID != dwPID ? 1 : 0;
+    int iSlot = m_players[0].dwPID != dwPID ? 1 : 0;
 
-	m_bRevenge = true;
+    m_bRevenge = true;
+    m_players[iSlot].bAgree = true;
+    m_players[!iSlot].bCanRevenge = true;
+    m_players[!iSlot].bAgree = false;
 
-	m_players[iSlot].bAgree = true;
-	m_players[!iSlot].bCanRevenge = true;
-	m_players[!iSlot].bAgree = false;
+    // Restore HP Recovery Affect after PvP ends
+    LPCHARACTER pkWinner = CHARACTER_MANAGER::Instance().FindByPID(m_players[iSlot].dwPID);
+    LPCHARACTER pkLoser = CHARACTER_MANAGER::Instance().FindByPID(m_players[!iSlot].dwPID);
 
-	Packet();
+    if (pkWinner && pkWinner->FindAffect(AFFECT_AUTO_HP_RECOVERY))
+        pkWinner->FindAffect(AFFECT_AUTO_HP_RECOVERY)->bActive = true; // Reactivate effect
+
+    if (pkLoser)
+    {
+        CAffect* affect = pkLoser->FindAffect(AFFECT_AUTO_HP_RECOVERY);
+        if (affect != NULL)
+            affect->bActive = true; // Reactivate for the loser too
+    }
+
+    Packet();
 }
 
 bool CPVP::CanRevenge(DWORD dwPID)
