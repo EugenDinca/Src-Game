@@ -11090,8 +11090,6 @@ void CHARACTER::CheckPvPBonus(bool isAdd, bool* pvpSettingNew)
 
 		CAffect* affect = NULL;
 		
-		static CAffect* storedHpElixirAffect = NULL;
-		
 		if (pvpSettings[PVP_HP_ELIXIR] == false)
 		{
 			affect = FindAffect(AFFECT_AUTO_HP_RECOVERY);
