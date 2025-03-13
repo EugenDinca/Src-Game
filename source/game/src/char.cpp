@@ -10990,7 +10990,7 @@ bool CHARACTER::IsBlockPvP(DWORD itemVnum)
 		return true;
 	else if (itemVnum >= 71115 && itemVnum <= 71142 && pvpSettings[PVP_NEW_PET] == false)
 		return true;
-	else if ((itemVnum == 52041 || itemVnum == 71124 || itemVnum == 72010) && pvpSettings[PVP_NEW_PET] == false)
+	else if ((itemVnum == 52041 || itemVnum == 71124) && pvpSettings[PVP_NEW_PET] == false)
 		return true;
 
 	std::map<DWORD, DWORD> pvp_data = {
@@ -11082,11 +11082,11 @@ void CHARACTER::CheckPvPBonus(bool isAdd, bool* pvpSettingNew)
 		{
 			item = GetWear(WEAR_PET_SKIN);
 			if (item != NULL)
-				RemoveAffect(item);
+				RemoveAffect(item->GetVnum());
 	
 			item = GetWear(WEAR_PET);
 			if (item != NULL)
-				RemoveAffect(item);
+				RemoveAffect(item->GetVnum());
 		}
 
 		if (pvpSettings[PVP_BUFFI_SKILLS] == false)
