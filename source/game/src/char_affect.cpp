@@ -194,8 +194,14 @@ bool CHARACTER::UpdateAffect()
 		PointChange(POINT_SP, GetPoint(POINT_SP_RECOVER_CONTINUE));
 	}
 
-	AutoRecoveryItemProcess(AFFECT_AUTO_HP_RECOVERY);
-	AutoRecoveryItemProcess(AFFECT_AUTO_SP_RECOVERY);
+	if (!FindAffect(AFFECT_AUTO_HP_RECOVERY))
+{
+    //sys_log(0, "DEBUG: HP Recovery Affect missing, re-adding for %s", GetName());
+    AddAffect(AFFECT_AUTO_HP_RECOVERY, POINT_NONE, 0, AFF_NONE, INFINITE_AFFECT_DURATION, 0, true);
+    StartAffectEvent();
+}
+AutoRecoveryItemProcess(AFFECT_AUTO_HP_RECOVERY);
+AutoRecoveryItemProcess(AFFECT_AUTO_SP_RECOVERY);
 
 	if (GetMaxStamina() > GetStamina())
 	{
