@@ -170,8 +170,6 @@ void CPVP::Win(DWORD dwPID)
             pkLoser->AddAffect(AFFECT_AUTO_HP_RECOVERY, POINT_NONE, 0, 0, INFINITE_AFFECT_DURATION, 0, false);
         }
     }
-	
-	pvpSettings[PVP_HP_ELIXIR] = true;
 
     Packet();
 }
