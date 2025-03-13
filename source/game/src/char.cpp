@@ -11091,14 +11091,14 @@ void CHARACTER::CheckPvPBonus(bool isAdd, bool* pvpSettingNew)
 		CAffect* affect = NULL;
 		
 		if (pvpSettings[PVP_HP_ELIXIR] == false)
-		{
-			affect = FindAffect(AFFECT_AUTO_HP_RECOVERY);
-			if (affect != NULL)
-			{
-				// Disable the affect instead of removing it
-				affect->SetActive(false);  // Assuming there's a method to deactivate the affect.
-			}
-		}
+{
+    affect = FindAffect(AFFECT_AUTO_HP_RECOVERY);
+    if (affect != NULL)
+    {
+        // Disable the effect by modifying an internal flag (if exists)
+        affect->isActive = false;  // Assuming 'isActive' is a flag that controls the effect's state.
+    }
+}
 
 		if (pvpSettings[PVP_POISONING] == false)
 		{
