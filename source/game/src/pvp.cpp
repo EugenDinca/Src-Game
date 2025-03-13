@@ -146,7 +146,6 @@ void CPVP::Win(DWORD dwPID)
     int iSlot = m_players[0].dwPID != dwPID ? 1 : 0;
 
     m_bRevenge = true;
-
     m_players[iSlot].bAgree = true;
     m_players[!iSlot].bCanRevenge = true;
     m_players[!iSlot].bAgree = false;
@@ -157,17 +156,17 @@ void CPVP::Win(DWORD dwPID)
 
     if (pkWinner)
     {
-        if (!pkWinner->FindAffect(AFFECT_AUTO_HP_RECOVERY))
+        if (!pkWinner->FindAffect(AFFECT_AUTO_HP_RECOVERY)) // If the effect was removed
         {
-            pkWinner->AddAffect(AFFECT_AUTO_HP_RECOVERY, POINT_NONE, 0, AFF_NONE, INFINITE_AFFECT_DURATION, 0, true);
+            pkWinner->AddAffect(AFFECT_AUTO_HP_RECOVERY, POINT_NONE, 0, AFF_NONE, INFINITE_AFFECT_DURATION, 0, false);
         }
     }
 
     if (pkLoser)
     {
-        if (!pkLoser->FindAffect(AFFECT_AUTO_HP_RECOVERY))
+        if (!pkLoser->FindAffect(AFFECT_AUTO_HP_RECOVERY)) // If the effect was removed
         {
-            pkLoser->AddAffect(AFFECT_AUTO_HP_RECOVERY, POINT_NONE, 0, 0, INFINITE_AFFECT_DURATION, 0, false);
+            pkLoser->AddAffect(AFFECT_AUTO_HP_RECOVERY, POINT_NONE, 0, AFF_NONE, INFINITE_AFFECT_DURATION, 0, false);
         }
     }
 
