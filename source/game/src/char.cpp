@@ -11047,7 +11047,7 @@ void CHARACTER::RestoreDisabledAffects()
 {
     for (int affectType : disabledAffects)
     {
-        AddAffect(affectType, POINT_NONE, 0, AFF_NONE, INFINITE_AFFECT_DURATION, 0, false);
+        AddAffect(AFFECT_AUTO_HP_RECOVERY, POINT_NONE, 0, 0, INFINITE_AFFECT_DURATION, 1, false);
     }
     disabledAffects.clear(); // Clear the list after restoring
 }
