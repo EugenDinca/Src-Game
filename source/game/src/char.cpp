@@ -11108,35 +11108,35 @@ void CHARACTER::CheckPvPBonus(bool isAdd, bool* pvpSettingNew)
 
 		if (pvpSettings[PVP_WHITE_DEW] == false)
 		{
-			affect = FindAffect(AFFECT_BLEND, aApplyInfo[APPLY_DEF_GRADE_BONUS].bPointType);
+			affect = FindAffect(AFFECT_BLEND_POTION_6);
 			if (affect != NULL)
 				RemoveAffect(affect);
 		}
 
 		if (pvpSettings[PVP_YELLOW_DEW] == false)
 		{
-			affect = FindAffect(AFFECT_BLEND, aApplyInfo[APPLY_ATT_SPEED].bPointType);
+			affect = FindAffect(AFFECT_BLEND_POTION_3);
 			if (affect != NULL)
 				RemoveAffect(affect);
 		}
 
 		if (pvpSettings[PVP_ORANGE_DEW] == false)
 		{
-			affect = FindAffect(AFFECT_BLEND, aApplyInfo[APPLY_PENETRATE_PCT].bPointType);
+			affect = FindAffect(AFFECT_BLEND_POTION_2);
 			if (affect != NULL)
 				RemoveAffect(affect);
 		}
 
 		if (pvpSettings[PVP_RED_DEW] == false)
 		{
-			affect = FindAffect(AFFECT_BLEND, aApplyInfo[APPLY_CRITICAL_PCT].bPointType);
+			affect = FindAffect(AFFECT_BLEND_POTION_1);
 			if (affect != NULL)
 				RemoveAffect(affect);
 		}
 
 		if (pvpSettings[PVP_BLUE_DEW] == false)
 		{
-			affect = FindAffect(AFFECT_BLEND, aApplyInfo[APPLY_ATT_GRADE_BONUS].bPointType);
+			affect = FindAffect(AFFECT_BLEND_POTION_5);
 			if (affect != NULL)
 				RemoveAffect(affect);
 		}
@@ -11150,21 +11150,21 @@ void CHARACTER::CheckPvPBonus(bool isAdd, bool* pvpSettingNew)
 		
 		if (pvpSettings[PVP_GREEN_DEW] == false)
 		{
-			affect = FindAffect(AFFECT_BLEND, aApplyInfo[APPLY_RESIST_MAGIC].bPointType);
+			affect = FindAffect(AFFECT_BLEND_POTION_4);
 			if (affect != NULL)
 				RemoveAffect(affect);
 		}
 
 		if (pvpSettings[PVP_ZIN_WATER] == false)
 		{
-			affect = FindAffect(AFFECT_EXP_BONUS_EURO_FREE, aApplyInfo[APPLY_ATT_GRADE_BONUS].bPointType);
+			affect = FindAffect(AFFECT_WATER_POTION_1);
 			if (affect != NULL)
 				RemoveAffect(affect);
 		}
 
 		if (pvpSettings[PVP_SAMBO_WATER] == false)
 		{
-			affect = FindAffect(AFFECT_EXP_BONUS_EURO_FREE, aApplyInfo[APPLY_DEF_GRADE_BONUS].bPointType);
+			affect = FindAffect(AFFECT_WATER_POTION_2);
 			if (affect != NULL)
 				RemoveAffect(affect);
 		}
@@ -11178,28 +11178,28 @@ void CHARACTER::CheckPvPBonus(bool isAdd, bool* pvpSettingNew)
 
 		if (pvpSettings[PVP_ENERGY] == false)
 		{
-			affect = FindAffect(AFFECT_BLEND, aApplyInfo[APPLY_ENERGY].bPointType);
+			affect = FindAffect(AFFECT_ENERGY);
 			if (affect != NULL)
 				RemoveAffect(affect);
 		}
 
 		if (pvpSettings[PVP_DRAGON_GOD_ATTACK] == false)
 		{
-			affect = FindAffect(510, aApplyInfo[86].bPointType);
+			affect = FindAffect(AFFECT_DRAGON_GOD_2);
 			if (affect != NULL)
 				RemoveAffect(affect);
 		}
 
 		if (pvpSettings[PVP_DRAGON_GOD_DEFENCE] == false)
 		{
-			affect = FindAffect(510, aApplyInfo[65].bPointType);
+			affect = FindAffect(AFFECT_DRAGON_GOD_4);
 			if (affect != NULL)
 				RemoveAffect(affect);
 		}
 
 		if (pvpSettings[PVP_DRAGON_GOD_LIFE] == false)
 		{
-			affect = FindAffect(510, aApplyInfo[69].bPointType);
+			affect = FindAffect(AFFECT_DRAGON_GOD_1);
 			if (affect != NULL)
 				RemoveAffect(affect);
 		}
@@ -11207,14 +11207,14 @@ void CHARACTER::CheckPvPBonus(bool isAdd, bool* pvpSettingNew)
 
 		if (pvpSettings[PVP_PIERCING_STRIKE] == false)
 		{
-			affect = FindAffect(510, aApplyInfo[16].bPointType);
+			affect = FindAffect(AFFECT_PENETRATE);
 			if (affect != NULL)
 				RemoveAffect(affect);
 		}
 
 		if (pvpSettings[PVP_CRITICAL_STRIKE] == false)
 		{
-			affect = FindAffect(510, aApplyInfo[15].bPointType);
+			affect = FindAffect(AFFECT_CRITICAL);
 			if (affect != NULL)
 				RemoveAffect(affect);
 		}
