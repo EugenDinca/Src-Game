@@ -213,6 +213,10 @@ EVENTFUNC(oxevent_timer)
 		return PASSES_PER_SEC(10);
 
 	case 1:
+#if defined(__BL_OX_RENDER_AREA__)
+		COXEventManager::instance().RenderArea(info->answer ? OXArea::OXEVENT_AREA_O : OXArea::OXEVENT_AREA_X);
+#endif
+	
 		SendNoticeMap(LC_TEXT("OX_TALK_7"), OXEVENT_MAP_INDEX, true);
 
 		if (info->answer == true)
@@ -232,6 +236,9 @@ EVENTFUNC(oxevent_timer)
 		return PASSES_PER_SEC(5);
 
 	case 2:
+#if defined(__BL_OX_RENDER_AREA__)
+		COXEventManager::instance().RenderArea(OXArea::OXEVENT_AREA_MAX);
+#endif
 		COXEventManager::instance().WarpToAudience();
 		COXEventManager::instance().SetStatus(OXEVENT_CLOSE);
 		SendNoticeMap(LC_TEXT("OX_TALK_11"), OXEVENT_MAP_INDEX, true);
@@ -240,6 +247,19 @@ EVENTFUNC(oxevent_timer)
 	}
 	return 0;
 }
+
+#if defined(__BL_OX_RENDER_AREA__)
+void COXEventManager::RenderArea(OXArea eArea) const
+{
+	itertype(m_map_char) iter = m_map_char.begin();
+	for (; iter != m_map_char.end(); ++iter)
+	{
+		LPCHARACTER pkChar = CHARACTER_MANAGER::instance().FindByPID(iter->second);
+		if (pkChar)
+			pkChar->ChatPacket(CHAT_TYPE_COMMAND, "OXAreaRender %d", eArea);
+	}
+}
+#endif
 
 bool COXEventManager::Quiz(unsigned char level, int timelimit)
 {

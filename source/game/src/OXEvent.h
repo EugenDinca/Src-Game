@@ -17,6 +17,16 @@ enum OXEventStatus
 	OXEVENT_ERR = 0xff
 };
 
+#if defined(__BL_OX_RENDER_AREA__)
+enum OXArea
+{
+	OXEVENT_AREA_O,
+	OXEVENT_AREA_X,
+
+	OXEVENT_AREA_MAX
+};
+#endif
+
 class COXEventManager : public singleton<COXEventManager>
 {
 private:
@@ -62,6 +72,10 @@ public:
 	void WarpToAudience();
 
 	DWORD GetAttenderCount() { return m_map_attender.size(); }
+	
+#if defined(__BL_OX_RENDER_AREA__)
+	void RenderArea(OXArea eArea) const;
+#endif
 	
 #ifdef OX_EVENT_DOUBLE_CONNECT_DISABLE
 	public:
