@@ -141,7 +141,7 @@ bool CPVP::IsFight()
 	return (m_players[0].bAgree == m_players[1].bAgree) && m_players[0].bAgree;
 }
 
-void CPVP::Win(DWORD dwPID)
+void CPVP::Win(DWORD dwPID) //renewal_pvp update Eugen
 {
     int iSlot = m_players[0].dwPID != dwPID ? 1 : 0;
 
