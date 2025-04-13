@@ -17,6 +17,9 @@ extern WORD p2p_port;
 
 extern char db_addr[ADDRESS_MAX_LEN + 1];
 extern WORD db_port;
+#ifdef ENABLE_VOICE_CHAT
+extern bool g_bVoiceChatDisabled;
+#endif
 
 extern int passes_per_sec;
 extern int save_event_second_cycle;

@@ -1278,6 +1278,16 @@ namespace quest
 		{
 			CHARACTER_MANAGER::instance().SetMobGoldDropRatePremium(value);
 		}
+#ifdef ENABLE_VOICE_CHAT
+		else if (name == "voice_chat_disable")
+		{
+			bool disabled = (bool)value;
+			if (g_bVoiceChatDisabled == disabled)
+				return;
+
+			g_bVoiceChatDisabled = disabled;
+		}
+#endif
 	}
 
 	int	CQuestManager::GetEventFlag(const string& name)

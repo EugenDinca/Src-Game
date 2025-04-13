@@ -62,6 +62,9 @@ bool		g_bSkillDisable = false;
 int			g_iFullUserCount = 500;
 int			g_iBusyUserCount = 200;
 BYTE		g_bAuthServer = false;
+#ifdef ENABLE_VOICE_CHAT
+bool g_bVoiceChatDisabled = false;
+#endif
 
 string	g_stAuthMasterIP;
 WORD		g_wAuthMasterPort = 0;

@@ -228,7 +228,9 @@ protected:
 #ifdef ENABLE_MINI_GAME_BNW
 	int			MinigameBnw(LPCHARACTER ch, const char* data, size_t uiBytes);
 #endif
-
+#ifdef ENABLE_VOICE_CHAT
+	int HandleVoiceChatPacket(const LPCHARACTER ch, const char* c_pData, size_t uiBytes);
+#endif
 };
 
 class CInputDead : public CInputMain

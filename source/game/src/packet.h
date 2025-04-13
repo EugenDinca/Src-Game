@@ -140,6 +140,9 @@ enum ClientToGamePackets
 #ifdef ENABLE_MINI_GAME_CATCH_KING
 	HEADER_CG_MINI_GAME_CATCH_KING		= 92,
 #endif
+#ifdef ENABLE_VOICE_CHAT
+	HEADER_CG_VOICE_CHAT = 207,
+#endif
 	HEADER_CG_KEY_AGREEMENT				= 252,
 	HEADER_CG_TIME_SYNC					= 253,
 	HEADER_CG_PONG						= 254,
@@ -335,6 +338,9 @@ enum GameToClientPackets
 #endif
 #ifdef ENABLE_PLAYER_BLOCK_SYSTEM
 	HEADER_GC_PLAYER_BLOCK 				= 161,
+#endif
+#ifdef ENABLE_VOICE_CHAT
+	HEADER_GC_VOICE_CHAT = 182,
 #endif
 #if defined(__BL_KILL_BAR__)
 	HEADER_GC_KILLBAR 					= 218,
@@ -3568,6 +3574,29 @@ typedef struct SPacketGGPlayerBlock
 	char szBlockingPlayerName[CHARACTER_NAME_MAX_LEN + 1];
 	char szBlockedPlayerName[CHARACTER_NAME_MAX_LEN + 1];
 } TPacketGGPlayerBlock;
+#endif
+
+#if defined(ENABLE_VOICE_CHAT)
+enum EVoiceChatTypes : uint8_t
+{
+	VOICE_CHAT_TYPE_NONE,
+	VOICE_CHAT_TYPE_LOCAL,
+	VOICE_CHAT_TYPE_PARTY,
+	VOICE_CHAT_TYPE_GUILD,
+	VOICE_CHAT_TYPE_MAX_NUM,
+};
+
+typedef struct SVoiceChatPacket
+{
+	uint8_t header;
+	uint16_t size;
+	uint16_t dataSize;
+	uint16_t distance;
+	uint8_t type;
+	bool isEncoded;
+	char name[CHARACTER_NAME_MAX_LEN + 1];
+	uint32_t vid;
+} TVoiceChatPacket;
 #endif
 
 #pragma pack()

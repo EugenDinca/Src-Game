@@ -249,6 +249,13 @@ int CInputHandshake::Analyze(LPDESC d, BYTE bHeader, const char* c_pData)
 		d->SetChannelStatusRequested(true);
 		db_clientdesc->DBPacket(HEADER_GD_REQUEST_CHANNELSTATUS, d->GetHandle(), NULL, 0);
 	}
+#ifdef ENABLE_VOICE_CHAT
+	else if (bHeader ==  HEADER_CG_VOICE_CHAT)
+	{
+		TVoiceChatPacket* p = (TVoiceChatPacket*)c_pData;
+		return p->dataSize;
+	}
+#endif
 	else if (bHeader == HEADER_CG_PONG)
 		Pong(d);
 	else if (bHeader == HEADER_CG_HANDSHAKE)

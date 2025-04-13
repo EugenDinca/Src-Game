@@ -297,7 +297,11 @@ int DESC::ProcessInput()
 
 		if (iSizeBuffer > 0)
 		{
+#ifdef ENABLE_VOICE_CHAT
+			TEMP_BUFFER	tempbuf(MAX(8196, iSizeBuffer));
+#else
 			TEMP_BUFFER	tempbuf;
+#endif
 			LPBUFFER lpBufferDecrypt = tempbuf.getptr();
 			buffer_adjust_size(lpBufferDecrypt, iSizeBuffer);
 
@@ -372,9 +376,13 @@ void DESC::BufferedPacket(const void* c_pvData, int iSize)
 {
 	if (m_iPhase == PHASE_CLOSE)
 		return;
-
+#ifdef ENABLE_VOICE_CHAT
+	if (!m_lpBufferedOutputBuffer)
+		m_lpBufferedOutputBuffer = buffer_new(MAX(4096, iSize));
+#else
 	if (!m_lpBufferedOutputBuffer)
 		m_lpBufferedOutputBuffer = buffer_new(MAX(1024, iSize));
+#endif
 
 	buffer_write(m_lpBufferedOutputBuffer, c_pvData, iSize);
 }

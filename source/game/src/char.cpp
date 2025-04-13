@@ -6765,7 +6765,7 @@ void CHARACTER::BeginStateEmpty()
 	return;
 }
 
-void CHARACTER::EffectPacket(int enumEffectType)
+void CHARACTER::EffectPacket(int enumEffectType, LPDESC specificDesc)
 {
 	TPacketGCSpecialEffect p;
 
@@ -6773,7 +6773,10 @@ void CHARACTER::EffectPacket(int enumEffectType)
 	p.type = enumEffectType;
 	p.vid = GetVID();
 
-	PacketAround(&p, sizeof(TPacketGCSpecialEffect));
+	if (specificDesc)
+		specificDesc->Packet(&p, sizeof(TPacketGCSpecialEffect));
+	else
+		PacketAround(&p, sizeof(TPacketGCSpecialEffect));
 }
 
 void CHARACTER::SpecificEffectPacket(const char filename[MAX_EFFECT_FILE_NAME])
@@ -11245,5 +11248,34 @@ void CHARACTER::CheckPvPBonus(bool isAdd, bool* pvpSettingNew)
 		if (affect)
 			RemoveAffect(affect);
 	}
+}
+#endif
+
+#ifdef ENABLE_VOICE_CHAT
+void CHARACTER::VoiceChatSetConfig(uint8_t type, bool flag)
+{
+	int questFlag = GetQuestFlag("voice_chat.config");
+	if (flag)
+	{
+		SET_BIT(questFlag, (1 << type));
+	}
+	else
+	{
+		REMOVE_BIT(questFlag, (1 << type));
+	}
+
+	SetQuestFlag("voice_chat.config", questFlag);
+	ChatPacket(CHAT_TYPE_COMMAND, "voice_chat_config %d", questFlag);
+}
+
+bool CHARACTER::VoiceChatIsBlock(uint8_t type) const
+{
+	int flag = GetQuestFlag("voice_chat.config");
+	return IS_SET(flag, (1 << type));
+}
+
+int CHARACTER::VoiceChatGetConfig() const
+{
+	return GetQuestFlag("voice_chat.config");
 }
 #endif

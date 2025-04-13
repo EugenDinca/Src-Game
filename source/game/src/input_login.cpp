@@ -642,6 +642,10 @@ void CInputLogin::Entergame(LPDESC d, const char* data)
 #ifdef ENABLE_SWITCHBOT
 	CSwitchbotManager::Instance().EnterGame(ch);
 #endif
+#ifdef ENABLE_VOICE_CHAT
+	ch->ChatPacket(CHAT_TYPE_COMMAND, "voice_chat_disabled %u", g_bVoiceChatDisabled);
+	ch->ChatPacket(CHAT_TYPE_COMMAND, "voice_chat_config %d", ch->VoiceChatGetConfig());
+#endif
 
 	for (int i = 0; i <= PREMIUM_MAX_NUM; ++i)
 	{
@@ -1118,6 +1122,14 @@ int CInputLogin::Analyze(LPDESC d, BYTE bHeader, const char* c_pData)
 	case HEADER_CG_ITEM_USE:
 	case HEADER_CG_TARGET:
 		break;
+
+#ifdef ENABLE_VOICE_CHAT
+		case HEADER_CG_VOICE_CHAT:
+		{
+			TVoiceChatPacket* p = (TVoiceChatPacket*)c_pData;
+			return p->dataSize;
+		}
+#endif
 
 	default:
 		sys_err("login phase does not handle this packet! header %d", bHeader);

@@ -243,6 +243,9 @@ CPacketInfoCG::CPacketInfoCG()
 #ifdef ENABLE_MINI_GAME_CATCH_KING
 	Set(HEADER_CG_MINI_GAME_CATCH_KING, sizeof(TPacketCGMiniGameCatchKing), "MiniGameCatchKing", true);
 #endif
+#ifdef ENABLE_VOICE_CHAT
+	Set(HEADER_CG_VOICE_CHAT, sizeof(TVoiceChatPacket), "VoiceChatPacket");
+#endif
 }
 
 CPacketInfoCG::~CPacketInfoCG()

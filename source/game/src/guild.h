@@ -2,6 +2,9 @@
 #define __INC_GUILD_H
 
 #include "skill.h"
+#ifdef ENABLE_VOICE_CHAT
+#include "char.h"
+#endif
 
 typedef struct _SQLMsg SQLMsg;
 
@@ -324,6 +327,17 @@ public:
 
 	void		InviteDeny(DWORD dwPID);
 	// END_OF_GUILD_JOIN_BUG_FIX
+
+#ifdef ENABLE_VOICE_CHAT
+		template <class Func> void ForEachOnMapMember(Func& f, int32_t lMapIndex)
+		{
+			for (auto ch : m_memberOnline)
+			{
+				if (ch && ch->GetMapIndex() == lMapIndex)
+					f(ch);
+			}
+		}
+#endif
 
 private:
 	void		Initialize();

@@ -355,6 +355,10 @@ ACMD(do_stone_scroll);
 ACMD(do_auto_hunt);
 #endif
 
+#ifdef ENABLE_VOICE_CHAT
+ACMD(do_voice_chat_config);
+#endif
+
 struct command_info cmd_info[] =
 {
 	{ "!RESERVED!",	NULL,			0,			POS_DEAD,	GM_IMPLEMENTOR	},
@@ -752,6 +756,9 @@ struct command_info cmd_info[] =
 #endif
 #ifdef __AUTO_HUNT__
 	{ "auto_hunt",	do_auto_hunt,		0,		POS_DEAD,	GM_PLAYER },
+#endif
+#ifdef ENABLE_VOICE_CHAT
+	{ "voice_chat_config",	do_voice_chat_config,	0,	POS_DEAD,	GM_PLAYER },
 #endif
 	{ "\n",		NULL,			0,			POS_DEAD,	GM_IMPLEMENTOR	}
 };

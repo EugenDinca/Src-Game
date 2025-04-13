@@ -341,3 +341,4 @@ using QS_USHORT = unsigned short;//SyncQuickslot newpos UINT16_MAX
 #define ENABLE_ATTR_RARE_RENEWAL
 
 #define ENABLE_OFFICIAL_STUFF
+#define ENABLE_VOICE_CHAT

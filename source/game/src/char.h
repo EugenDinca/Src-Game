@@ -1300,7 +1300,7 @@ public:
 	void			ProcessRecallItem(LPITEM item);
 
 	//	void			PotionPacket(int iPotionType);
-	void			EffectPacket(int enumEffectType);
+	void			EffectPacket(int enumEffectType, LPDESC specificDesc = nullptr);
 	void			SpecificEffectPacket(const char filename[128]);
 	void			SpecificEffectPacket(BYTE type);
 
@@ -2819,6 +2819,13 @@ public:
 	DWORD GetEscapeCooltime() const { return m_dwEscapeCooltime; }
 private:
 	DWORD m_dwEscapeCooltime;
+#endif
+
+#ifdef ENABLE_VOICE_CHAT
+public:
+	void VoiceChatSetConfig(uint8_t type, bool flag);
+	bool VoiceChatIsBlock(uint8_t type) const;
+	int VoiceChatGetConfig() const;
 #endif
 
 #ifdef ENABLE_EXPRESSING_EMOTION
