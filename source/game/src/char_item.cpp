@@ -8047,7 +8047,7 @@ bool CHARACTER::GiveItemFromSpecialItemGroup(DWORD dwGroupNum, std::vector<DWORD
 		{
 		case CSpecialItemGroup::GOLD:
 		PointChange(POINT_GOLD, dwCount);
-		ChatPacket(CHAT_TYPE_INFO, LC_TEXT("You received %d Yang."), dwCount);
+		ChatPacket(CHAT_TYPE_INFO, "You received %d Yang.", dwCount);
 		bSuccess = true;
 		break;
 
