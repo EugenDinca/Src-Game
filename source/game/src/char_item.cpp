@@ -6263,9 +6263,9 @@ void CHARACTER::GiveGold(int iAmount)
 
         // Mesaj chat pentru party
 #ifdef ENABLE_EXTENDED_YANG_LIMIT
-        ChatPacket(CHAT_TYPE_INFO, "Ai primit %lld suma de yang", (long long)dwMyAmount);
+ChatPacket(CHAT_TYPE_INFO, "+YANG:%lld", (long long)dwMyAmount);
 #else
-        ChatPacket(CHAT_TYPE_INFO, "Ai primit %d suma de yang", (int)dwMyAmount);
+ChatPacket(CHAT_TYPE_INFO, "+YANG:%d", (int)dwMyAmount);
 #endif
 
 #ifdef ENABLE_EXTENDED_BATTLE_PASS
@@ -6278,9 +6278,9 @@ void CHARACTER::GiveGold(int iAmount)
 
         // Mesaj chat pentru solo
 #ifdef ENABLE_EXTENDED_YANG_LIMIT
-        ChatPacket(CHAT_TYPE_INFO, "Ai primit %lld suma de yang", (long long)iAmount);
+ChatPacket(CHAT_TYPE_INFO, "+YANG:%lld", (long long)iAmount);
 #else
-        ChatPacket(CHAT_TYPE_INFO, "Ai primit %d suma de yang", (int)iAmount);
+ChatPacket(CHAT_TYPE_INFO, "+YANG:%d", (int)iAmount);
 #endif
 
 #ifdef ENABLE_EXTENDED_BATTLE_PASS
