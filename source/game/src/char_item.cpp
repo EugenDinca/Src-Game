@@ -6226,6 +6226,55 @@ namespace NPartyPickupDistribute
 	};
 }
 
+//#ifdef ENABLE_EXTENDED_YANG_LIMIT
+//void CHARACTER::GiveGold(int64_t iAmount)
+//#else
+//void CHARACTER::GiveGold(int iAmount)
+//#endif
+//{
+//	if (iAmount <= 0)
+//		return;
+//
+//	if (GetParty())
+//	{
+//		LPPARTY pParty = GetParty();
+//
+//#ifdef ENABLE_EXTENDED_YANG_LIMIT
+//		int64_t dwTotal = iAmount;
+//		int64_t dwMyAmount = dwTotal;
+//#else
+//		DWORD dwTotal = iAmount;
+//		DWORD dwMyAmount = dwTotal;
+//#endif
+//
+//		NPartyPickupDistribute::FCountNearMember funcCountNearMember(this);
+//		pParty->ForEachOnlineMember(funcCountNearMember);
+//
+//		if (funcCountNearMember.total > 1)
+//		{
+//			DWORD dwShare = dwTotal / funcCountNearMember.total;
+//			dwMyAmount -= dwShare * (funcCountNearMember.total - 1);
+//
+//			NPartyPickupDistribute::FMoneyDistributor funcMoneyDist(this, dwShare);
+//
+//			pParty->ForEachOnlineMember(funcMoneyDist);
+//		}
+//
+//		PointChange(POINT_GOLD, dwMyAmount, true);
+//
+//#ifdef ENABLE_EXTENDED_BATTLE_PASS
+//		UpdateExtBattlePassMissionProgress(YANG_COLLECT, dwMyAmount, GetMapIndex());
+//#endif
+//	}
+//	else
+//	{
+//		PointChange(POINT_GOLD, iAmount, true);
+//#ifdef ENABLE_EXTENDED_BATTLE_PASS
+//		UpdateExtBattlePassMissionProgress(YANG_COLLECT, iAmount, GetMapIndex());
+//#endif
+//	}
+//}
+
 #ifdef ENABLE_EXTENDED_YANG_LIMIT
 void CHARACTER::GiveGold(int64_t iAmount)
 #else
@@ -6235,7 +6284,11 @@ void CHARACTER::GiveGold(int iAmount)
 	if (iAmount <= 0)
 		return;
 
+#ifdef ENABLE_EXTENDED_YANG_LIMIT
 	sys_log(0, "GIVE_GOLD: %s %lld", GetName(), iAmount);
+#else
+	sys_log(0, "GIVE_GOLD: %s %d", GetName(), iAmount);
+#endif
 
 	if (GetParty())
 	{
@@ -6254,11 +6307,14 @@ void CHARACTER::GiveGold(int iAmount)
 
 		if (funcCountNearMember.total > 1)
 		{
+#ifdef ENABLE_EXTENDED_YANG_LIMIT
+			int64_t dwShare = dwTotal / funcCountNearMember.total;
+#else
 			DWORD dwShare = dwTotal / funcCountNearMember.total;
+#endif
 			dwMyAmount -= dwShare * (funcCountNearMember.total - 1);
 
 			NPartyPickupDistribute::FMoneyDistributor funcMoneyDist(this, dwShare);
-
 			pParty->ForEachOnlineMember(funcMoneyDist);
 		}
 
@@ -6267,12 +6323,23 @@ void CHARACTER::GiveGold(int iAmount)
 #ifdef ENABLE_EXTENDED_BATTLE_PASS
 		UpdateExtBattlePassMissionProgress(YANG_COLLECT, dwMyAmount, GetMapIndex());
 #endif
+
+		// Mesaj către jucător
+		ChatPacket(CHAT_TYPE_INFO, "You received %lld Yang!", dwMyAmount);
 	}
 	else
 	{
 		PointChange(POINT_GOLD, iAmount, true);
+
 #ifdef ENABLE_EXTENDED_BATTLE_PASS
 		UpdateExtBattlePassMissionProgress(YANG_COLLECT, iAmount, GetMapIndex());
+#endif
+
+		// Mesaj către jucător
+#ifdef ENABLE_EXTENDED_YANG_LIMIT
+		ChatPacket(CHAT_TYPE_INFO, "You received %lld Yang!", iAmount);
+#else
+		ChatPacket(CHAT_TYPE_INFO, "You received %d Yang!", iAmount);
 #endif
 	}
 }
