@@ -6232,47 +6232,61 @@ void CHARACTER::GiveGold(int64_t iAmount)
 void CHARACTER::GiveGold(int iAmount)
 #endif
 {
-	if (iAmount <= 0)
-		return;
+    if (iAmount <= 0)
+        return;
 
-	if (GetParty())
-	{
-		LPPARTY pParty = GetParty();
+    if (GetParty())
+    {
+        LPPARTY pParty = GetParty();
 
 #ifdef ENABLE_EXTENDED_YANG_LIMIT
-		int64_t dwTotal = iAmount;
-		int64_t dwMyAmount = dwTotal;
+        int64_t dwTotal = iAmount;
+        int64_t dwMyAmount = dwTotal;
 #else
-		DWORD dwTotal = iAmount;
-		DWORD dwMyAmount = dwTotal;
+        DWORD dwTotal = iAmount;
+        DWORD dwMyAmount = dwTotal;
 #endif
 
-		NPartyPickupDistribute::FCountNearMember funcCountNearMember(this);
-		pParty->ForEachOnlineMember(funcCountNearMember);
+        NPartyPickupDistribute::FCountNearMember funcCountNearMember(this);
+        pParty->ForEachOnlineMember(funcCountNearMember);
 
-		if (funcCountNearMember.total > 1)
-		{
-			DWORD dwShare = dwTotal / funcCountNearMember.total;
-			dwMyAmount -= dwShare * (funcCountNearMember.total - 1);
+        if (funcCountNearMember.total > 1)
+        {
+            DWORD dwShare = dwTotal / funcCountNearMember.total;
+            dwMyAmount -= dwShare * (funcCountNearMember.total - 1);
 
-			NPartyPickupDistribute::FMoneyDistributor funcMoneyDist(this, dwShare);
+            NPartyPickupDistribute::FMoneyDistributor funcMoneyDist(this, dwShare);
+            pParty->ForEachOnlineMember(funcMoneyDist);
+        }
 
-			pParty->ForEachOnlineMember(funcMoneyDist);
-		}
+        PointChange(POINT_GOLD, dwMyAmount, true);
 
-		PointChange(POINT_GOLD, dwMyAmount, true);
+        // Mesaj chat pentru party
+#ifdef ENABLE_EXTENDED_YANG_LIMIT
+        ChatPacket(CHAT_TYPE_INFO, "Ai primit %lld suma de yang", (long long)dwMyAmount);
+#else
+        ChatPacket(CHAT_TYPE_INFO, "Ai primit %d suma de yang", (int)dwMyAmount);
+#endif
 
 #ifdef ENABLE_EXTENDED_BATTLE_PASS
-		UpdateExtBattlePassMissionProgress(YANG_COLLECT, dwMyAmount, GetMapIndex());
+        UpdateExtBattlePassMissionProgress(YANG_COLLECT, dwMyAmount, GetMapIndex());
 #endif
-	}
-	else
-	{
-		PointChange(POINT_GOLD, iAmount, true);
+    }
+    else
+    {
+        PointChange(POINT_GOLD, iAmount, true);
+
+        // Mesaj chat pentru solo
+#ifdef ENABLE_EXTENDED_YANG_LIMIT
+        ChatPacket(CHAT_TYPE_INFO, "Ai primit %lld suma de yang", (long long)iAmount);
+#else
+        ChatPacket(CHAT_TYPE_INFO, "Ai primit %d suma de yang", (int)iAmount);
+#endif
+
 #ifdef ENABLE_EXTENDED_BATTLE_PASS
-		UpdateExtBattlePassMissionProgress(YANG_COLLECT, iAmount, GetMapIndex());
+        UpdateExtBattlePassMissionProgress(YANG_COLLECT, iAmount, GetMapIndex());
 #endif
-	}
+    }
 }
 
 bool CHARACTER::PickupItem(DWORD dwVID)
@@ -8046,10 +8060,9 @@ bool CHARACTER::GiveItemFromSpecialItemGroup(DWORD dwGroupNum, std::vector<DWORD
 		switch (dwVnum)
 		{
 		case CSpecialItemGroup::GOLD:
-		PointChange(POINT_GOLD, dwCount);
-		ChatPacket(CHAT_TYPE_INFO, "You received %d Yang.", dwCount);
-		bSuccess = true;
-		break;
+			PointChange(POINT_GOLD, dwCount);
+			bSuccess = true;
+			break;
 
 		case CSpecialItemGroup::EXP:
 		{
