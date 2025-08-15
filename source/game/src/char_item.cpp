@@ -6235,6 +6235,12 @@ void CHARACTER::GiveGold(int iAmount)
     if (iAmount <= 0)
         return;
 
+#ifdef ENABLE_EXTENDED_YANG_LIMIT
+    sys_log(0, "GIVE_GOLD: %s %lld", GetName(), iAmount);
+#else
+    sys_log(0, "GIVE_GOLD: %s %d", GetName(), iAmount);
+#endif
+
     if (GetParty())
     {
         LPPARTY pParty = GetParty();
@@ -6252,7 +6258,11 @@ void CHARACTER::GiveGold(int iAmount)
 
         if (funcCountNearMember.total > 1)
         {
+#ifdef ENABLE_EXTENDED_YANG_LIMIT
+            int64_t dwShare = dwTotal / funcCountNearMember.total;
+#else
             DWORD dwShare = dwTotal / funcCountNearMember.total;
+#endif
             dwMyAmount -= dwShare * (funcCountNearMember.total - 1);
 
             NPartyPickupDistribute::FMoneyDistributor funcMoneyDist(this, dwShare);
@@ -6261,31 +6271,36 @@ void CHARACTER::GiveGold(int iAmount)
 
         PointChange(POINT_GOLD, dwMyAmount, true);
 
-        // Mesaj chat pentru party
-#ifdef ENABLE_EXTENDED_YANG_LIMIT
-ChatPacket(CHAT_TYPE_INFO, "+YANG:%lld", (long long)dwMyAmount);
-#else
-ChatPacket(CHAT_TYPE_INFO, "+YANG:%d", (int)dwMyAmount);
-#endif
-
 #ifdef ENABLE_EXTENDED_BATTLE_PASS
         UpdateExtBattlePassMissionProgress(YANG_COLLECT, dwMyAmount, GetMapIndex());
+#endif
+
+#ifdef ENABLE_EXTENDED_YANG_LIMIT
+        if (dwMyAmount > 1000) // log pentru sume mari
+            LogManager::instance().CharLog(this, dwMyAmount, "GET_GOLD", "");
+#else
+        if (dwMyAmount > 1000)
+            LogManager::instance().CharLog(this, dwMyAmount, "GET_GOLD", "");
 #endif
     }
     else
     {
         PointChange(POINT_GOLD, iAmount, true);
 
-        // Mesaj chat pentru solo
-#ifdef ENABLE_EXTENDED_YANG_LIMIT
-ChatPacket(CHAT_TYPE_INFO, "+YANG:%lld", (long long)iAmount);
-#else
-ChatPacket(CHAT_TYPE_INFO, "+YANG:%d", (int)iAmount);
-#endif
-
 #ifdef ENABLE_EXTENDED_BATTLE_PASS
         UpdateExtBattlePassMissionProgress(YANG_COLLECT, iAmount, GetMapIndex());
 #endif
+
+        if (LC_IsBrazil())
+        {
+            if (iAmount >= 213)
+                LogManager::instance().CharLog(this, iAmount, "GET_GOLD", "");
+        }
+        else
+        {
+            if (iAmount > 1000)
+                LogManager::instance().CharLog(this, iAmount, "GET_GOLD", "");
+        }
     }
 }
 
