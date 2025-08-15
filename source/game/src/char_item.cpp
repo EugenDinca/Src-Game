@@ -6232,76 +6232,49 @@ void CHARACTER::GiveGold(int64_t iAmount)
 void CHARACTER::GiveGold(int iAmount)
 #endif
 {
-    if (iAmount <= 0)
-        return;
+	if (iAmount <= 0)
+		return;
+
+	sys_log(0, "GIVE_GOLD: %s %lld", GetName(), iAmount);
+
+	if (GetParty())
+	{
+		LPPARTY pParty = GetParty();
 
 #ifdef ENABLE_EXTENDED_YANG_LIMIT
-    sys_log(0, "GIVE_GOLD: %s %lld", GetName(), iAmount);
+		int64_t dwTotal = iAmount;
+		int64_t dwMyAmount = dwTotal;
 #else
-    sys_log(0, "GIVE_GOLD: %s %d", GetName(), iAmount);
+		DWORD dwTotal = iAmount;
+		DWORD dwMyAmount = dwTotal;
 #endif
 
-    if (GetParty())
-    {
-        LPPARTY pParty = GetParty();
+		NPartyPickupDistribute::FCountNearMember funcCountNearMember(this);
+		pParty->ForEachOnlineMember(funcCountNearMember);
 
-#ifdef ENABLE_EXTENDED_YANG_LIMIT
-        int64_t dwTotal = iAmount;
-        int64_t dwMyAmount = dwTotal;
-#else
-        DWORD dwTotal = iAmount;
-        DWORD dwMyAmount = dwTotal;
-#endif
+		if (funcCountNearMember.total > 1)
+		{
+			DWORD dwShare = dwTotal / funcCountNearMember.total;
+			dwMyAmount -= dwShare * (funcCountNearMember.total - 1);
 
-        NPartyPickupDistribute::FCountNearMember funcCountNearMember(this);
-        pParty->ForEachOnlineMember(funcCountNearMember);
+			NPartyPickupDistribute::FMoneyDistributor funcMoneyDist(this, dwShare);
 
-        if (funcCountNearMember.total > 1)
-        {
-#ifdef ENABLE_EXTENDED_YANG_LIMIT
-            int64_t dwShare = dwTotal / funcCountNearMember.total;
-#else
-            DWORD dwShare = dwTotal / funcCountNearMember.total;
-#endif
-            dwMyAmount -= dwShare * (funcCountNearMember.total - 1);
+			pParty->ForEachOnlineMember(funcMoneyDist);
+		}
 
-            NPartyPickupDistribute::FMoneyDistributor funcMoneyDist(this, dwShare);
-            pParty->ForEachOnlineMember(funcMoneyDist);
-        }
-
-        PointChange(POINT_GOLD, dwMyAmount, true);
+		PointChange(POINT_GOLD, dwMyAmount, true);
 
 #ifdef ENABLE_EXTENDED_BATTLE_PASS
-        UpdateExtBattlePassMissionProgress(YANG_COLLECT, dwMyAmount, GetMapIndex());
+		UpdateExtBattlePassMissionProgress(YANG_COLLECT, dwMyAmount, GetMapIndex());
 #endif
-
-#ifdef ENABLE_EXTENDED_YANG_LIMIT
-        if (dwMyAmount > 1000) // log pentru sume mari
-            LogManager::instance().CharLog(this, dwMyAmount, "GET_GOLD", "");
-#else
-        if (dwMyAmount > 1000)
-            LogManager::instance().CharLog(this, dwMyAmount, "GET_GOLD", "");
-#endif
-    }
-    else
-    {
-        PointChange(POINT_GOLD, iAmount, true);
-
+	}
+	else
+	{
+		PointChange(POINT_GOLD, iAmount, true);
 #ifdef ENABLE_EXTENDED_BATTLE_PASS
-        UpdateExtBattlePassMissionProgress(YANG_COLLECT, iAmount, GetMapIndex());
+		UpdateExtBattlePassMissionProgress(YANG_COLLECT, iAmount, GetMapIndex());
 #endif
-
-        if (LC_IsBrazil())
-        {
-            if (iAmount >= 213)
-                LogManager::instance().CharLog(this, iAmount, "GET_GOLD", "");
-        }
-        else
-        {
-            if (iAmount > 1000)
-                LogManager::instance().CharLog(this, iAmount, "GET_GOLD", "");
-        }
-    }
+	}
 }
 
 bool CHARACTER::PickupItem(DWORD dwVID)
