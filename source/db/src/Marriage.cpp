@@ -294,14 +294,16 @@ namespace marriage
 			sys_err("try to end wedding %u %u", dwPID1, dwPID2);
 			return;
 		}
-
-		TWedding& w = it->second;
-
+	
+		//fix wedding
+		TWedding w = it->second;
+		m_mapRunningWedding.erase(it);
+	
 		TPacketWeddingEnd p;
 		p.dwPID1 = w.dwPID1;
 		p.dwPID2 = w.dwPID2;
+	
 		CClientManager::instance().ForwardPacket(HEADER_DG_WEDDING_END, &p, sizeof(p));
-		m_mapRunningWedding.erase(it);
 	}
 
 	void CManager::Update()
