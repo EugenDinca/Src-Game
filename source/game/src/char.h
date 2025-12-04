@@ -713,9 +713,11 @@ public:
 	virtual void			EndStateEmpty() {}
 
 	void				RestartAtSamePos();
+	bool CanUseLoginByKey() const { return m_bCanUseLoginByKey; }
 
 protected:
 	DWORD				m_dwStateDuration;
+	bool m_bCanUseLoginByKey;
 	//////////////////////////////////////////////////////////////////////////////////
 
 public:

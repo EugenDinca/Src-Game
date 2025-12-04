@@ -875,8 +875,9 @@ typedef struct SPlayerDeletePacket
 
 typedef struct SLogoutPacket
 {
-	char	login[LOGIN_MAX_LEN + 1];
-	char	passwd[PASSWD_MAX_LEN + 1];
+	char login[LOGIN_MAX_LEN + 1];
+	char passwd[PASSWD_MAX_LEN + 1];
+	bool bCanUseLoginByKey;
 } TLogoutPacket;
 
 typedef struct SPlayerCountPacket

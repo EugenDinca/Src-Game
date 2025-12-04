@@ -276,6 +276,8 @@ void CHARACTER::Initialize()
 	// MINING
 	m_pkMiningEvent = nullptr;
 	// END_OF_MINING
+	
+	m_bCanUseLoginByKey = false;
 
 	m_pkPoisonEvent = NULL;
 #ifdef ENABLE_WOLFMAN_CHARACTER
@@ -6010,6 +6012,7 @@ bool CHARACTER::WarpSet(long x, long y, long lPrivateMapIndex, long lMapIndex, l
 		lMapIndex = lPrivateMapIndex;
 	}
 
+	m_bCanUseLoginByKey = true;
 	Stop();
 	Save();
 
@@ -6080,7 +6083,8 @@ bool CHARACTER::WarpSet(long x, long y, long lPrivateMapIndex)
 
 		lMapIndex = lPrivateMapIndex;
 	}
-
+	
+	m_bCanUseLoginByKey = true;
 	Stop();
 	Save();
 
@@ -8724,7 +8728,8 @@ bool CHARACTER::SwitchChannel(long newAddr, WORD newPort)
 		sys_err("%s attempted to change channel from CH99, ignoring req.", GetName());
 		return false;
 	}
-
+	
+	m_bCanUseLoginByKey = true;
 	Stop();
 	Save();
 

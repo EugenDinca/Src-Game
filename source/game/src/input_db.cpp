@@ -132,20 +132,26 @@ void CInputDB::LoginSuccess(DWORD dwHandle, const char* data)
 
 	if (!d)
 	{
+		sys_log(0, "CInputDB::LoginSuccess - cannot find handle [%s]", pTab->login);
+		
 		TLogoutPacket pack;
-
+		
 		strlcpy(pack.login, pTab->login, sizeof(pack.login));
+		pack.bCanUseLoginByKey = false;
 		db_clientdesc->DBPacket(HEADER_GD_LOGOUT, dwHandle, &pack, sizeof(pack));
 		return;
 	}
-
+	
 	if (strcmp(pTab->status, "OK"))
 	{
+		sys_log(0, "CInputDB::LoginSuccess - status[%s] is not OK [%s]", pTab->status, pTab->login);
+		
 		TLogoutPacket pack;
-
+		
 		strlcpy(pack.login, pTab->login, sizeof(pack.login));
+		pack.bCanUseLoginByKey = false;
 		db_clientdesc->DBPacket(HEADER_GD_LOGOUT, dwHandle, &pack, sizeof(pack));
-
+		
 		LoginFailure(d, pTab->status);
 		return;
 	}

@@ -37,6 +37,9 @@ public:
 
 	DWORD		GetLastPlayerID() const { return m_dwLastPlayerID; }
 	void		SetLastPlayerID(DWORD id) { m_dwLastPlayerID = id; }
+	
+	bool IsAllowLoginByKey() const { return m_bAllowLoginByKey; }
+	void SetAllowLoginByKey(bool bFlag) { m_bAllowLoginByKey = bFlag; }
 
 private:
 	DWORD           m_dwKey;
@@ -48,6 +51,7 @@ private:
 	bool		m_bDeleted;
 	time_t		m_lastPlayTime;
 	int		m_aiPremiumTimes[PREMIUM_MAX_NUM];
+	bool	m_bAllowLoginByKey;
 
 	DWORD		m_dwLastPlayerID;
 

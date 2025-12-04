@@ -112,6 +112,19 @@ void CClientManager::QUERY_LOGIN_BY_KEY(CPeer* pkPeer, DWORD dwHandle, TPacketGD
 		pkPeer->EncodeReturn(HEADER_DG_LOGIN_NOT_EXIST, dwHandle);
 		return;
 	}
+	
+	if (!pkLoginData->IsAllowLoginByKey())
+	{
+		sys_err("LOGIN_BY_KEY without request %s", r.login); // To track them down
+		sys_log(0, "LOGIN_BY_KEY without request %s %lu", r.login, p->dwLoginKey);
+		TPacketDGLoginAlready ptog;
+		strlcpy(ptog.szLogin, szLogin, sizeof(ptog.szLogin));
+		pkPeer->EncodeHeader(HEADER_DG_LOGIN_ALREADY, dwHandle, sizeof(TPacketDGLoginAlready));
+		pkPeer->Encode(&ptog, sizeof(TPacketDGLoginAlready));
+		return;
+	}
+	
+	pkLoginData->SetAllowLoginByKey(false);
 
 	TAccountTable* pkTab = new TAccountTable;
 	memset(pkTab, 0, sizeof(TAccountTable));
@@ -446,6 +459,8 @@ void CClientManager::QUERY_LOGOUT(CPeer* peer, DWORD dwHandle, const char* data)
 
 	if (pLoginData == NULL)
 		return;
+	
+	pLoginData->SetAllowLoginByKey(packet->bCanUseLoginByKey);
 
 	int pid[PLAYER_PER_ACCOUNT];
 

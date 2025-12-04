@@ -111,8 +111,12 @@ void DESC::Destroy()
 		m_pLogFile = NULL;
 	}
 
+	bool bCanUseLoginByKey = true;
+
 	if (m_lpCharacter)
 	{
+		bCanUseLoginByKey = m_lpCharacter->CanUseLoginByKey();
+		
 		m_lpCharacter->Disconnect("DESC::~DESC");
 		m_lpCharacter = NULL;
 	}
@@ -128,9 +132,10 @@ void DESC::Destroy()
 		if (m_accountTable.login[0] && m_accountTable.passwd[0])
 		{
 			TLogoutPacket pack;
-
+			
 			strlcpy(pack.login, m_accountTable.login, sizeof(pack.login));
 			strlcpy(pack.passwd, m_accountTable.passwd, sizeof(pack.passwd));
+			pack.bCanUseLoginByKey = bCanUseLoginByKey;
 
 			db_clientdesc->DBPacket(HEADER_GD_LOGOUT, m_dwHandle, &pack, sizeof(TLogoutPacket));
 		}

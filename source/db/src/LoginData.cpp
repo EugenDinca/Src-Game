@@ -13,6 +13,7 @@ CLoginData::CLoginData()
 	m_bDeleted = false;
 	m_lastPlayTime = 0;
 	m_dwLastPlayerID = 0;
+	m_bAllowLoginByKey = true; // We allow loginByKey by default (so the first login doesn't fail)
 
 	memset(&m_data, 0, sizeof(TAccountTable));
 }
