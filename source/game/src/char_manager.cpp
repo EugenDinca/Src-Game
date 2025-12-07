@@ -416,35 +416,6 @@ LPCHARACTER CHARACTER_MANAGER::SpawnMob(DWORD dwVnum, long lMapIndex, long x, lo
     }
 #endif
 
-#ifdef ENABLE_BOSS_SPAWN_NOTICE
-// Lista tuturor boss-ilor
-static const std::unordered_set<int> bossSet = {
-    191, 192, 193, 194, 491, 492, 493, 494,
-    531, 532, 533, 534, 591, 691, 791, 792,
-    1091, 1092, 1093, 1095, 1191, 1192, 1304,
-    1901, 2091, 2206, 2307, 2306, 2491, 2492,
-    2494, 2495, 2597, 2598, 3190, 3191, 3290,
-    3291, 3390, 3391, 3490, 3491, 3590, 3591,
-    3690, 3691, 3790, 3791, 3890, 3891, 6390,
-    6391, 3090, 3091, 2191, 6421, 4204, 4209,
-    4210, 3596
-};
-
-// Obținem ID-ul boss-ului care tocmai a spawnat
-int spawnedBossID = ch->GetRaceNum();
-
-// Trimite notice doar dacă este un boss și nu a mai fost notificat deja
-if (bossSet.find(spawnedBossID) != bossSet.end())
-{
-    char szSpawnNotice[QUERY_MAX_LEN];
-    snprintf(szSpawnNotice, sizeof(szSpawnNotice),
-             "[CH %d] : %s has spawned!",
-             g_bChannel,
-             ch->GetName());
-    BroadcastNotice(szSpawnNotice);
-}
-#endif
-
 	return (ch);
 }
 
