@@ -335,20 +335,6 @@ LPCHARACTER CHARACTER_MANAGER::SpawnMobRandomPosition(DWORD dwVnum, long lMapInd
 
 LPCHARACTER CHARACTER_MANAGER::SpawnMob(DWORD dwVnum, long lMapIndex, long x, long y, long z, bool bSpawnMotion, int iRot, bool bShow)
 {
-#ifdef ENABLE_BOSS_SPAWN_NOTICE
-	static const std::vector<int> bossList = {
-		191, 192, 193, 194, 491, 492, 493, 494,
-		531, 532, 533, 534, 591, 691, 791, 792,
-		1091, 1092, 1093, 1095, 1191, 1192, 1304,
-		1901, 2091, 2206, 2307, 2306, 2491, 2492,
-		2494, 2495, 2597, 2598, 3190, 3191, 3290,
-		3291, 3390, 3391, 3490, 3491, 3590, 3591,
-		3690, 3691, 3790, 3791, 3890, 3891, 6390,
-		6391, 3090, 3091, 2191, 6421, 4204, 4209,
-		4210, 3596
-	};
-#endif
-	
 	const CMob* pkMob = CMobManager::instance().Get(dwVnum);
 	if (!pkMob)
 	{
@@ -416,21 +402,33 @@ LPCHARACTER CHARACTER_MANAGER::SpawnMob(DWORD dwVnum, long lMapIndex, long x, lo
 	}
 	
 #ifdef BOSS_DAMAGE_RANKING_PLUGIN
-	if (const auto is_boss_in_ranking{
-			bossdamageranking::boss_dmg_ranking_manager().is_boss_in_ranking(ch->GetRaceNum())};
-		is_boss_in_ranking)
-	{
-		sys_err("add boss to list");
-		bossdamageranking::BossDamageRankingBossInfo boss_info{};
-		boss_info.mob_vnum = dwVnum;
-		boss_info.mob_vid = ch->GetVID();
-		boss_info.max_hp = ch->GetMaxHP();
+    if (const auto is_boss_in_ranking{
+            bossdamageranking::boss_dmg_ranking_manager().is_boss_in_ranking(ch->GetRaceNum())};
+        is_boss_in_ranking)
+    {
+        sys_err("add boss to list");
+        bossdamageranking::BossDamageRankingBossInfo boss_info{};
+        boss_info.mob_vnum = dwVnum;
+        boss_info.mob_vid = ch->GetVID();
+        boss_info.max_hp = ch->GetMaxHP();
 
-		bossdamageranking::boss_dmg_ranking_manager().add_boss_to_list(boss_info);
-	}
+        bossdamageranking::boss_dmg_ranking_manager().add_boss_to_list(boss_info);
+    }
 #endif
 
 #ifdef ENABLE_BOSS_SPAWN_NOTICE
+	static const std::vector<int> bossList = {
+		191, 192, 193, 194, 491, 492, 493, 494,
+		531, 532, 533, 534, 591, 691, 791, 792,
+		1091, 1092, 1093, 1095, 1191, 1192, 1304,
+		1901, 2091, 2206, 2307, 2306, 2491, 2492,
+		2494, 2495, 2597, 2598, 3190, 3191, 3290,
+		3291, 3390, 3391, 3490, 3491, 3590, 3591,
+		3690, 3691, 3790, 3791, 3890, 3891, 6390,
+		6391, 3090, 3091, 2191, 6421, 4204, 4209,
+		4210, 3596
+	};
+
 	if (std::find(bossList.begin(), bossList.end(), ch->GetRaceNum()) != bossList.end())
 	{
 		char szSpawnNotice[QUERY_MAX_LEN];
