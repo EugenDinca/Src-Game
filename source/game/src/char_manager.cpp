@@ -347,16 +347,6 @@ LPCHARACTER CHARACTER_MANAGER::SpawnMob(DWORD dwVnum, long lMapIndex, long x, lo
 		6391, 3090, 3091, 2191, 6421, 4204, 4209,
 		4210, 3596
 	};
-
-	if (std::find(bossList.begin(), bossList.end(), ch->GetRaceNum()) != bossList.end())
-	{
-		char szSpawnNotice[QUERY_MAX_LEN];
-		snprintf(szSpawnNotice, sizeof(szSpawnNotice),
-				"[CH %d] : %s s-a spawnat!",
-				g_bChannel,
-				ch->GetName());
-		BroadcastNotice(szSpawnNotice);
-	}
 #endif
 	
 	const CMob* pkMob = CMobManager::instance().Get(dwVnum);
@@ -426,18 +416,30 @@ LPCHARACTER CHARACTER_MANAGER::SpawnMob(DWORD dwVnum, long lMapIndex, long x, lo
 	}
 	
 #ifdef BOSS_DAMAGE_RANKING_PLUGIN
-    if (const auto is_boss_in_ranking{
-            bossdamageranking::boss_dmg_ranking_manager().is_boss_in_ranking(ch->GetRaceNum())};
-        is_boss_in_ranking)
-    {
-        sys_err("add boss to list");
-        bossdamageranking::BossDamageRankingBossInfo boss_info{};
-        boss_info.mob_vnum = dwVnum;
-        boss_info.mob_vid = ch->GetVID();
-        boss_info.max_hp = ch->GetMaxHP();
+	if (const auto is_boss_in_ranking{
+			bossdamageranking::boss_dmg_ranking_manager().is_boss_in_ranking(ch->GetRaceNum())};
+		is_boss_in_ranking)
+	{
+		sys_err("add boss to list");
+		bossdamageranking::BossDamageRankingBossInfo boss_info{};
+		boss_info.mob_vnum = dwVnum;
+		boss_info.mob_vid = ch->GetVID();
+		boss_info.max_hp = ch->GetMaxHP();
 
-        bossdamageranking::boss_dmg_ranking_manager().add_boss_to_list(boss_info);
-    }
+		bossdamageranking::boss_dmg_ranking_manager().add_boss_to_list(boss_info);
+	}
+#endif
+
+#ifdef ENABLE_BOSS_SPAWN_NOTICE
+	if (std::find(bossList.begin(), bossList.end(), ch->GetRaceNum()) != bossList.end())
+	{
+		char szSpawnNotice[QUERY_MAX_LEN];
+		snprintf(szSpawnNotice, sizeof(szSpawnNotice),
+				 "[CH %d] : %s has spawned!",
+				 g_bChannel,
+				 ch->GetName());
+		BroadcastNotice(szSpawnNotice);
+	}
 #endif
 
 	return (ch);
