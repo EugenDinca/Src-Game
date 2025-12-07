@@ -205,10 +205,19 @@ EVENTFUNC(switchbot_event)
 	{
 		info->oyuncuYok = 0;
 		info->pkSwitchbot->SwitchItems();
-#ifdef ENABLE_PREMIUM_MEMBER_SYSTEM
+	
+		// ---- AICI SE ADAUGĂ CODUL CERUT ----
+		if (!info->pkSwitchbot->HasActiveSlots())
+		{
+			info->pkSwitchbot->ClearEvent(); // Clear event pointer
+			return 0; // Stop event
+		}
+		// -------------------------------------
+	
+	#ifdef ENABLE_PREMIUM_MEMBER_SYSTEM
 		if (ch->IsPremium())
 			return PASSES_PER_SEC(c_fPremiumSpeed);
-#endif
+	#endif
 	}
 	else
 	{
@@ -254,6 +263,11 @@ void CSwitchbot::Pause()
 		event_cancel(&m_pkSwitchEvent);
 		m_pkSwitchEvent = nullptr;
 	}
+}
+
+void CSwitchbot::ClearEvent()
+{
+	m_pkSwitchEvent = nullptr;
 }
 
 bool CSwitchbot::IsActive(uint8_t slot)
@@ -347,6 +361,9 @@ void CSwitchbot::SwitchItems()
 
 			if (!HasActiveSlots())
 			{
+				memset(&m_table.active, 0, sizeof(m_table.active));
+				CSwitchbotManager::Instance().SendSwitchbotUpdate(m_table.player_id);
+				return; // Exit early - event will stop when it returns 0
 				Stop();
 			}
 			else
@@ -413,8 +430,12 @@ void CSwitchbot::SwitchItems()
 			if (stop)
 			{
 				SendItemUpdate(pkOwner, bSlot, pkItem);
-				Stop();
-
+			
+				// fix
+				memset(&m_table.active, 0, sizeof(m_table.active));
+			
+				CSwitchbotManager::Instance().SendSwitchbotUpdate(m_table.player_id);
+			
 				if (SWITCHBOT_PRICE_TYPE == 1)
 				{
 					pkOwner->NewChatPacket(SWITCH_BOT_STOP_INFO_1);
@@ -423,7 +444,7 @@ void CSwitchbot::SwitchItems()
 				{
 					pkOwner->NewChatPacket(SWITCH_BOT_STOP_INFO_2);
 				}
-
+			
 				return;
 			}
 

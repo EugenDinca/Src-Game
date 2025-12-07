@@ -35,6 +35,7 @@ public:
 	void Start();
 	void Stop();
 	void Pause();
+	void ClearEvent(); // Clear event pointer (called from event handler)
 
 	/*void StartEndEvent(uint32_t player_id);*/
 
