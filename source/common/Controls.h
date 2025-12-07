@@ -75,6 +75,7 @@ enum eConfig {
 #define ENABLE_EXPRESSING_EMOTION															// NEW EMOTION
 #define __BL_KILL_BAR__																		// Kill Bar Icon
 #define __BL_OX_RENDER_AREA__																// Area OX write choice collor effect
+#define ENABLE_BOSS_SPAWN_NOTICE															// Anounce Boss Spawn /notice
 
 #define ENABLE_PLAYER_STATS_SYSTEM															// Character Stats
 #define ENABLE_GLOBAL_RANKING																// Global Ranking System
