@@ -673,7 +673,7 @@ void CHARACTER::Reward(bool bItemDrop)
 		pkAttacker->UpdateExtBattlePassMissionProgress(KILL_MONSTER, 1, GetRaceNum());
 #endif
 
-#define ANNOUNCEMENT_KILL_BOSS
+#ifdef ANNOUNCEMENT_KILL_BOSS
 		const int bossVnumMAP[34] = {
 			2492, 2495, 2307, 2306,
 			2597, 2598, 1093, 691,
