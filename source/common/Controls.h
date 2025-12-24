@@ -62,6 +62,7 @@ enum eConfig {
 #define ENABLE_MULTI_LANGUAGE_SYSTEM														// Multi language system
 #define ENABLE_EXTENDED_WHISPER_DETAILS														// Extended whisper details
 #define ENABLE_SKILL_DESCRIPTION_RENEWAL													//Description Of Book Remaining
+#define ANNOUNCEMENT_KILL_BOSS																// ANNOUNCEMENT KILL BOSS
 
 #define OX_EVENT_DOUBLE_CONNECT_DISABLE														//OX DOUBLE CONNECTION REMOVE (IP)
 #define BOSS_DAMAGE_RANKING_PLUGIN															// Enable Damage Ranking Boss

@@ -673,6 +673,38 @@ void CHARACTER::Reward(bool bItemDrop)
 		pkAttacker->UpdateExtBattlePassMissionProgress(KILL_MONSTER, 1, GetRaceNum());
 #endif
 
+#define ANNOUNCEMENT_KILL_BOSS
+		const int bossVnumMAP[30] = {
+			2492, 2495, 2307, 2306,
+			2597, 2598, 1093, 691,
+			1304, 1192, 1901, 2091,
+			2206, 2191, 2291, 2092,
+			792, 4091, 4092, 4095,
+			3690, 3691, 3590, 3591,
+			3490, 3491, 191, 192,
+			193, 194, 491, 492,
+			493, 494
+		};
+
+		for (int i = 0; i < _countof(bossVnumMAP); i++)
+		{
+			if (GetRaceNum() == bossVnumMAP[i])
+			{
+				const CMob * pkMob = CMobManager::instance().Get(bossVnumMAP[i]);
+
+				if (pkMob)
+				{
+					char szNotice[512+1];
+					if (SEX_MALE == GET_SEX(pkAttacker))
+						snprintf(szNotice, sizeof(szNotice), "[ANNOUNCEMENT:]: Lv. %d %s Killed: %s!", pkAttacker->GetLevel(), pkAttacker->GetName(), pkMob->m_table.szLocaleName);
+					else
+						snprintf(szNotice, sizeof(szNotice), "[ANNOUNCEMENT:]: Lv. %d %s Killed: %s!", pkAttacker->GetLevel(), pkAttacker->GetName(), pkMob->m_table.szLocaleName);
+					BroadcastNotice(szNotice);
+				}
+			}
+		}
+#endif
+
 		if (!number(0, 9))
 		{
 			if (pkAttacker->GetPoint(POINT_KILL_HP_RECOVERY))
