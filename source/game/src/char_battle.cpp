@@ -674,7 +674,7 @@ void CHARACTER::Reward(bool bItemDrop)
 #endif
 
 #define ANNOUNCEMENT_KILL_BOSS
-		const int bossVnumMAP[30] = {
+		const int bossVnumMAP[34] = {
 			2492, 2495, 2307, 2306,
 			2597, 2598, 1093, 691,
 			1304, 1192, 1901, 2091,
