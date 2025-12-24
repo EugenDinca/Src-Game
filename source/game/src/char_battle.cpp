@@ -696,9 +696,9 @@ void CHARACTER::Reward(bool bItemDrop)
 				{
 					char szNotice[512+1];
 					if (SEX_MALE == GET_SEX(pkAttacker))
-						snprintf(szNotice, sizeof(szNotice), "[ANNOUNCEMENT:]: Lv. %d %s Killed: %s!", pkAttacker->GetLevel(), pkAttacker->GetName(), pkMob->m_table.szLocaleName);
+						snprintf(szNotice, sizeof(szNotice), "[ANNOUNCEMENT]: Lv. %d %s, killed: %s!", pkAttacker->GetLevel(), pkAttacker->GetName(), pkMob->m_table.szLocaleName);
 					else
-						snprintf(szNotice, sizeof(szNotice), "[ANNOUNCEMENT:]: Lv. %d %s Killed: %s!", pkAttacker->GetLevel(), pkAttacker->GetName(), pkMob->m_table.szLocaleName);
+						snprintf(szNotice, sizeof(szNotice), "[ANNOUNCEMENT]: Lv. %d %s, killed: %s!", pkAttacker->GetLevel(), pkAttacker->GetName(), pkMob->m_table.szLocaleName);
 					BroadcastNotice(szNotice);
 				}
 			}
