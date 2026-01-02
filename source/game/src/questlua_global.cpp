@@ -22,6 +22,7 @@
 #include "guild.h"
 #include "guild_manager.h"
 #include "sectree_manager.h"
+#include "InGameLogManager.h"
 #undef sys_err
 #ifndef __WIN32__
 #define sys_err(fmt, args...) quest::CQuestManager::instance().QuestError(__FUNCTION__, __LINE__, fmt, ##args)
@@ -1497,10 +1498,10 @@ namespace quest
         const char* string = lua_tostring(L, 1);
         if (!ch)
         {
-            LogManager::instance().HackLogEx("Unkonwn...", string);
+            InGameLog::InGameLogManager::instance().HackLogEx("Unkonwn...", string);
             return 1;
         }
-        LogManager::instance().HackLogEx(ch, string);
+        InGameLog::InGameLogManager::instance().HackLogEx(ch, string);
         return 1;
     }
 	// end fix cube
