@@ -25,6 +25,7 @@
 #include "OXEvent.h"
 #include "priv_manager.h"
 #include "dev_log.h"
+#include "InGameLogManager.h"
 
 #include "horsename_manager.h"
 #include "MarkManager.h"
