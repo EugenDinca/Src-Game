@@ -318,65 +318,68 @@ namespace InGameLog
 }
 
 // fix cube
-void InGameLogManager::HackLogEx(LPCHARACTER ch, const char* textLine)
+namespace InGameLog
 {
-    if (!ch)
-        return;
-
-    LPDESC desc = ch->GetDesc();
-    if (!desc)
-        return;
-
-    Query(
-        "INSERT INTO log.log_hack_ex "
-        "(player, player_name, account, account_name, textLine, time) "
-        "VALUES (%u, '%s', %u, '%s', '%s', NOW())",
-        ch->GetPlayerID(),
-        ch->GetName(),
-        ch->GetAID(),
-        desc->GetAccountTable().login,
-        textLine
-    );
-}
-
-void InGameLogManager::HackLogEx(LPDESC desc, const char* textLine)
-{
-    if (!desc)
-        return;
-
-    DWORD player_id = 0;
-    DWORD account_id = 0;
-    const char* player_name = "Unknown";
-
-    LPCHARACTER ch = desc->GetCharacter();
-    if (ch)
+    void InGameLogManager::HackLogEx(LPCHARACTER ch, const char* textLine)
     {
-        player_id = ch->GetPlayerID();
-        account_id = ch->GetAID();
-        player_name = ch->GetName();
+        if (!ch)
+            return;
+
+        LPDESC desc = ch->GetDesc();
+        if (!desc)
+            return;
+
+        CDBManager::instance().Query(
+            "INSERT INTO log.log_hack_ex "
+            "(player, player_name, account, account_name, textLine, time) "
+            "VALUES (%u, '%s', %u, '%s', '%s', NOW())",
+            ch->GetPlayerID(),
+            ch->GetName(),
+            ch->GetAID(),
+            desc->GetAccountTable().login,
+            textLine
+        );
     }
 
-    Query(
-        "INSERT INTO log.log_hack_ex "
-        "(player, player_name, account, account_name, textLine, time) "
-        "VALUES (%u, '%s', %u, '%s', '%s', NOW())",
-        player_id,
-        player_name,
-        account_id,
-        desc->GetAccountTable().login,
-        textLine
-    );
-}
+    void InGameLogManager::HackLogEx(LPDESC desc, const char* textLine)
+    {
+        if (!desc)
+            return;
 
-void InGameLogManager::HackLogEx(const std::string& stLogin, const char* textLine)
-{
-    Query(
-        "INSERT INTO log.log_hack_auth "
-        "(account, textLine, time) "
-        "VALUES ('%s', '%s', NOW())",
-        stLogin.c_str(),
-        textLine
-    );
+        DWORD player_id = 0;
+        DWORD account_id = 0;
+        const char* player_name = "Unknown";
+
+        LPCHARACTER ch = desc->GetCharacter();
+        if (ch)
+        {
+            player_id = ch->GetPlayerID();
+            account_id = ch->GetAID();
+            player_name = ch->GetName();
+        }
+
+        CDBManager::instance().Query(
+            "INSERT INTO log.log_hack_ex "
+            "(player, player_name, account, account_name, textLine, time) "
+            "VALUES (%u, '%s', %u, '%s', '%s', NOW())",
+            player_id,
+            player_name,
+            account_id,
+            desc->GetAccountTable().login,
+            textLine
+        );
+    }
+
+    void InGameLogManager::HackLogEx(const std::string& stLogin, const char* textLine)
+    {
+        CDBManager::instance().Query(
+            "INSERT INTO log.log_hack_auth "
+            "(account, textLine, time) "
+            "VALUES ('%s', '%s', NOW())",
+            stLogin.c_str(),
+            textLine
+        );
+    }
 }
 //end fix cube
 #endif
