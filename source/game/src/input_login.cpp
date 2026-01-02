@@ -25,7 +25,6 @@
 #include "OXEvent.h"
 #include "priv_manager.h"
 #include "dev_log.h"
-#include "InGameLogManager.h"
 
 #include "horsename_manager.h"
 #include "MarkManager.h"
@@ -272,22 +271,25 @@ void CInputLogin::CharacterSelect(LPDESC d, const char* data)
 		sys_err("no account table");
 		return;
 	}
-
-	//fix cube
+	
+	// Protecție empire invalid
 	if (d->GetEmpire() < 0 || d->GetEmpire() > 3)
-    {
-        InGameLog::InGameLogManager::instance().HackLogEx(d, "CInputLogin::CharacterSelect try crash to game core. (GetEmpire)");
-        d->SetPhase(PHASE_CLOSE);
-        return;
-    }
-
-    if (pinfo->index >= PLAYER_PER_ACCOUNT)
-    {
-        InGameLog::InGameLogManager::instance().HackLogEx(d, "CInputLogin::CharacterSelect try crash to game core. (index)");
-        sys_err("index overflow %d, login: %s", pinfo->index, c_r.login);
-        return;
-    }
-	//end fix cube
+	{
+		sys_err("[LOGIN HACK] Empire invalid (%d) login: %s",
+			d->GetEmpire(),
+			c_r.login);
+		d->SetPhase(PHASE_CLOSE);
+		return;
+	}
+	
+	// Protecție index overflow
+	if (pinfo->index >= PLAYER_PER_ACCOUNT)
+	{
+		sys_err("[LOGIN HACK] Index overflow %d login: %s",
+			pinfo->index,
+			c_r.login);
+		return;
+	}
 
 	//@fixme239 BEGIN
 	if (d->GetEmpire() < 0 || d->GetEmpire() > 3)

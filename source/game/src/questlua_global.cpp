@@ -22,7 +22,6 @@
 #include "guild.h"
 #include "guild_manager.h"
 #include "sectree_manager.h"
-#include "InGameLogManager.h"
 #undef sys_err
 #ifndef __WIN32__
 #define sys_err(fmt, args...) quest::CQuestManager::instance().QuestError(__FUNCTION__, __LINE__, fmt, ##args)
@@ -1493,18 +1492,27 @@ namespace quest
 	
 	//fix cube
 	ALUA(_hack_log_ex)
-    {
-        LPCHARACTER ch = CQuestManager::instance().GetCurrentCharacterPtr();
-        const char* string = lua_tostring(L, 1);
-        if (!ch)
-        {
-            InGameLog::InGameLogManager::instance().HackLogEx("Unkonwn...", string);
-            return 1;
-        }
-        InGameLog::InGameLogManager::instance().HackLogEx(ch, string);
-        return 1;
-    }
-	// end fix cube
+	{
+		LPCHARACTER ch = CQuestManager::instance().GetCurrentCharacterPtr();
+		const char* msg = lua_tostring(L, 1);
+	
+		if (!msg)
+			return 0;
+	
+		if (ch)
+		{
+			sys_err("[QUEST HACK] %s (%u): %s",
+				ch->GetName(),
+				ch->GetPlayerID(),
+				msg);
+		}
+		else
+		{
+			sys_err("[QUEST HACK] Unknown character: %s", msg);
+		}
+	
+		return 1;
+	}
 
 	ALUA(_get_special_item_group)
 	{

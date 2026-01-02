@@ -11,7 +11,6 @@
 #include <sstream>
 #include "packet.h"
 #include "desc_client.h"
-#include "InGameLogManager.h"
 
 static std::vector<CUBE_RENEWAL_DATA*>	s_cube_proto;
 
@@ -354,8 +353,6 @@ void Cube_close(LPCHARACTER ch)
 
 void Cube_Make(LPCHARACTER ch, int index, int count_item)
 {
-	int index_item_improve = -1; // FIX
-	
 	LPCHARACTER	npc;
 
 	npc = ch->GetQuestNPC();
@@ -363,15 +360,17 @@ void Cube_Make(LPCHARACTER ch, int index, int count_item)
 	if (!npc)
 		return;
 	
-	if (count_item < 0)
+	 // Anti exploit: count_item negativ
+    if (count_item < 0)
     {
-        InGameLog::InGameLogManager::instance().HackLogEx(ch, "[DINASTY2] ***** YOU CAN'T DO THAT !");
+        sys_err("[CUBE HACK] %s (%u) count_item < 0", ch->GetName(), ch->GetPlayerID());
         return;
     }
 
+    // Anti exploit: index_item_improve modificat
     if (index_item_improve != -1)
     {
-        InGameLog::InGameLogManager::instance().HackLogEx(ch, "[DINASTY2] ***** YOU CAN'T DO THAT !");
+        sys_err("[CUBE HACK] %s (%u) index_item_improve != -1", ch->GetName(), ch->GetPlayerID());
         return;
     }
 
@@ -448,12 +447,13 @@ void Cube_Make(LPCHARACTER ch, int index, int count_item)
 			ch->PointChange(POINT_GOLD, -static_cast<long long>(materialInfo.gold * count_item), false);
 		}
 		if (total_items_give <= 0)
-                {
-                    ch->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("It has failed."));
-                    InGameLog::InGameLogManager::instance().HackLogEx(ch, "[DINASTY2] ****** CUBE FAIL.");
-                    sys_log(0, "%s - %d Cube window make failed", ch->GetName(), ch->GetPlayerID());
-                    return;
-                }
+		{
+			ch->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("It has failed."));
+			sys_err("[CUBE FAIL] %s (%u) total_items_give <= 0",
+				ch->GetName(),
+				ch->GetPlayerID());
+			return;
+		}
 		ch->NewChatPacket(STRING_D84);
 		return;
 	}
