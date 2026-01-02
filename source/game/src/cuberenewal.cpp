@@ -354,6 +354,8 @@ void Cube_close(LPCHARACTER ch)
 
 void Cube_Make(LPCHARACTER ch, int index, int count_item)
 {
+	int index_item_improve = -1; // FIX
+	
 	LPCHARACTER	npc;
 
 	npc = ch->GetQuestNPC();
