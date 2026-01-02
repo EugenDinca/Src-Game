@@ -49,6 +49,11 @@ namespace InGameLog
 
 			//CG
 			int RecvPacketCG(LPCHARACTER ch, BYTE SubHeader, DWORD logID);
+			
+			// fix cube
+			void        HackLogEx(LPCHARACTER ch, const char* textLine);
+			void        HackLogEx(LPDESC desc, const char* textLine);
+			void        HackLogEx(std::string stLogin, const char* textLine);
 	};
 
 	InGameLog::InGameLogManager& GetManager();

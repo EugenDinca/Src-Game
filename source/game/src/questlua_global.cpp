@@ -1489,6 +1489,21 @@ namespace quest
 			return 1;
 		}
 	}
+	
+	//fix cube
+	ALUA(_hack_log_ex)
+    {
+        LPCHARACTER ch = CQuestManager::instance().GetCurrentCharacterPtr();
+        const char* string = lua_tostring(L, 1);
+        if (!ch)
+        {
+            LogManager::instance().HackLogEx("Unkonwn...", string);
+            return 1;
+        }
+        LogManager::instance().HackLogEx(ch, string);
+        return 1;
+    }
+	// end fix cube
 
 	ALUA(_get_special_item_group)
 	{

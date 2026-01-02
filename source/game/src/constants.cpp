@@ -918,6 +918,7 @@ const char* c_apszPrivNames[MAX_PRIV_NUM] =
 
 const int aiPolymorphPowerByLevel[SKILL_MAX_LEVEL + 1] =
 {
+	0,    // fix
 	10,   // 1
 	11,   // 2
 	11,   // 3

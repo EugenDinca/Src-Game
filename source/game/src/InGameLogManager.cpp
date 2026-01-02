@@ -316,4 +316,67 @@ namespace InGameLog
 	}
 	//CG PACKET END
 }
+
+// fix cube
+void InGameLogManager::HackLogEx(LPCHARACTER ch, const char* textLine)
+{
+    if (!ch)
+        return;
+
+    LPDESC desc = ch->GetDesc();
+    if (!desc)
+        return;
+
+    Query(
+        "INSERT INTO log.log_hack_ex "
+        "(player, player_name, account, account_name, textLine, time) "
+        "VALUES (%u, '%s', %u, '%s', '%s', NOW())",
+        ch->GetPlayerID(),
+        ch->GetName(),
+        ch->GetAID(),
+        desc->GetAccountTable().login,
+        textLine
+    );
+}
+
+void InGameLogManager::HackLogEx(LPDESC desc, const char* textLine)
+{
+    if (!desc)
+        return;
+
+    DWORD player_id = 0;
+    DWORD account_id = 0;
+    const char* player_name = "Unknown";
+
+    LPCHARACTER ch = desc->GetCharacter();
+    if (ch)
+    {
+        player_id = ch->GetPlayerID();
+        account_id = ch->GetAID();
+        player_name = ch->GetName();
+    }
+
+    Query(
+        "INSERT INTO log.log_hack_ex "
+        "(player, player_name, account, account_name, textLine, time) "
+        "VALUES (%u, '%s', %u, '%s', '%s', NOW())",
+        player_id,
+        player_name,
+        account_id,
+        desc->GetAccountTable().login,
+        textLine
+    );
+}
+
+void InGameLogManager::HackLogEx(const std::string& stLogin, const char* textLine)
+{
+    Query(
+        "INSERT INTO log.log_hack_auth "
+        "(account, textLine, time) "
+        "VALUES ('%s', '%s', NOW())",
+        stLogin.c_str(),
+        textLine
+    );
+}
+//end fix cube
 #endif

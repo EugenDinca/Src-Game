@@ -272,6 +272,22 @@ void CInputLogin::CharacterSelect(LPDESC d, const char* data)
 		return;
 	}
 
+	//fix cube
+	if (d->GetEmpire() < 0 || d->GetEmpire() > 3)
+    {
+        LogManager::instance().HackLogEx(d, "CInputLogin::CharacterSelect try crash to game core. (GetEmpire)");
+        d->SetPhase(PHASE_CLOSE);
+        return;
+    }
+
+    if (pinfo->index >= PLAYER_PER_ACCOUNT)
+    {
+        LogManager::instance().HackLogEx(d, "CInputLogin::CharacterSelect try crash to game core. (index)");
+        sys_err("index overflow %d, login: %s", pinfo->index, c_r.login);
+        return;
+    }
+	//end fix cube
+
 	//@fixme239 BEGIN
 	if (d->GetEmpire() < 0 || d->GetEmpire() > 3)
 	{

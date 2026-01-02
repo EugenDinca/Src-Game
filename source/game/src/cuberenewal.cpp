@@ -359,6 +359,18 @@ void Cube_Make(LPCHARACTER ch, int index, int count_item)
 
 	if (!npc)
 		return;
+	
+	if (count_item < 0)
+    {
+        LogManager::instance().HackLogEx(ch, "[DINASTY2] ***** YOU CAN'T DO THAT !");
+        return;
+    }
+
+    if (index_item_improve != -1)
+    {
+        LogManager::instance().HackLogEx(ch, "[DINASTY2] ***** YOU CAN'T DO THAT !");
+        return;
+    }
 
 	if (!ch->IsCubeOpen())
 	{
@@ -432,6 +444,13 @@ void Cube_Make(LPCHARACTER ch, int index, int count_item)
 		{
 			ch->PointChange(POINT_GOLD, -static_cast<long long>(materialInfo.gold * count_item), false);
 		}
+		if (total_items_give <= 0)
+                {
+                    ch->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("It has failed."));
+                    LogManager::instance().HackLogEx(ch, "[DINASTY2] ****** CUBE FAIL.");
+                    sys_log(0, "%s - %d Cube window make failed", ch->GetName(), ch->GetPlayerID());
+                    return;
+                }
 		ch->NewChatPacket(STRING_D84);
 		return;
 	}
