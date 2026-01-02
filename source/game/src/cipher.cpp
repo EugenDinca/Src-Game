@@ -151,15 +151,25 @@ void Cipher::CleanUp() {
 }
 
 size_t Cipher::Prepare(void* buffer, size_t* length) {
-	assert(key_agreement_ == NULL);
-	key_agreement_ = new DH2KeyAgreement();
-	assert(key_agreement_ != NULL);
-	size_t agreed_length = key_agreement_->Prepare(buffer, length);
-	if (agreed_length == 0) {
-		delete key_agreement_;
-		key_agreement_ = NULL;
-	}
-	return agreed_length;
+  // Prevent double initialization - memory corruption guard
+  if (key_agreement_ != NULL) {
+    sys_err("Cipher::Prepare() called while key_agreement_ already exists - potential double initialization");
+    delete key_agreement_;
+    key_agreement_ = NULL;
+  }
+
+  key_agreement_ = new DH2KeyAgreement();
+  if (key_agreement_ == NULL) {
+    sys_err("Failed to allocate DH2KeyAgreement");
+    return 0;
+  }
+
+  size_t agreed_length = key_agreement_->Prepare(buffer, length);
+  if (agreed_length == 0) {
+    delete key_agreement_;
+    key_agreement_ = NULL;
+  }
+  return agreed_length;
 }
 
 bool Cipher::Activate(bool polarity, size_t agreed_length,

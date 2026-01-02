@@ -159,34 +159,43 @@ void CInputProcessor::Pong(LPDESC d)
 	d->SetPong(true);
 }
 
-void CInputProcessor::Handshake(LPDESC d, const char* c_pData)
+void CInputProcessor::Handshake(LPDESC d, const char * c_pData)
 {
-	TPacketCGHandshake* p = (TPacketCGHandshake*)c_pData;
+    TPacketCGHandshake * p = (TPacketCGHandshake *) c_pData;
 
-	if (d->GetHandshake() != p->dwHandshake)
-	{
-		sys_err("Invalid Handshake on %d", d->GetSocket());
-		d->SetPhase(PHASE_CLOSE);
-	}
-	else
-	{
-		if (d->IsPhase(PHASE_HANDSHAKE))
-		{
-			if (d->HandshakeProcess(p->dwTime, p->lDelta, false))
-			{
+    if (d->GetHandshake() != p->dwHandshake)
+    {
+        sys_err("Invalid Handshake on %d", d->GetSocket());
+        d->SetPhase(PHASE_CLOSE);
+    }
+    else
+    {
+        if (d->IsPhase(PHASE_HANDSHAKE))
+        {
+            if (d->HandshakeProcess(p->dwTime, p->lDelta, false))
+            {
 #ifdef _IMPROVED_PACKET_ENCRYPTION_
-				d->SendKeyAgreement();
+                // Prevent duplicate key agreement if already prepared
+                if (!d->IsCipherPrepared())
+                {
+                    d->SendKeyAgreement();
+                }
+                else
+                {
+                    sys_err("Duplicate handshake attempt on socket %d - cipher already prepared", d->GetSocket());
+                    d->SetPhase(PHASE_CLOSE);
+                }
 #else
-				if (g_bAuthServer)
-					d->SetPhase(PHASE_AUTH);
-				else
-					d->SetPhase(PHASE_LOGIN);
+                if (g_bAuthServer)
+                    d->SetPhase(PHASE_AUTH);
+                else
+                    d->SetPhase(PHASE_LOGIN);
 #endif // #ifdef _IMPROVED_PACKET_ENCRYPTION_
-			}
-		}
-		else
-			d->HandshakeProcess(p->dwTime, p->lDelta, true);
-	}
+            }
+        }
+        else
+            d->HandshakeProcess(p->dwTime, p->lDelta, true);
+    }
 }
 
 void LoginFailure(LPDESC d, const char* c_pszStatus)
