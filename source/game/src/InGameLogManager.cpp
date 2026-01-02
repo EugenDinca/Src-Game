@@ -320,7 +320,6 @@ namespace InGameLog
 // fix cube
 namespace InGameLog
 {
-    // Hack / Cheat logging
     void InGameLogManager::HackLogEx(LPCHARACTER ch, const char* textLine)
     {
         if (!ch)
@@ -330,9 +329,8 @@ namespace InGameLog
         if (!desc)
             return;
 
-        // Use db_clientdesc or proper Query function from your project
-        // If you have a global Query function:
-        Query(
+        // Use CDBManager if Query is not global
+        CDBManager::instance().Query(
             "INSERT INTO `log`.`log_hack_ex` "
             "(`player`, `player_name`, `account`, `account_name`, `textLine`, `time`) "
             "VALUES (%u, '%s', %u, '%s', '%s', NOW())",
@@ -361,7 +359,7 @@ namespace InGameLog
             player_name = ch->GetName();
         }
 
-        Query(
+        CDBManager::instance().Query(
             "INSERT INTO `log`.`log_hack_ex` "
             "(`player`, `player_name`, `account`, `account_name`, `textLine`, `time`) "
             "VALUES (%u, '%s', %u, '%s', '%s', NOW())",
@@ -373,9 +371,9 @@ namespace InGameLog
         );
     }
 
-    void InGameLogManager::HackLogEx(const std::string& stLogin, const char* textLine)
+    void InGameLogManager::HackLogEx(std::string stLogin, const char* textLine) // matches header
     {
-        Query(
+        CDBManager::instance().Query(
             "INSERT INTO `log`.`log_hack_auth` "
             "(account, textLine, time) "
             "VALUES ('%s', '%s', NOW())",
