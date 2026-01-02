@@ -368,11 +368,11 @@ void Cube_Make(LPCHARACTER ch, int index, int count_item)
     }
 
     // Anti exploit: index_item_improve modificat
-    if (index_item_improve != -1)
-    {
-        sys_err("[CUBE HACK] %s (%u) index_item_improve != -1", ch->GetName(), ch->GetPlayerID());
-        return;
-    }
+    //if (index_item_improve != -1)
+    //{
+    //    sys_err("[CUBE HACK] %s (%u) index_item_improve != -1", ch->GetName(), ch->GetPlayerID());
+    //    return;
+    //}
 
 	if (!ch->IsCubeOpen())
 	{
