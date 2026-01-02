@@ -11,6 +11,7 @@
 #include <sstream>
 #include "packet.h"
 #include "desc_client.h"
+#include "InGameLogManager.h"
 
 static std::vector<CUBE_RENEWAL_DATA*>	s_cube_proto;
 
@@ -362,13 +363,13 @@ void Cube_Make(LPCHARACTER ch, int index, int count_item)
 	
 	if (count_item < 0)
     {
-        InGameLogManager::instance().HackLogEx(ch, "[DINASTY2] ***** YOU CAN'T DO THAT !");
+        InGameLog::InGameLogManager::instance().HackLogEx(ch, "[DINASTY2] ***** YOU CAN'T DO THAT !");
         return;
     }
 
     if (index_item_improve != -1)
     {
-        InGameLogManager::instance().HackLogEx(ch, "[DINASTY2] ***** YOU CAN'T DO THAT !");
+        InGameLog::InGameLogManager::instance().HackLogEx(ch, "[DINASTY2] ***** YOU CAN'T DO THAT !");
         return;
     }
 
@@ -447,7 +448,7 @@ void Cube_Make(LPCHARACTER ch, int index, int count_item)
 		if (total_items_give <= 0)
                 {
                     ch->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("It has failed."));
-                    InGameLogManager::instance().HackLogEx(ch, "[DINASTY2] ****** CUBE FAIL.");
+                    InGameLog::InGameLogManager::instance().HackLogEx(ch, "[DINASTY2] ****** CUBE FAIL.");
                     sys_log(0, "%s - %d Cube window make failed", ch->GetName(), ch->GetPlayerID());
                     return;
                 }
