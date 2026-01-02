@@ -320,6 +320,7 @@ namespace InGameLog
 // fix cube
 namespace InGameLog
 {
+    // Hack / Cheat logging
     void InGameLogManager::HackLogEx(LPCHARACTER ch, const char* textLine)
     {
         if (!ch)
@@ -329,9 +330,11 @@ namespace InGameLog
         if (!desc)
             return;
 
-        CDBManager::instance().Query(
-            "INSERT INTO log.log_hack_ex "
-            "(player, player_name, account, account_name, textLine, time) "
+        // Use db_clientdesc or proper Query function from your project
+        // If you have a global Query function:
+        Query(
+            "INSERT INTO `log`.`log_hack_ex` "
+            "(`player`, `player_name`, `account`, `account_name`, `textLine`, `time`) "
             "VALUES (%u, '%s', %u, '%s', '%s', NOW())",
             ch->GetPlayerID(),
             ch->GetName(),
@@ -358,9 +361,9 @@ namespace InGameLog
             player_name = ch->GetName();
         }
 
-        CDBManager::instance().Query(
-            "INSERT INTO log.log_hack_ex "
-            "(player, player_name, account, account_name, textLine, time) "
+        Query(
+            "INSERT INTO `log`.`log_hack_ex` "
+            "(`player`, `player_name`, `account`, `account_name`, `textLine`, `time`) "
             "VALUES (%u, '%s', %u, '%s', '%s', NOW())",
             player_id,
             player_name,
@@ -372,8 +375,8 @@ namespace InGameLog
 
     void InGameLogManager::HackLogEx(const std::string& stLogin, const char* textLine)
     {
-        CDBManager::instance().Query(
-            "INSERT INTO log.log_hack_auth "
+        Query(
+            "INSERT INTO `log`.`log_hack_auth` "
             "(account, textLine, time) "
             "VALUES ('%s', '%s', NOW())",
             stLogin.c_str(),
