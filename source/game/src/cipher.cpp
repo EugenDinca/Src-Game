@@ -150,26 +150,54 @@ void Cipher::CleanUp() {
 	activated_ = false;
 }
 
+//size_t Cipher::Prepare(void* buffer, size_t* length) {
+//  // Prevent double initialization - memory corruption guard
+//  if (key_agreement_ != NULL) {
+//    sys_err("Cipher::Prepare() called while key_agreement_ already exists - potential double initialization");
+//    delete key_agreement_;
+//    key_agreement_ = NULL;
+//  }
+//
+//  key_agreement_ = new DH2KeyAgreement();
+//  if (key_agreement_ == NULL) {
+//    sys_err("Failed to allocate DH2KeyAgreement");
+//    return 0;
+//  }
+//
+//  size_t agreed_length = key_agreement_->Prepare(buffer, length);
+//  if (agreed_length == 0) {
+//    delete key_agreement_;
+//    key_agreement_ = NULL;
+//  }
+//  return agreed_length;
+//}
+
 size_t Cipher::Prepare(void* buffer, size_t* length) {
-  // Prevent double initialization - memory corruption guard
-  if (key_agreement_ != NULL) {
-    sys_err("Cipher::Prepare() called while key_agreement_ already exists - potential double initialization");
-    delete key_agreement_;
-    key_agreement_ = NULL;
-  }
+    // Verificăm dacă key_agreement_ există deja
+    if (key_agreement_ != nullptr) {
+        sys_err("Cipher::Prepare() called while key_agreement_ already exists - cleaning up to prevent double initialization");
+        delete key_agreement_;
+        key_agreement_ = nullptr;
+    }
 
-  key_agreement_ = new DH2KeyAgreement();
-  if (key_agreement_ == NULL) {
-    sys_err("Failed to allocate DH2KeyAgreement");
-    return 0;
-  }
+    // Creăm un nou obiect DH2KeyAgreement
+    key_agreement_ = new(std::nothrow) DH2KeyAgreement();
+    if (key_agreement_ == nullptr) {
+        sys_err("Failed to allocate DH2KeyAgreement");
+        return 0; // Nu putem continua fără key agreement
+    }
 
-  size_t agreed_length = key_agreement_->Prepare(buffer, length);
-  if (agreed_length == 0) {
-    delete key_agreement_;
-    key_agreement_ = NULL;
-  }
-  return agreed_length;
+    // Pregătim key agreement-ul cu buffer-ul primit
+    size_t agreed_length = key_agreement_->Prepare(buffer, length);
+
+    // Dacă handshake-ul eșuează, curățăm obiectul pentru siguranță
+    if (agreed_length == 0) {
+        sys_err("DH2KeyAgreement::Prepare failed, cleaning up");
+        delete key_agreement_;
+        key_agreement_ = nullptr;
+    }
+
+    return agreed_length;
 }
 
 bool Cipher::Activate(bool polarity, size_t agreed_length,

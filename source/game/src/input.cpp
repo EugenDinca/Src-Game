@@ -159,42 +159,77 @@ void CInputProcessor::Pong(LPDESC d)
 	d->SetPong(true);
 }
 
-void CInputProcessor::Handshake(LPDESC d, const char * c_pData)
-{
-    TPacketCGHandshake * p = (TPacketCGHandshake *) c_pData;
+//void CInputProcessor::Handshake(LPDESC d, const char * c_pData)
+//{
+//    TPacketCGHandshake * p = (TPacketCGHandshake *) c_pData;
+//
+//    if (d->GetHandshake() != p->dwHandshake)
+//    {
+//        sys_err("Invalid Handshake on %d", d->GetSocket());
+//        d->SetPhase(PHASE_CLOSE);
+//    }
+//    else
+//    {
+//        if (d->IsPhase(PHASE_HANDSHAKE))
+//        {
+//            if (d->HandshakeProcess(p->dwTime, p->lDelta, false))
+//            {
+//#ifdef _IMPROVED_PACKET_ENCRYPTION_
+//                // Prevent duplicate key agreement if already prepared
+//                if (!d->IsCipherPrepared())
+//                {
+//                    d->SendKeyAgreement();
+//                }
+//                else
+//                {
+//                    sys_err("Duplicate handshake attempt on socket %d - cipher already prepared", d->GetSocket());
+//                    d->SetPhase(PHASE_CLOSE);
+//                }
+//#else
+//                if (g_bAuthServer)
+//                    d->SetPhase(PHASE_AUTH);
+//                else
+//                    d->SetPhase(PHASE_LOGIN);
+//#endif // #ifdef _IMPROVED_PACKET_ENCRYPTION_
+//            }
+//        }
+//        else
+//            d->HandshakeProcess(p->dwTime, p->lDelta, true);
+//    }
+//}
 
-    if (d->GetHandshake() != p->dwHandshake)
-    {
-        sys_err("Invalid Handshake on %d", d->GetSocket());
+void CInputProcessor::Handshake(LPDESC d, const char * c_pData) {
+    TPacketCGHandshake* p = (TPacketCGHandshake*) c_pData;
+
+    // Verificăm dacă handshake-ul este valid
+    if (d->GetHandshake() != p->dwHandshake) {
+        sys_err("Invalid handshake on socket %d", d->GetSocket());
         d->SetPhase(PHASE_CLOSE);
+        return;
     }
-    else
-    {
-        if (d->IsPhase(PHASE_HANDSHAKE))
-        {
-            if (d->HandshakeProcess(p->dwTime, p->lDelta, false))
-            {
+
+    // Procesăm handshake doar dacă suntem în faza corespunzătoare
+    if (d->IsPhase(PHASE_HANDSHAKE)) {
+        if (d->HandshakeProcess(p->dwTime, p->lDelta, false)) {
 #ifdef _IMPROVED_PACKET_ENCRYPTION_
-                // Prevent duplicate key agreement if already prepared
-                if (!d->IsCipherPrepared())
-                {
-                    d->SendKeyAgreement();
-                }
-                else
-                {
-                    sys_err("Duplicate handshake attempt on socket %d - cipher already prepared", d->GetSocket());
-                    d->SetPhase(PHASE_CLOSE);
-                }
-#else
-                if (g_bAuthServer)
-                    d->SetPhase(PHASE_AUTH);
-                else
-                    d->SetPhase(PHASE_LOGIN);
-#endif // #ifdef _IMPROVED_PACKET_ENCRYPTION_
+            // Dacă cipher-ul nu e pregătit, trimitem key agreement
+            if (!d->IsCipherPrepared()) {
+                d->SendKeyAgreement();
+            } else {
+                sys_err("Duplicate handshake attempt on socket %d - cipher already prepared", d->GetSocket());
+                d->SetPhase(PHASE_CLOSE);
             }
+#else
+            // Flux normal pentru server fără criptare îmbunătățită
+            if (g_bAuthServer)
+                d->SetPhase(PHASE_AUTH);
+            else
+                d->SetPhase(PHASE_LOGIN);
+#endif
         }
-        else
-            d->HandshakeProcess(p->dwTime, p->lDelta, true);
+    } else {
+        // Dacă handshake-ul vine în altă fază, procesăm ca fallback
+        d->HandshakeProcess(p->dwTime, p->lDelta, true);
     }
 }
 
