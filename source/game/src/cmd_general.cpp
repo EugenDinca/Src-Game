@@ -87,44 +87,21 @@ ACMD(do_user_horse_ride)
 	}
 }
 
-//ACMD(do_user_horse_back)
-//{
-//	if (ch->GetHorse() != NULL)
-//	{
-//		ch->HorseSummon(false);
-//		ch->NewChatPacket(STRING_D3);
-//	}
-//	else if (ch->IsHorseRiding() == true)
-//	{
-//		ch->NewChatPacket(STRING_D4);
-//	}
-//	else
-//	{
-//		ch->NewChatPacket(STRING_D2);
-//	}
-//}
-
-//fix
 ACMD(do_user_horse_back)
 {
-    // 1. Dacă este călare → trebuie să coboare
-    if (ch->IsHorseRiding())
-    {
-        ch->StopRiding();
-        ch->NewChatPacket(STRING_D4); // mesajul tău (ex: "Ai coborât de pe mount")
-        return;
-    }
-
-    // 2. Dacă mount-ul este chemat → îl trimitem înapoi
-    if (ch->GetHorse() != NULL)
-    {
-        ch->HorseSummon(false);
-        ch->NewChatPacket(STRING_D3); // mesajul tău (ex: "Mount trimis")
-        return;
-    }
-
-    // 3. Dacă nu există mount
-    ch->NewChatPacket(STRING_D2); // mesajul tău (ex: "Nu ai mount")
+	if (ch->GetHorse() != NULL)
+	{
+		ch->HorseSummon(false);
+		ch->NewChatPacket(STRING_D3);
+	}
+	else if (ch->IsHorseRiding() == true)
+	{
+		ch->NewChatPacket(STRING_D4);
+	}
+	else
+	{
+		ch->NewChatPacket(STRING_D2);
+	}
 }
 
 ACMD(do_user_horse_feed)
