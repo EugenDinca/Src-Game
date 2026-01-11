@@ -87,21 +87,52 @@ ACMD(do_user_horse_ride)
 	}
 }
 
+//ACMD(do_user_horse_back)
+//{
+//	if (ch->GetHorse() != NULL)
+//	{
+//		ch->HorseSummon(false);
+//		ch->NewChatPacket(STRING_D3);
+//	}
+//	else if (ch->IsHorseRiding() == true)
+//	{
+//		ch->NewChatPacket(STRING_D4);
+//	}
+//	else
+//	{
+//		ch->NewChatPacket(STRING_D2);
+//	}
+//}
+
 ACMD(do_user_horse_back)
 {
-	if (ch->GetHorse() != NULL)
-	{
-		ch->HorseSummon(false);
-		ch->NewChatPacket(STRING_D3);
-	}
-	else if (ch->IsHorseRiding() == true)
-	{
-		ch->NewChatPacket(STRING_D4);
-	}
-	else
-	{
-		ch->NewChatPacket(STRING_D2);
-	}
+    // 1. Dacă ești pe mount → coboară
+    if (ch->IsRiding())
+    {
+        ch->StopRiding();
+        ch->NewChatPacket(STRING_D4);
+        return;
+    }
+
+    // 2. Dacă ai mount costum echipat → îl scoatem
+    LPITEM mount = ch->GetWear(WEAR_COSTUME_MOUNT);
+    if (mount)
+    {
+        ch->UnequipItem(mount);
+        ch->NewChatPacket(STRING_D3);
+        return;
+    }
+
+    // 3. Dacă ai horse clasic
+    if (ch->GetHorse())
+    {
+        ch->HorseSummon(false);
+        ch->NewChatPacket(STRING_D3);
+        return;
+    }
+
+    // 4. Nimic de scos
+    ch->NewChatPacket(STRING_D2);
 }
 
 ACMD(do_user_horse_feed)
