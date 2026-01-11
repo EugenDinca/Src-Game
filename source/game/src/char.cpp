@@ -5973,159 +5973,178 @@ void CHARACTER::ExitToSavedLocation()
 #ifdef ENABLE_P2P_WARP
 bool CHARACTER::WarpSet(long x, long y, long lPrivateMapIndex)
 {
-	if (!IsPC())
-	{
-		return false;
-	}
+    if (!IsPC())
+    {
+        return false;
+    }
 
-	long lAddr;
-	long lMapIndex;
-	uint16_t wPort;
+    long lAddr;
+    long lMapIndex;
+    uint16_t wPort;
 
-	if (!CMapLocation::instance().Get(x, y, lMapIndex, lAddr, wPort))
-	{
-		sys_err("cannot find map location index %d x %d y %d name %s", lMapIndex, x, y, GetName());
-		return false;
-	}
+    if (!CMapLocation::instance().Get(x, y, lMapIndex, lAddr, wPort))
+    {
+        sys_err("cannot find map location index %d x %d y %d name %s", lMapIndex, x, y, GetName());
+        return false;
+    }
 
-	return WarpSet(x, y, lPrivateMapIndex, lMapIndex, lAddr, wPort);
+    return WarpSet(x, y, lPrivateMapIndex, lMapIndex, lAddr, wPort);
 }
 
 bool CHARACTER::WarpSet(long x, long y, long lPrivateMapIndex, long lMapIndex, long lAddr, WORD wPort)
 {
-	{
-		long lCurAddr;
-		long lCurMapIndex = 0;
-		WORD wCurPort;
+    {
+        long lCurAddr;
+        long lCurMapIndex = 0;
+        WORD wCurPort;
 
-		CMapLocation::instance().Get(GetX(), GetY(), lCurMapIndex, lCurAddr, wCurPort);
-	}
+        CMapLocation::instance().Get(GetX(), GetY(), lCurMapIndex, lCurAddr, wCurPort);
+    }
 
-	if (lPrivateMapIndex >= 10000)
-	{
-		if (lPrivateMapIndex / 10000 != lMapIndex)
-		{
-			sys_err ("Invalid map index %d, must be child of %d", lPrivateMapIndex, lMapIndex);
-			return false;
-		}
+    if (lPrivateMapIndex >= 10000)
+    {
+        if (lPrivateMapIndex / 10000 != lMapIndex)
+        {
+            sys_err ("Invalid map index %d, must be child of %d", lPrivateMapIndex, lMapIndex);
+            return false;
+        }
 
-		lMapIndex = lPrivateMapIndex;
-	}
+        lMapIndex = lPrivateMapIndex;
+    }
 
-	m_bCanUseLoginByKey = true;
-	Stop();
-	Save();
+    m_bCanUseLoginByKey = true;
+    Stop();
+    Save();
 
-	if (GetSectree())
-	{
-		GetSectree()->RemoveEntity(this);
-		ViewCleanup();
-		EncodeRemovePacket(this);
-	}
+    if (GetSectree())
+    {
+        GetSectree()->RemoveEntity(this);
+        ViewCleanup();
+        EncodeRemovePacket(this);
+    }
 
-	m_lWarpMapIndex = lMapIndex;
-	m_posWarp.x = x;
-	m_posWarp.y = y;
+    m_lWarpMapIndex = lMapIndex;
+    m_posWarp.x = x;
+    m_posWarp.y = y;
 
-	TPacketGCWarp p;
-	p.bHeader = HEADER_GC_WARP;
-	p.lX = x;
-	p.lY = y;
-	p.lAddr = lAddr;
-	p.wPort = wPort;
+    TPacketGCWarp p;
+    p.bHeader = HEADER_GC_WARP;
+    p.lX = x;
+    p.lY = y;
+    p.lAddr = lAddr;
+    p.wPort = wPort;
 
 #ifdef ENABLE_SWITCHBOT
-	CSwitchbotManager::Instance().SetIsWarping(GetPlayerID(), true);
+    CSwitchbotManager::Instance().SetIsWarping(GetPlayerID(), true);
 
-	if (p.wPort != mother_port)
-	{
-		CSwitchbotManager::Instance().P2PSendSwitchbot(GetPlayerID(), p.wPort);
-	}
+    if (p.wPort != mother_port)
+    {
+        CSwitchbotManager::Instance().P2PSendSwitchbot(GetPlayerID(), p.wPort);
+    }
 #endif
 #ifdef ENABLE_FARM_BLOCK
-	SetWarpCheck(true);
+    SetWarpCheck(true);
 #endif
-	GetDesc()->Packet(&p, sizeof(TPacketGCWarp));
-	return true;
+
+    GetDesc()->Packet(&p, sizeof(TPacketGCWarp));
+
+    // 🔥 FIX MOUNT COSTUME — restore mount după warp
+    LPITEM mount = GetWear(WEAR_COSTUME_MOUNT);
+    if (mount)
+    {
+        MountVnum(mount->GetVnum());
+        StartRiding();
+    }
+
+    return true;
 }
 
 #else
 bool CHARACTER::WarpSet(long x, long y, long lPrivateMapIndex)
 {
-	if (!IsPC())
-		return false;
+    if (!IsPC())
+        return false;
 
-	long lAddr;
-	long lMapIndex;
-	WORD wPort;
+    long lAddr;
+    long lMapIndex;
+    WORD wPort;
 
-	if (!CMapLocation::instance().Get(x, y, lMapIndex, lAddr, wPort))
-	{
-		sys_err("cannot find map location index %d x %d y %d name %s", lMapIndex, x, y, GetName());
-		return false;
-	}
+    if (!CMapLocation::instance().Get(x, y, lMapIndex, lAddr, wPort))
+    {
+        sys_err("cannot find map location index %d x %d y %d name %s", lMapIndex, x, y, GetName());
+        return false;
+    }
 
-	{
-		long lCurAddr;
-		long lCurMapIndex = 0;
-		WORD wCurPort;
+    {
+        long lCurAddr;
+        long lCurMapIndex = 0;
+        WORD wCurPort;
 
-		CMapLocation::instance().Get(GetX(), GetY(), lCurMapIndex, lCurAddr, wCurPort);
-	}
+        CMapLocation::instance().Get(GetX(), GetY(), lCurMapIndex, lCurAddr, wCurPort);
+    }
 
-	if (lPrivateMapIndex >= 10000)
-	{
-		if (lPrivateMapIndex / 10000 != lMapIndex)
-		{
-			sys_err("Invalid map index %d, must be child of %d", lPrivateMapIndex, lMapIndex);
-			return false;
-		}
+    if (lPrivateMapIndex >= 10000)
+    {
+        if (lPrivateMapIndex / 10000 != lMapIndex)
+        {
+            sys_err("Invalid map index %d, must be child of %d", lPrivateMapIndex, lMapIndex);
+            return false;
+        }
 
-		lMapIndex = lPrivateMapIndex;
-	}
-	
-	m_bCanUseLoginByKey = true;
-	Stop();
-	Save();
+        lMapIndex = lPrivateMapIndex;
+    }
 
-	if (GetSectree())
-	{
-		GetSectree()->RemoveEntity(this);
-		ViewCleanup();
+    m_bCanUseLoginByKey = true;
+    Stop();
+    Save();
 
-		EncodeRemovePacket(this);
-	}
+    if (GetSectree())
+    {
+        GetSectree()->RemoveEntity(this);
+        ViewCleanup();
 
-	m_lWarpMapIndex = lMapIndex;
-	m_posWarp.x = x;
-	m_posWarp.y = y;
+        EncodeRemovePacket(this);
+    }
 
-	TPacketGCWarp p;
+    m_lWarpMapIndex = lMapIndex;
+    m_posWarp.x = x;
+    m_posWarp.y = y;
 
-	p.bHeader = HEADER_GC_WARP;
-	p.lX = x;
-	p.lY = y;
-	p.lAddr = lAddr;
+    TPacketGCWarp p;
+
+    p.bHeader = HEADER_GC_WARP;
+    p.lX = x;
+    p.lY = y;
+    p.lAddr = lAddr;
 #ifdef ENABLE_NEWSTUFF
-	if (!g_stProxyIP.empty())
-		p.lAddr = inet_addr(g_stProxyIP.c_str());
+    if (!g_stProxyIP.empty())
+        p.lAddr = inet_addr(g_stProxyIP.c_str());
 #endif
-	p.wPort = wPort;
+    p.wPort = wPort;
 
 #ifdef ENABLE_SWITCHBOT
-	CSwitchbotManager::Instance().SetIsWarping(GetPlayerID(), true);
+    CSwitchbotManager::Instance().SetIsWarping(GetPlayerID(), true);
 
-	if (p.wPort != mother_port)
-	{
-		CSwitchbotManager::Instance().P2PSendSwitchbot(GetPlayerID(), p.wPort);
-	}
+    if (p.wPort != mother_port)
+    {
+        CSwitchbotManager::Instance().P2PSendSwitchbot(GetPlayerID(), p.wPort);
+    }
 #endif
 #ifdef ENABLE_FARM_BLOCK
-	SetWarpCheck(true);
+    SetWarpCheck(true);
 #endif
 
-	GetDesc()->Packet(&p, sizeof(TPacketGCWarp));
-	return true;
+    GetDesc()->Packet(&p, sizeof(TPacketGCWarp));
+
+    // 🔥 FIX MOUNT COSTUME — restore mount după warp
+    LPITEM mount = GetWear(WEAR_COSTUME_MOUNT);
+    if (mount)
+    {
+        MountVnum(mount->GetVnum());
+        StartRiding();
+    }
+
+    return true;
 }
 #endif
 
