@@ -4104,15 +4104,19 @@ ACMD(do_auto_hunt)
 #ifdef ENABLE_VOICE_CHAT
 ACMD(do_voice_chat_config)
 {
-	char arg[256];
-	one_argument(argument, arg, sizeof(arg));
-	
-	uint8_t type;
-	str_to_number(type, arg);
-	
-	if (!type || type >= VOICE_CHAT_TYPE_MAX_NUM)
-		return;
-	
-	ch->VoiceChatSetConfig(type, !ch->VoiceChatIsBlock(type));
+    char arg[256];
+    one_argument(argument, arg, sizeof(arg));
+
+    int tmp = 0;
+
+    if (!str_to_number(tmp, arg))
+        return;
+
+    if (tmp <= 0 || tmp >= VOICE_CHAT_TYPE_MAX_NUM)
+        return;
+
+    uint8_t type = static_cast<uint8_t>(tmp);
+
+    ch->VoiceChatSetConfig(type, !ch->VoiceChatIsBlock(type));
 }
 #endif
